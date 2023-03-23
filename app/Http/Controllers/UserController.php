@@ -10,4 +10,9 @@ class UserController extends Controller
     {
         return $dataTable->render('users.index');
     }
+
+    public function create()
+    {
+        return view('users.index');
+    }
 }

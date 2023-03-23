@@ -22,11 +22,18 @@
 					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-					<h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-						<a href=".">
-							<img src="{{ url('img/logo.svg') }}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-						</a>
-					</h1>
+
+					<div class="navbar-nav flex-row order-md-last">
+						<div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+							<a href=".">
+								<img src="{{ asset('img/himakom.png') }}" alt="Tabler" class="navbar-brand-image">
+								<span class="navbar-brand-text">HIMAKOM</span>
+							</a>
+						</div>
+						@include('layouts.navigation')
+					</div>
+
+
 					<div class="navbar-nav flex-row order-md-last">
 
 						@auth
@@ -53,9 +60,6 @@
 					</div>
 				</div>
 			</header>
-
-			@include('layouts.navigation')
-
 		</div>
 		<div class="page-wrapper">
 
