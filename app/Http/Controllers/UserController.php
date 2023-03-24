@@ -82,9 +82,8 @@ class UserController extends Controller
             $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
             // delete old avatar
-            $oldAvatar = $user->first()->avatar;
-            if ($oldAvatar) {
-                Storage::delete($oldAvatar);
+            if($user->first()->avatar) {
+                unlink(public_path('storage/' . $user->first()->avatar));
             }
         }
 
@@ -112,11 +111,9 @@ class UserController extends Controller
 
         $user = User::where('id', $id);
 
-        // delete avatar
-        $avatar = $user->first()->avatar;
-        if ($avatar) {
-            Storage::delete($avatar);
-            $user->update(['avatar' => null]);
+        // delete old avatar
+        if($user->first()->avatar) {
+            unlink(public_path('storage/' . $user->first()->avatar));
         }
 
         $user->delete();

@@ -19,11 +19,11 @@ class UsersDataTable extends DataTable
 
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery()
+        return $model::with('roles')
+            ->select('users.*')
             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->select('users.id', 'users.name', 'users.email', 'roles.name as role_name', 'roles.id as role_id')
-            ->orderBy('role_name', 'asc');
+            ->select('users.id', 'users.name', 'users.avatar', 'users.email', 'roles.name as role_name', 'roles.id as role_id');
     }
 
     public function html(): HtmlBuilder
@@ -53,10 +53,10 @@ class UsersDataTable extends DataTable
                         </div>
                     `)
                     $("#formModal").trigger("reset");
+                    $(".img-holder").attr("src", "/img/default_avatar.jpg");
                     $("#modal").find(".modal-title").text("Tambah User");
                     $("#modal").find(".modal-footer").find("button").text("Simpan");
 
-                    $("#formModal").find("img").attr("src", "img/himakom.png");
 
                     $("#modal").modal("show");
 
@@ -78,7 +78,7 @@ class UsersDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('email'),
-            Column::make('role_name')->searchable(false),
+            Column::make('role_name'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

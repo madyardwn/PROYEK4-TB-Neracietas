@@ -24,7 +24,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label for="avatar" class="form-label">Avatar</label>
-                                    <img class="" width="265" height="300" src="" alt="">
+                                    <img class="img-holder img-thumbnail" width="265" height="300" src="" alt="">
                                     <input type="file" class="form-control mt-2" id="avatar" name="avatar">
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                         <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
                             Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                        <button id="btnSubmit" type="submit" class="btn btn-primary ms-auto">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -85,8 +85,21 @@
             }
         })
 
+        $('#avatar').change(function() {
+            const file = $(this)[0].files[0]
+            const reader = new FileReader()
+
+            reader.onload = function(e) {
+                $('.img-holder').attr('src', e.target.result)
+            }
+
+            reader.readAsDataURL(file)
+        })
+
         $('#formModal').on('submit', function(e) {
             e.preventDefault();
+
+            $('#btnSubmit').attr('disabled', 'disabled');
             $('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').remove();
 
@@ -101,17 +114,20 @@
                 method: method,
                 url: url,
                 data: formData,
-                processData: false, // prevent jQuery from automatically processing the data
-                contentType: false, // prevent jQuery from automatically setting the content type
+                processData: false,
+                contentType: false,
 
                 success: function(res) {
                     if (res) {
+
+                        $('#btnSubmit').removeAttr('disabled');
                         $('#modal').modal('hide');
                         table.ajax.reload();
                     }
                 },
                 error: function(err) {
                     if (err) {
+                        $('#btnSubmit').removeAttr('disabled');
                         $.each(err.responseJSON.errors, function(key, value) {
                             $('#formModal').find(`#${key}`).addClass('is-invalid');
                             $('#formModal').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`);
@@ -120,7 +136,6 @@
                 }
             });
         });
-
 
 
         $(document).on('click', '.btnEdit', function() {
@@ -147,7 +162,11 @@
                         $('#formModal').find('input[name="_method"]').val('PUT')
                         $('#formModal').find('input[name="name"]').val(res.name)
                         $('#formModal').find('input[name="email"]').val(res.email)
-                        $('#formModal').find('img').attr('src', '/storage/' + res.avatar)
+                        if (res.avatar) {
+                            $('.img-holder').attr('src', `/storage/${res.avatar}`)
+                        } else {
+                            $('.img-holder').attr('src', '/img/default_avatar.jpg')
+                        }
 
                         $('#modal').modal('show')
                         $('#formModal').attr('action', `/users/${id}`)
