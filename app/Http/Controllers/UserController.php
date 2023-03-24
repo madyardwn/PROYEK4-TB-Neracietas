@@ -34,10 +34,10 @@ class UserController extends Controller
 
         $user = User::create(
             [
-                'name' => request()->name,
-                'email' => request()->email,
-                'avatar' => request()->hasFile('avatar') ? request()->file('avatar')->store('avatars', 'public') : null,
-                'password' => bcrypt(request()->password),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'avatar' => $request->hasFile('avatar') ? $request->file('avatar')->store('avatars', 'public') : null,
             ]
         );
         $user->assignRole(Role::findOrFail(request()->role));

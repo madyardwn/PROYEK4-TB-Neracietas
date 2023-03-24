@@ -9,9 +9,69 @@
             {!! $dataTable->table() !!}
         </div>
     </div>
-
-    @include('users.create')
-    @include('users.edit')
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form action="" method="post" id="formModal" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="_method" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group mb-3">
+                                    <label for="avatar">Avatar</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="filepond is-invalid" id="avatar" name="avatar">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group mb-3">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}">
+                                </div>
+                                <div class="form-group mb-3" id="pwd">
+                                    <div class="row" id="password">
+                                        <div class="col-md-6">
+                                            <label for="password">Password</label>
+                                            <input type="password" class="form-control" id="password" name="password">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="password_confirmation">Confirm Password</label>
+                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="role">Role</label>
+                                    <select class="form-select" id="role" name="role">
+                                        <option value="" selected disabled>Pilih Role</option>
+                                        @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 @push('scripts')
@@ -26,7 +86,7 @@
             }
         })
 
-        $('#formCreate').on('submit', function(e) {
+        $('#formModal').on('submit', function(e) {
             e.preventDefault()
             $('.is-invalid').removeClass('is-invalid')
             $('.invalid-feedback').remove()
@@ -36,7 +96,7 @@
             const method = form.attr('method')
             const data = form.serialize()
             const url = form.attr('action')
-
+            console.log(data)
             $.ajax({
                 method: method,
                 url: url,
@@ -44,15 +104,15 @@
 
                 success: function(res) {
                     if (res) {
-                        $('#modalCreate').modal('hide')
+                        $('#modal').modal('hide')
                         table.ajax.reload()
                     }
                 },
                 error: function(err) {
                     if (err) {
                         $.each(err.responseJSON.errors, function(key, value) {
-                            $('#formCreate').find(`#${key}`).addClass('is-invalid')
-                            $('#formCreate').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
+                            $('#formModal').find(`#${key}`).addClass('is-invalid')
+                            $('#formModal').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
                         })
                     }
                 }
@@ -60,6 +120,9 @@
         })
 
         $(document).on('click', '.btnEdit', function() {
+            $('.is-invalid').removeClass('is-invalid')
+            $('.invalid-feedback').remove()
+
             const id = $(this).data('id')
             const method = $(this).data('method')
 
@@ -71,12 +134,15 @@
                 },
                 success: function(res) {
                     if (res) {
-                        $('#formEdit').trigger('reset')
-                        $('#modalEdit').modal('show')
-                        $('#formEdit').attr('action', `/users/${id}`)
-                        $('#formEdit').find('input[name="name"]').val(res.name)
-                        $('#formEdit').find('input[name="email"]').val(res.email)
-                        $('#formEdit')
+                        $('#formModal').trigger('reset')
+                        $('#formModal').find('#password').remove()
+                        $('#modal').find('.modal-title').text('Edit User')
+                        $('#modal').modal('show')
+                        $('#formModal').attr('action', `/users/${id}`)
+                        $('#formModal').find('input[name="_method"]').val('PUT')
+                        $('#formModal').find('input[name="name"]').val(res.name)
+                        $('#formModal').find('input[name="email"]').val(res.email)
+                        $('#formModal')
                             .find('option')
                             .each(function() {
                                 if ($(this).val() == res.role_id) {
@@ -87,39 +153,6 @@
                             })
                     }
                 },
-            })
-        })
-
-        $('#formEdit').on('submit', function(e) {
-            e.preventDefault()
-            $('.is-invalid').removeClass('is-invalid')
-            $('.invalid-feedback').remove()
-
-            const table = $('#users-table').DataTable()
-            const form = $(this)
-            const method = form.attr('method')
-            const data = form.serialize()
-            const url = form.attr('action')
-
-            $.ajax({
-                method: method,
-                url: url,
-                data: data,
-
-                success: function(res) {
-                    if (res) {
-                        $('#modalEdit').modal('hide')
-                        table.ajax.reload()
-                    }
-                },
-                error: function(err) {
-                    if (err) {
-                        $.each(err.responseJSON.errors, function(key, value) {
-                            $('#formEdit').find(`#${key}`).addClass('is-invalid')
-                            $('#formEdit').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
-                        })
-                    }
-                }
             })
         })
 

@@ -35,8 +35,28 @@ class UsersDataTable extends DataTable
             ->orderBy(1)
             ->buttons([
                 Button::make('add')->action('function() {
-                    $("#formCreate").trigger("reset");
-                    $("#modalCreate").modal("show");
+                    if ($("#formModal").find("#password").length) {
+                        $("#formModal").find("#password").remove();
+                    }
+                    $(".is-invalid").removeClass("is-invalid")
+                    $(".invalid-feedback").remove()
+                    $("#formModal").find("#pwd").append(`
+                        <div class="row" id="password">
+                            <div class="col-md-6">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="password_confirmation">Confirm Password</label>
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                            </div>
+                        </div>
+                    `)
+                    $("#formModal").trigger("reset");
+                    $("#modal").find(".modal-title").text("Tambah User");
+                    $("#modal").modal("show");
+                    $("#formModal").attr("action", "' . route('users.store') . '");
+                    $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
                 }'),
                 Button::make('excel'),
                 Button::make('csv'),
