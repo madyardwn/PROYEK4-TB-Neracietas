@@ -6,16 +6,18 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="description" content="">
+	<meta name="csrf-token" content="{{ csrf_token() }}" />
 	<title>{{ config('app.name', 'Laravel') }}</title>
 	@vite('resources/sass/app.scss')
-	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+	@yield('custom_styles')
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> <!-- Custom styles for this Page-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-	@yield('custom_styles')
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+	<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
 
 </head>
 
@@ -30,9 +32,9 @@
 
 					<div class="navbar-nav flex-row order-md-last">
 						<div class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-							<a href=".">
+							<a href="#" style="text-decoration: none;">
 								<img src="{{ asset('img/himakom.png') }}" alt="Tabler" class="navbar-brand-image">
-								<span class="navbar-brand-text">HIMAKOM</span>
+								<span class="navbar-brand-text">Neracietas</span>
 							</a>
 						</div>
 						@include('layouts.navigation')
@@ -113,6 +115,15 @@
 
 
 	<!-- Page level custom scripts -->
+
+	<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+	<script>
+		// Get a reference to the file input element
+		const inputElement = document.querySelector('input[type="file"]');
+
+		// Create a FilePond instance
+		const pond = FilePond.create(inputElement);
+	</script>
 	@yield('custom_scripts')
 	@stack('scripts')
 </body>

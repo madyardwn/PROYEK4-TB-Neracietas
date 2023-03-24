@@ -9,85 +9,135 @@
             {!! $dataTable->table() !!}
         </div>
     </div>
-    <div class="modal fade" id="modalAction" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
 
-        </div>
-    </div>
+    @include('users.create')
+    @include('users.edit')
 </div>
 @endsection
 @push('scripts')
 {!! $dataTable->scripts() !!}
 
 <script>
-    const modal = new bootstrap.Modal(document.getElementById('modalAction'))
+    $(document).ready(function() {
 
-    // btn-show
-    $('#users-table').on('click', '.btn-show', function() {
-        $.ajax({
-            method: "get",
-            url: "{{ route('users.show', ':id') }}".replace(':id', $(this).data('id')),
-            success: function(res) {
-                $("#modalAction").find(".modal-dialog").html(res)
-                modal.show()
+        $ajaxSetup = $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         })
-    })
 
-    // btn-edit
-    $('#users-table').on('click', '.btn-edit', function() {
-        $.ajax({
-            method: "get",
-            url: "{{ route('users.edit', ':id') }}".replace(':id', $(this).data('id')),
-            success: function(res) {
-                $("#modalAction").find(".modal-dialog").html(res)
-                modal.show()
-                store()
-            }
-        })
-    })
-
-    // btn-delete
-    $('#users-table').on('click', '.btn-delete', function() {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    method: "delete",
-                    url: "{{ route('users.destroy', ':id') }}".replace(':id', $(this).data('id')),
-                    success: function(res) {
-                        $('#dataTableBuilder').DataTable().ajax.reload()
-                        Swal.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
-                        )
-                    }
-                })
-            }
-        })
-    })
-
-    function store() {
-        $('#formAction').on('submit', function(e) {
+        $('#formCreate').on('submit', function(e) {
             e.preventDefault()
+            $('.is-invalid').removeClass('is-invalid')
+            $('.invalid-feedback').remove()
+
+            const table = $('#users-table').DataTable()
+            const form = $(this)
+            const method = form.attr('method')
+            const data = form.serialize()
+            const url = form.attr('action')
+
             $.ajax({
-                method: 'post',
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
+                method: method,
+                url: url,
+                data: data,
+
                 success: function(res) {
-                    modal.hide()
-                    $('#dataTableBuilder').DataTable().ajax.reload()
+                    if (res) {
+                        $('#modalCreate').modal('hide')
+                        table.ajax.reload()
+                    }
+                },
+                error: function(err) {
+                    if (err) {
+                        $.each(err.responseJSON.errors, function(key, value) {
+                            $('#formCreate').find(`#${key}`).addClass('is-invalid')
+                            $('#formCreate').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
+                        })
+                    }
                 }
             })
         })
-    }
+
+        $(document).on('click', '.btnEdit', function() {
+            const id = $(this).data('id')
+            const method = $(this).data('method')
+
+            $.ajax({
+                method: method,
+                url: `/users/${id}/edit`,
+                data: {
+                    id: id
+                },
+                success: function(res) {
+                    if (res) {
+                        $('#formEdit').trigger('reset')
+                        $('#modalEdit').modal('show')
+                        $('#formEdit').attr('action', `/users/${id}`)
+                        $('#formEdit').find('input[name="name"]').val(res.name)
+                        $('#formEdit').find('input[name="email"]').val(res.email)
+                        $('#formEdit')
+                            .find('option')
+                            .each(function() {
+                                if ($(this).val() == res.role_id) {
+                                    $(this).attr('selected', true)
+                                } else {
+                                    $(this).attr('selected', false)
+                                }
+                            })
+                    }
+                },
+            })
+        })
+
+        $('#formEdit').on('submit', function(e) {
+            e.preventDefault()
+            $('.is-invalid').removeClass('is-invalid')
+            $('.invalid-feedback').remove()
+
+            const table = $('#users-table').DataTable()
+            const form = $(this)
+            const method = form.attr('method')
+            const data = form.serialize()
+            const url = form.attr('action')
+
+            $.ajax({
+                method: method,
+                url: url,
+                data: data,
+
+                success: function(res) {
+                    if (res) {
+                        $('#modalEdit').modal('hide')
+                        table.ajax.reload()
+                    }
+                },
+                error: function(err) {
+                    if (err) {
+                        $.each(err.responseJSON.errors, function(key, value) {
+                            $('#formEdit').find(`#${key}`).addClass('is-invalid')
+                            $('#formEdit').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
+                        })
+                    }
+                }
+            })
+        })
+
+        $(document).on('click', '.btnDelete', function() {
+            const id = $(this).data('id')
+
+            $.ajax({
+                method: 'DELETE',
+                url: "{{ route('users.destroy', ':id') }}".replace(':id', id),
+                data: {
+                    id: id
+                },
+                success: function(res) {
+                    const table = $('#users-table').DataTable()
+                    table.ajax.reload()
+                },
+            })
+        })
+    })
 </script>
 @endpush

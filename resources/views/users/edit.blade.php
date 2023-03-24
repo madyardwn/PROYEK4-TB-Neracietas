@@ -1,10 +1,11 @@
-    <div class="modal fade" id="modalCreate" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form action="{{ route('users.store') }}" method="post" enctype="multipart/form-data" id="formCreate">
+                <form id="formEdit" action="" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <div class="modal-header">
-                        <h5 class="modal-title">Buat Anggota</h5>
+                        <h5 class="modal-title">Edit Anggota</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -26,20 +27,10 @@
                                     <label for="email">Email</label>
                                     <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}">
                                 </div>
-                                <div class="form-group mb-3">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label for="password">Password</label>
-                                            <input type="password" class="form-control" id="password" name="password">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="password_confirmation">Confirm Password</label>
-                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="form-group mb-3">
                                     <label for="role">Role</label>
+                                    <!-- jika user meimiliki role maka akan di select -->
                                     <select class="form-select" id="role" name="role">
                                         <option value="" selected disabled>Pilih Role</option>
                                         @foreach ($roles as $role)

@@ -19,7 +19,11 @@ class UsersDataTable extends DataTable
 
     public function query(User $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->select('users.id', 'users.name', 'users.email', 'roles.name as role_name', 'roles.id as role_id')
+            ->orderBy('role_name', 'asc');
     }
 
     public function html(): HtmlBuilder
@@ -31,15 +35,8 @@ class UsersDataTable extends DataTable
             ->orderBy(1)
             ->buttons([
                 Button::make('add')->action('function() {
-                    $.ajax({
-                        method: "get",
-                        url: "' . route('users.create') . '",
-                        success: function(res) {
-                            $("#modalAction").find(".modal-dialog").html(res)
-                            modal.show()
-                            store()
-                        }
-                    })
+                    $("#formCreate").trigger("reset");
+                    $("#modalCreate").modal("show");
                 }'),
                 Button::make('excel'),
                 Button::make('csv'),
@@ -55,6 +52,7 @@ class UsersDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('email'),
+            Column::make('role_name')->searchable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -64,9 +62,8 @@ class UsersDataTable extends DataTable
                 ->title('Action')->width(100)
                 ->render('function() {
                     return `
-                            <button type="button" class="btn btn-sm btn-info btn-show fa fa-eye" data-id="${this.id}"></button>
-                            <button type="button" class="btn btn-sm btn-primary btn-edit fa fa-edit" data-id="${this.id}"></button>
-                            <button type="button" class="btn btn-sm btn-danger btn-delete fa fa-trash" data-id="${this.id}"></button>
+                            <button type="button" class="btn btn-sm btn-primary btnEdit fa fa-edit" data-id="${this.id}"></button>
+                            <button type="button" class="btn btn-sm btn-danger btnDelete fa fa-trash" data-id="${this.id}"></button>
                     `
                 }'),
         ];

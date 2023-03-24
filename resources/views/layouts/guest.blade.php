@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +10,7 @@
 
     @vite('resources/sass/app.scss')
 </head>
+
 <body class="border-top-wide border-primary d-flex flex-column">
 
     <div class="page page-center">
@@ -18,12 +20,14 @@
                     <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
                 </a>
             </div>
-
-            @yield('content')
+            <div class="container" style="max-width: 400px">
+                @yield('content')
+            </div>
 
         </div>
     </div>
 
     @vite('resources/js/app.js')
 </body>
+
 </html>
