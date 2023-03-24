@@ -6,6 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -30,17 +31,25 @@ class UserController extends Controller
             'email' => 'required|email|unique:users|max:30',
             'password' => 'required|min:8|confirmed',
             'role' => 'required',
+            'avatar' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        $user = User::create(
-            [
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'avatar' => $request->hasFile('avatar') ? $request->file('avatar')->store('avatars', 'public') : null,
-            ]
-        );
+        if ($request->hasFile('avatar')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('avatar')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+            $avatar = $request->file('avatar')->storeAs('avatars', $filename);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'avatar' => $avatar,
+        ]);
+
         $user->assignRole(Role::findOrFail(request()->role));
+
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
@@ -48,7 +57,7 @@ class UserController extends Controller
     {
         return $user->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->select('users.id', 'users.name', 'users.email', 'roles.name as role_name', 'roles.id as role_id')
+            ->select('users.id', 'users.name', 'users.avatar', 'users.email', 'roles.name as role_name', 'roles.id as role_id')
             ->orderBy('role_name', 'asc')
             ->get()
             ->where('id', $user->id)
@@ -64,13 +73,26 @@ class UserController extends Controller
             'role' => 'required',
         ]);
 
+        if ($request->hasFile('avatar')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('avatar')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+            $avatar = $request->file('avatar')->storeAs('avatars', $filename);
+
+            // delete old avatar
+            $oldAvatar = User::where('id', $id)->first()->avatar;
+            if ($oldAvatar) {
+                Storage::delete($oldAvatar);
+            }
+        }
+
         $user = User::where('id', $id);
 
         $user->update(
             [
                 'name' => request()->name,
                 'email' => request()->email,
-                'avatar' => request()->hasFile('avatar') ? request()->file('avatar')->store('avatars', 'public') : null,
+                'avatar' => $avatar ?? $user->first()->avatar,
             ]
         );
 
@@ -82,7 +104,25 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
+        if (auth()->user()->id == $id) {
+            return response()->json([
+                'message' => 'You cannot delete yourself.',
+            ], 403);
+        }
+
+        $user = User::where('id', $id);
+
+        // delete avatar
+        $avatar = $user->first()->avatar;
+        if ($avatar) {
+            Storage::delete($avatar);
+            $user->update(['avatar' => null]);
+        }
+
         $user->delete();
+
+        return response()->json([
+            'message' => 'User deleted successfully.',
+        ], 200);
     }
 }

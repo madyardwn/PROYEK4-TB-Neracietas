@@ -54,7 +54,10 @@ class UsersDataTable extends DataTable
                     `)
                     $("#formModal").trigger("reset");
                     $("#modal").find(".modal-title").text("Tambah User");
+                    $("#modal").find(".modal-footer").find("button").text("Simpan");
                     $("#modal").modal("show");
+                    $("#formModal").find("img").attr("src", "img/himakom.png");
+
                     $("#formModal").attr("action", "' . route('users.store') . '");
                     $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
                 }'),
@@ -91,6 +94,6 @@ class UsersDataTable extends DataTable
 
     protected function filename(): string
     {
-        return 'Users_' . date('YmdHis');
+        return 'Users_' . date('Y-m-d_H-i-s');
     }
 }

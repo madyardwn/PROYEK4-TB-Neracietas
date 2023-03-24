@@ -12,7 +12,7 @@
     <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form action="" method="post" id="formModal" enctype="multipart/form-data">
+                <form id="formModal" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="_method" value="">
                     <div class="modal-header">
@@ -22,11 +22,10 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-5">
-                                <div class="form-group mb-3">
-                                    <label for="avatar">Avatar</label>
-                                    <div class="custom-file">
-                                        <input type="file" class="filepond is-invalid" id="avatar" name="avatar">
-                                    </div>
+                                <div class="form-group">
+                                    <label for="avatar" class="form-label">Avatar</label>
+                                    <img class="" width="265" height="300" src="" alt="">
+                                    <input type="file" class="form-control mt-2" id="avatar" name="avatar">
                                 </div>
                             </div>
                             <div class="col-md-7">
@@ -87,37 +86,42 @@
         })
 
         $('#formModal').on('submit', function(e) {
-            e.preventDefault()
-            $('.is-invalid').removeClass('is-invalid')
-            $('.invalid-feedback').remove()
+            e.preventDefault();
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').remove();
 
-            const table = $('#users-table').DataTable()
-            const form = $(this)
-            const method = form.attr('method')
-            const data = form.serialize()
-            const url = form.attr('action')
-            console.log(data)
+            const form = $(this);
+            const formData = new FormData(form[0]);
+
+            const table = $('#users-table').DataTable();
+            const method = form.attr('method');
+            const url = form.attr('action');
+
             $.ajax({
                 method: method,
                 url: url,
-                data: data,
+                data: formData,
+                processData: false, // prevent jQuery from automatically processing the data
+                contentType: false, // prevent jQuery from automatically setting the content type
 
                 success: function(res) {
                     if (res) {
-                        $('#modal').modal('hide')
-                        table.ajax.reload()
+                        $('#modal').modal('hide');
+                        table.ajax.reload();
                     }
                 },
                 error: function(err) {
                     if (err) {
                         $.each(err.responseJSON.errors, function(key, value) {
-                            $('#formModal').find(`#${key}`).addClass('is-invalid')
-                            $('#formModal').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`)
-                        })
+                            $('#formModal').find(`#${key}`).addClass('is-invalid');
+                            $('#formModal').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`);
+                        });
                     }
                 }
-            })
-        })
+            });
+        });
+
+
 
         $(document).on('click', '.btnEdit', function() {
             $('.is-invalid').removeClass('is-invalid')
@@ -134,14 +138,21 @@
                 },
                 success: function(res) {
                     if (res) {
+                        console.log(res)
                         $('#formModal').trigger('reset')
                         $('#formModal').find('#password').remove()
                         $('#modal').find('.modal-title').text('Edit User')
-                        $('#modal').modal('show')
-                        $('#formModal').attr('action', `/users/${id}`)
+                        $('#modal').find('.modal-footer').find('button').text('Update')
+
                         $('#formModal').find('input[name="_method"]').val('PUT')
                         $('#formModal').find('input[name="name"]').val(res.name)
                         $('#formModal').find('input[name="email"]').val(res.email)
+                        $('#formModal').find('img').attr('src', '/storage/' + res.avatar)
+
+                        $('#modal').modal('show')
+                        $('#formModal').attr('action', `/users/${id}`)
+
+
                         $('#formModal')
                             .find('option')
                             .each(function() {

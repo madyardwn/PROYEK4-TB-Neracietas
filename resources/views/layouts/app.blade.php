@@ -12,7 +12,6 @@
 	@yield('custom_styles')
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css"> <!-- Custom styles for this Page-->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-	<link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -116,14 +115,6 @@
 
 	<!-- Page level custom scripts -->
 
-	<script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-	<script>
-		// Get a reference to the file input element
-		const inputElement = document.querySelector('input[type="file"]');
-
-		// Create a FilePond instance
-		const pond = FilePond.create(inputElement);
-	</script>
 	@yield('custom_scripts')
 	@stack('scripts')
 </body>
