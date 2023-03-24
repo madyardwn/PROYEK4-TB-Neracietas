@@ -38,14 +38,14 @@ class UserController extends Controller
             $currentDate = date('Y-m-d-H-i-s');
             $originalName = $request->file('avatar')->getClientOriginalName();
             $filename = $currentDate . '_' . $originalName;
-            $avatar = $request->file('avatar')->storeAs('avatars', $filename);
+            $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
         }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'avatar' => $avatar,
+            'avatar' => $avatar ?? null,
         ]);
 
         $user->assignRole(Role::findOrFail(request()->role));
@@ -73,20 +73,20 @@ class UserController extends Controller
             'role' => 'required',
         ]);
 
+        $user = User::where('id', $id);
+
         if ($request->hasFile('avatar')) {
             $currentDate = date('Y-m-d-H-i-s');
             $originalName = $request->file('avatar')->getClientOriginalName();
             $filename = $currentDate . '_' . $originalName;
-            $avatar = $request->file('avatar')->storeAs('avatars', $filename);
+            $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
             // delete old avatar
-            $oldAvatar = User::where('id', $id)->first()->avatar;
+            $oldAvatar = $user->first()->avatar;
             if ($oldAvatar) {
                 Storage::delete($oldAvatar);
             }
         }
-
-        $user = User::where('id', $id);
 
         $user->update(
             [
