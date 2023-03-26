@@ -55,11 +55,9 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return $user->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->select('users.id', 'users.name', 'users.avatar', 'users.email', 'roles.name as role_name', 'roles.id as role_id')
-            ->orderBy('role_name', 'asc')
-            ->get()
+        return $user
+            ->select('id', 'name', 'email', 'avatar')
+            ->with('roles:id,name')
             ->where('id', $user->id)
             ->first();
     }
@@ -82,7 +80,7 @@ class UserController extends Controller
             $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
             // delete old avatar
-            if($user->first()->avatar) {
+            if ($user->first()->avatar) {
                 unlink(public_path('storage/' . $user->first()->avatar));
             }
         }
@@ -112,7 +110,7 @@ class UserController extends Controller
         $user = User::where('id', $id);
 
         // delete old avatar
-        if($user->first()->avatar) {
+        if ($user->first()->avatar) {
             unlink(public_path('storage/' . $user->first()->avatar));
         }
 

@@ -153,11 +153,12 @@
                 },
                 success: function(res) {
                     if (res) {
-                        console.log(res)
-                        $('#formModal').trigger('reset')
-                        $('#formModal').find('#password').remove()
                         $('#modal').find('.modal-title').text('Edit User')
                         $('#modal').find('.modal-footer').find('button').text('Update')
+                        $('#modal').modal('show')
+
+                        $('#formModal').trigger('reset')
+                        $('#formModal').find('#password').remove()
 
                         $('#formModal').find('input[name="_method"]').val('PUT')
                         $('#formModal').find('input[name="name"]').val(res.name)
@@ -168,19 +169,13 @@
                             $('.img-holder').attr('src', '/img/default_avatar.jpg')
                         }
 
-                        $('#modal').modal('show')
                         $('#formModal').attr('action', `/users/${id}`)
-
-
                         $('#formModal')
                             .find('option')
-                            .each(function() {
-                                if ($(this).val() == res.role_id) {
-                                    $(this).attr('selected', true)
-                                } else {
-                                    $(this).attr('selected', false)
-                                }
+                            .filter(function() {
+                                return $(this).val() == res.roles[0].id
                             })
+                            .prop('selected', true)                
                     }
                 },
             })

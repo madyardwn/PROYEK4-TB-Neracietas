@@ -19,11 +19,9 @@ class UsersDataTable extends DataTable
 
     public function query(User $model): QueryBuilder
     {
-        return $model::with('roles')
-            ->select('users.*')
-            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->select('users.id', 'users.name', 'users.avatar', 'users.email', 'roles.name as role_name', 'roles.id as role_id');
+        return $model
+            ->select('users.id', 'users.name', 'users.email', 'users.avatar')
+            ->with('roles:id,name');
     }
 
     public function html(): HtmlBuilder
@@ -75,10 +73,27 @@ class UsersDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id'),
+            Column::make('id')
+                ->width(20)
+                ->addClass('text-center')
+                ->title('ID'),
+            Column::make('avatar')
+                ->width(60)
+                ->title('Avatar')
+                ->render('function() {
+                    return `
+                        <img src="/storage/${this.avatar}" class="img-fluid img-thumbnail" width="100">
+                    `
+                }'),
             Column::make('name'),
             Column::make('email'),
-            Column::make('role_name'),
+            Column::make('roles.name')
+                ->width(60)
+                ->addClass('text-center')
+                ->title('Role')
+                ->render('function() {
+                    return this.roles[0].name
+                }'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
