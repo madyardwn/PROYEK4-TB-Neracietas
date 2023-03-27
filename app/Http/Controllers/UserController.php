@@ -12,15 +12,8 @@ class UserController extends Controller
 {
     public function index(UsersDataTable $dataTable)
     {
-        return $dataTable->render('users.index', [
+        return $dataTable->render('pages.users.index', [
             'roles' => Role::all(),
-        ]);
-    }
-
-    public function show(User $user)
-    {
-        return view('users.show', [
-            'user' => $user,
         ]);
     }
 
@@ -109,7 +102,6 @@ class UserController extends Controller
 
         $user = User::where('id', $id);
 
-        // delete old avatar
         if ($user->first()->avatar) {
             unlink(public_path('storage/' . $user->first()->avatar));
         }

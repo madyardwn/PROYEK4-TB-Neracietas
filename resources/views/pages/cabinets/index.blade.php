@@ -30,27 +30,27 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group mb-3">
-                                    <label for="name">Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}">
+                                    <label for="name" class="form-label">Name</label>   
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Masukkan Nama">
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="Masukkan Email">
                                 </div>
                                 <div class="form-group mb-3" id="pwd">
                                     <div class="row" id="password">
                                         <div class="col-md-6">
-                                            <label for="password">Password</label>
+                                            <label for="password" class="form-label">Password</label>
                                             <input type="password" class="form-control" id="password" name="password">
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="password_confirmation">Confirm Password</label>
+                                            <label for="password_confirmation" class="form-label">Password Confirmation</label>
                                             <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label for="role">Role</label>
+                                    <label for="role" class="form-label">Role</label>
                                     <select class="form-select" id="role" name="role">
                                         <option value="" selected disabled>Pilih Role</option>
                                         @foreach ($roles as $role)
@@ -62,10 +62,10 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
-                            Cancel
-                        </a>
-                        <button id="btnSubmit" type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                        <div class="d-flex justify-content-between w-100">
+                            <a href="#" class="btn" data-bs-dismiss="modal">Tutup</a>
+                            <button id="btnSubmit" type="submit" class="btn btn-primary ms-auto">Simpan</button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -99,7 +99,9 @@
         $('#formModal').on('submit', function(e) {
             e.preventDefault();
 
-            $('#btnSubmit').attr('disabled', 'disabled');
+            $('#btnSubmit')
+                .addClass('btn-loading')
+                .attr('disabled', true);
             $('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').remove();
 
@@ -120,14 +122,18 @@
                 success: function(res) {
                     if (res) {
 
-                        $('#btnSubmit').removeAttr('disabled');
+                        $('#btnSubmit')
+                            .removeClass('btn-loading')
+                            .attr('disabled', false);
                         $('#modal').modal('hide');
                         table.ajax.reload();
                     }
                 },
                 error: function(err) {
                     if (err) {
-                        $('#btnSubmit').removeAttr('disabled');
+                        $('#btnSubmit')
+                            .removeClass('btn-loading')
+                            .attr('disabled', false);
                         $.each(err.responseJSON.errors, function(key, value) {
                             $('#formModal').find(`#${key}`).addClass('is-invalid');
                             $('#formModal').find(`#${key}`).after(`<div class="invalid-feedback">${value}</div>`);

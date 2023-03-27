@@ -20,8 +20,10 @@ class UsersDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         return $model
-            ->select('users.id', 'users.name', 'users.email', 'users.avatar')
-            ->with('roles:id,name');
+            ->newQuery()
+            ->select(['users.name', 'users.email', 'users.avatar', 'users.id', 'roles.name as roles', 'roles.id as role_id'])
+            ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id');
     }
 
     public function html(): HtmlBuilder
@@ -92,21 +94,27 @@ class UsersDataTable extends DataTable
                 ->addClass('text-center')
                 ->title('Role')
                 ->render('function() {
-                    return this.roles[0].name
+                    if (this.roles == "admin") {
+                        return `<span class="badge bg-danger">${this.roles}</span>`
+                    } else if (this.roles == "user") {
+                        return `<span class="badge bg-success">${this.roles}</span>`
+                    } else {
+                        return ``
+                    }
                 }'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->searchable(false)
-                ->width(60)
                 ->addClass('text-center')
-                ->title('Action')->width(100)
+                ->title('Action')
                 ->render('function() {
                     return `
-                            <button type="button" class="btn btn-sm btn-primary btnEdit fa fa-edit" data-id="${this.id}"></button>
-                            <button type="button" class="btn btn-sm btn-danger btnDelete fa fa-trash" data-id="${this.id}"></button>
+                        <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
+                        <button type="button" class="btn btn-ghost-danger  btn-sm btnDelete fa fa-trash" data-id="${this.id}"></button>
                     `
-                }'),
+                }')
+                ->width(50),
         ];
     }
 
