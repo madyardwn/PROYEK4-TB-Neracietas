@@ -23,6 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
+        'nim',
+        'na',        
+        'nama_bagus',        
+        'year',
+        'cabinet_id',
+        'department_id',
     ];
 
     /**
@@ -43,4 +49,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function cabinet()
+    {
+        return $this->belongsTo(Cabinet::class);
+    }
+
+    public function program()
+    {
+        return $this->belongsTo(Program::class);
+    }
 }

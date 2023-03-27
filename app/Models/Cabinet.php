@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Cabinet extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'logo',
+        'year',
+        'description',
+    ];
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class);
+    }
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

@@ -44,6 +44,12 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatar ?? null,
+            'nim' => request()->nim ?? null,
+            'na' => request()->na ?? null,
+            'nama_bagus' => request()->nama_bagus ?? null,
+            'year' => request()->year ?? null,
+            'department_id' => request()->department ?? null,
+            'cabinet_id' => request()->cabinet ?? null,
         ]);
 
         $user->assignRole(Role::findOrFail(request()->role));
@@ -54,34 +60,9 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return $user
-            ->select([
-                'users.id',
-                'users.name',
-                'users.email',
-                'users.avatar',
-                'users.nim',
-                'users.year',
-                'users.na',
-                'users.nama_bagus',
-                'roles.name as role',
-                'roles.id as role_id',
-                'departments.name as department',
-                'departments.id as department_id',
-                'cabinets.name as cabinet',
-                'cabinets.id as cabinet_id',
-            ])
-            ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->leftJoin('departments', function($join) {
-                $join->on('departments.id', '=', 'users.department_id')
-                    ->orWhereNull('users.department_id');
-            })
-            ->leftJoin('cabinets', function($join) {
-                $join->on('cabinets.id', '=', 'users.cabinet_id')
-                    ->orWhereNull('users.cabinet_id');
-            })
-            ->where('users.id', $user->id)
-            ->first();
+            ->load('roles')
+            ->load('department')
+            ->load('cabinet');
     }
     
 
@@ -112,6 +93,12 @@ class UserController extends Controller
                 'name' => request()->name,
                 'email' => request()->email,
                 'avatar' => $avatar ?? $user->first()->avatar,
+                'nim' => request()->nim ?? null,
+                'na' => request()->na ?? null,
+                'nama_bagus' => request()->nama_bagus ?? null,
+                'year' => request()->year ?? null,
+                'department_id' => request()->department ?? null,
+                'cabinet_id' => request()->cabinet ?? null,
             ]
         );
 

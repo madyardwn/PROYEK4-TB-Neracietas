@@ -60,16 +60,72 @@
             </a>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{{ route('users.index') }}">
-                    Daftar Anggota
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list" width="24"
+                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 6l11 0"></path>
+                            <path d="M9 12l11 0"></path>
+                            <path d="M9 18l11 0"></path>
+                            <path d="M5 6l0 .01"></path>
+                            <path d="M5 12l0 .01"></path>
+                            <path d="M5 18l0 .01"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Daftar Anggota
+                    </span>
                 </a>
                 <a class="dropdown-item" href="./changelog.html">
-                    Permissions
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-open"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z">
+                            </path>
+                            <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                            <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Permissions
+                    </span>
                 </a>
                 <a class="dropdown-item" href="./changelog.html">
-                    Roles
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path>
+                            <path d="M15 19l2 2l4 -4"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Roles
+                    </span>
                 </a>
                 <a class="dropdown-item" href="./changelog.html">
-                    Upload Data Angkatan
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-upload"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                            <path d="M7 9l5 -5l5 5"></path>
+                            <path d="M12 4l0 12"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Upload Data Angkatan
+                    </span>
                 </a>
             </div>
         </li>

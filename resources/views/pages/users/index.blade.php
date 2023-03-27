@@ -96,7 +96,7 @@
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="role" class="form-label">Departemen</label>
+                                        <label for="department" class="form-label">Department</label>
                                         <select class="form-select" id="department" name="department">
                                             <option value="" selected disabled>Pilih Department</option>
                                             @foreach ($departments as $department)
@@ -106,7 +106,7 @@
                                     </div>
 
                                     <div class="form-group mb-3">
-                                        <label for="role" class="form-label">Kabinet</label>
+                                        <label for="cabinet" class="form-label">Kabinet</label>
                                         <select class="form-select" id="cabinet" name="cabinet">
                                             <option value="" selected disabled>Pilih Kabinet</option>
                                             @foreach ($cabinets as $cabinet)
@@ -244,7 +244,7 @@
                                 .find('#role')
                                 .find('option')
                                 .filter(function() {
-                                    return $(this).val() == res.role_id
+                                    return $(this).val() == res.roles[0].id
                                 })
                                 .prop('selected', true)
 
