@@ -84,12 +84,33 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="form-group mb-3">
                                         <label for="role" class="form-label">Role</label>
                                         <select class="form-select" id="role" name="role">
                                             <option value="" selected disabled>Pilih Role</option>
                                             @foreach ($roles as $role)
                                                 <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="role" class="form-label">Departemen</label>
+                                        <select class="form-select" id="department" name="department">
+                                            <option value="" selected disabled>Pilih Department</option>
+                                            @foreach ($departments as $department)
+                                                <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        <label for="role" class="form-label">Kabinet</label>
+                                        <select class="form-select" id="cabinet" name="cabinet">
+                                            <option value="" selected disabled>Pilih Kabinet</option>
+                                            @foreach ($cabinets as $cabinet)
+                                                <option value="{{ $cabinet->id }}">{{ $cabinet->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -108,6 +129,7 @@
         </div>
     </div>
 @endsection
+
 @push('scripts')
     {!! $dataTable->scripts() !!}
 
@@ -203,19 +225,42 @@
                             $('#formModal').find('#password').remove()
 
                             $('#formModal').find('input[name="_method"]').val('PUT')
+
+                            $('#formModal').find('input[name="nim"]').val(res.nim)
+                            $('#formModal').find('input[name="na"]').val(res.na)
+                            $('#formModal').find('input[name="year"]').val(res.year)
+                            $('#formModal').find('input[name="nama_bagus"]').val(res.nama_bagus)
+
                             $('#formModal').find('input[name="name"]').val(res.name)
                             $('#formModal').find('input[name="email"]').val(res.email)
+
                             if (res.avatar) {
                                 $('.img-holder').attr('src', `/storage/${res.avatar}`)
-                            } else {
-                                $('.img-holder').attr('src', '/img/default_avatar.jpg')
                             }
 
                             $('#formModal').attr('action', `/users/${id}`)
+
                             $('#formModal')
+                                .find('#role')
                                 .find('option')
                                 .filter(function() {
-                                    return $(this).val() == res.roles[0].id
+                                    return $(this).val() == res.role_id
+                                })
+                                .prop('selected', true)
+
+                            $('#formModal')
+                                .find('#department')
+                                .find('option')
+                                .filter(function() {
+                                    return $(this).val() == res.department_id
+                                })
+                                .prop('selected', true)
+
+                            $('#formModal')
+                                .find('#cabinet')
+                                .find('option')
+                                .filter(function() {
+                                    return $(this).val() == res.cabinet_id
                                 })
                                 .prop('selected', true)
                         }

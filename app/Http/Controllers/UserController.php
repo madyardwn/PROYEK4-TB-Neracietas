@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\UsersDataTable;
+use App\Models\Cabinet;
+use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
@@ -14,6 +17,8 @@ class UserController extends Controller
     {
         return $dataTable->render('pages.users.index', [
             'roles' => Role::all(),
+            'departments' => Department::all(),
+            'cabinets' => Cabinet::all(),
         ]);
     }
 
@@ -49,12 +54,36 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return $user
-            ->select('id', 'name', 'email', 'avatar')
-            ->with('roles:id,name')
-            ->where('id', $user->id)
+            ->select([
+                'users.id',
+                'users.name',
+                'users.email',
+                'users.avatar',
+                'users.nim',
+                'users.year',
+                'users.na',
+                'users.nama_bagus',
+                'roles.name as role',
+                'roles.id as role_id',
+                'departments.name as department',
+                'departments.id as department_id',
+                'cabinets.name as cabinet',
+                'cabinets.id as cabinet_id',
+            ])
+            ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
+            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->leftJoin('departments', function($join) {
+                $join->on('departments.id', '=', 'users.department_id')
+                    ->orWhereNull('users.department_id');
+            })
+            ->leftJoin('cabinets', function($join) {
+                $join->on('cabinets.id', '=', 'users.cabinet_id')
+                    ->orWhereNull('users.cabinet_id');
+            })
+            ->where('users.id', $user->id)
             ->first();
     }
-
+    
 
     public function update(Request $request, $id)
     {
