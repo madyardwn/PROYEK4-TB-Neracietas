@@ -8,8 +8,6 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -44,12 +42,12 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'avatar' => $avatar ?? null,
-            'nim' => request()->nim ?? null,
-            'na' => request()->na ?? null,
-            'nama_bagus' => request()->nama_bagus ?? null,
-            'year' => request()->year ?? null,
-            'department_id' => request()->department ?? null,
-            'cabinet_id' => request()->cabinet ?? null,
+            'nim' => $request->nim ?? null,
+            'na' => $request->na ?? null,
+            'nama_bagus' => $request->nama_bagus ?? null,
+            'year' => $request->year ?? null,
+            'department_id' => $request->department ?? null,
+            'cabinet_id' => $request->cabinet ?? null,
         ]);
 
         $user->assignRole(Role::findOrFail(request()->role));
@@ -57,7 +55,7 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
 
-    public function edit(User $user)
+    public function edit(User $user): User
     {
         return $user
             ->load('roles')
@@ -90,15 +88,15 @@ class UserController extends Controller
 
         $user->update(
             [
-                'name' => request()->name,
-                'email' => request()->email,
+                'name' => $request->name,
+                'email' => $request->email,
                 'avatar' => $avatar ?? $user->first()->avatar,
-                'nim' => request()->nim ?? null,
-                'na' => request()->na ?? null,
-                'nama_bagus' => request()->nama_bagus ?? null,
-                'year' => request()->year ?? null,
-                'department_id' => request()->department ?? null,
-                'cabinet_id' => request()->cabinet ?? null,
+                'nim' => $request->nim ?? null,
+                'na' => $request->na ?? null,
+                'nama_bagus' => $request->nama_bagus ?? null,
+                'year' => $request->year ?? null,
+                'department_id' => $request->department ?? null,
+                'cabinet_id' => $request->cabinet ?? null,
             ]
         );
 

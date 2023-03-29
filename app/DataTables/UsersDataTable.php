@@ -20,8 +20,13 @@ class UsersDataTable extends DataTable
     public function query(User $model): QueryBuilder
     {
         return $model
-            ->newQuery()
-            ->select(['users.name', 'users.email', 'users.avatar', 'users.id', 'roles.name as roles', 'roles.id as role_id'])
+            ->select([
+                'users.name', 
+                'users.email', 
+                'users.avatar', 
+                'users.id', 
+                'roles.name as roles'
+            ])
             ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
             ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id');
     }
@@ -53,7 +58,7 @@ class UsersDataTable extends DataTable
                         </div>
                     `)
                     $("#formModal").trigger("reset");
-                    $(".img-holder").attr("src", "/img/default_avatar.jpg");
+                    $(".img-holder").attr("src", "/img/default_avatar.png");
                     $("#modal").find(".modal-title").text("Tambah User");
                     $("#modal").find(".modal-footer").find("button").text("Simpan");
 

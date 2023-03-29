@@ -221,8 +221,8 @@
                             $('#modal').find('.modal-footer').find('button').text('Update')
                             $('#modal').modal('show')
 
-                            $('#formModal').trigger('reset')
                             $('#formModal').find('#password').remove()
+                            $('#formModal').trigger('reset')
 
                             $('#formModal').find('input[name="_method"]').val('PUT')
 
@@ -234,8 +234,10 @@
                             $('#formModal').find('input[name="name"]').val(res.name)
                             $('#formModal').find('input[name="email"]').val(res.email)
 
-                            if (res.avatar) {
+                            if (res.avatar != null) {
                                 $('.img-holder').attr('src', `/storage/${res.avatar}`)
+                            } else {
+                                $('.img-holder').attr('src', '/img/default_avatar.png')
                             }
 
                             $('#formModal').attr('action', `/users/${id}`)
