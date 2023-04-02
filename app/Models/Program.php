@@ -25,9 +25,4 @@ class Program extends Model
     {
         return $this->hasOne(User::class);
     }
-
-    public function events()
-    {
-        return $this->hasMany(Event::class);
-    }
 }

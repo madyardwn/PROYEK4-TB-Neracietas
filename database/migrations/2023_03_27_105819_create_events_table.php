@@ -17,14 +17,11 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('location')->nullable();
             $table->string('image')->nullable();
-            $table->dateTime('start');
-            $table->dateTime('end');
+            $table->date('date');
+            $table->time('time');
             $table->boolean('is_active')->default(true);
 
-            $table->foreignId('program_id')->constrained('programs')->onDelete('cascade');
-            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
             $table->foreignId('cabinet_id')->constrained('cabinets')->onDelete('cascade');
-            
             $table->timestamps();
         });
     }

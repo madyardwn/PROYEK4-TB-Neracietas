@@ -11,7 +11,7 @@
         <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <form id="formModal" method="POST" enctype="multipart/form-data">
+                    <form id="formModal" method="POST" enctype="multipart/form-data" autocomplete="off">
                         @csrf
                         <input type="hidden" name="_method" value="">
                         <div class="modal-header">
@@ -22,45 +22,24 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <label for="avatar" class="form-label">Avatar</label>
+                                        <label for="logo" class="form-label">Logo</label>
                                         <img class="img-holder img-thumbnail" width="265" height="300" src=""
                                             alt="">
-                                        <input type="file" class="form-control mt-2" id="avatar" name="avatar">
+                                        <input type="file" class="form-control mt-2" id="logo" name="logo">
                                     </div>
                                 </div>
                                 <div class="col-md-7">
                                     <!-- nim -->
                                     <div class="form-group mb-3">
-                                        <label for="nim" class="form-label">NIM</label>
-                                        <input type="text" class="form-control" id="nim" name="nim"
-                                            value="{{ old('nim') }}" placeholder="Masukkan NIM" max="10">
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="na" class="form-label">Nomor Anggota</label>
-                                        <input type="text" class="form-control" id="na" name="na"
-                                            value="{{ old('na') }}" placeholder="Masukkan Nomor Anggota" max="10">
-                                    </div>
-
-
-                                    <div class="form-group mb-3">
-                                        <label for="name" class="form-label">Nama Lengkap</label>
+                                        <label for="name" class="form-label">Nama Kabinet</label>
                                         <input type="text" class="form-control" id="name" name="name"
                                             value="{{ old('name') }}" placeholder="Masukkan Nama" max="50">
                                     </div>
 
+                                    <!-- description -->
                                     <div class="form-group mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            value="{{ old('email') }}" placeholder="Masukkan Email" max="50">
-                                    </div>
-
-                                    <!-- nama_bagus -->
-                                    <div class="form-group mb-3">
-                                        <label for="nama_bagus" class="form-label">Nama Bagus</label>
-                                        <input type="text" class="form-control" id="nama_bagus" name="nama_bagus"
-                                            value="{{ old('nama_bagus') }}" placeholder="Masukkan Nama Bagus"
-                                            max="30">
+                                        <label for="description" class="form-label">Deskripsi</label>
+                                        <textarea class="form-control" id="description" name="description" placeholder="Masukkan Deskripsi" rows="3"></textarea>
                                     </div>
 
                                     <!--- year -->
@@ -70,39 +49,20 @@
                                             value="{{ old('year') }}" placeholder="Masukkan Tahun">
                                     </div>
 
-                                    <div class="form-group mb-3" id="pwd">
-                                        <div class="row" id="password">
-                                            <div class="col-md-6">
-                                                <label for="password" class="form-label">Password</label>
-                                                <input type="password" class="form-control" id="password"
-                                                    name="password" max="50">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="password_confirmation" class="form-label">Password
-                                                    Confirmation</label>
-                                                <input type="password" class="form-control" id="password_confirmation"
-                                                    name="password_confirmation" max="50">
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class="form-group mb-3">
-                                        <label for="role" class="form-label">Role</label>
-                                        <select class="form-select" id="role" name="role">
-                                            <option value="" selected disabled>Pilih Role</option>
-                                            @foreach ($roles as $role)
-                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group mb-3">
-                                        <label for="department" class="form-label">Departemen</label>
-                                        <select class="form-select" id="department" name="department">
-                                            <option value="" selected disabled>Pilih Departemen</option>
-                                            @foreach ($departments as $department)
-                                                <option value="{{ $department->id }}">{{ $department->name }}</option>
-                                            @endforeach
+                                        <label for="department" class="form-label">Status</label>
+                                        <select class="form-select" id="is_active" name="is_active">
+                                            <option value="" selected disabled>Pilih Status</option>
+                                            @if (old('is_active') == '')
+                                                <option value="1">Aktif</option>
+                                                <option value="0">Tidak Aktif</option>
+                                            @elseif (old('is_active') == 1)
+                                                <option value="1" selected>Aktif</option>
+                                                <option value="0">Tidak Aktif</option>
+                                            @else
+                                                <option value="1">Aktif</option>
+                                                <option value="0" selected>Tidak Aktif</option>
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -133,7 +93,7 @@
                 }
             })
 
-            $('#avatar').change(function() {
+            $('#logo').change(function() {
                 const file = $(this)[0].files[0]
                 const reader = new FileReader()
 
@@ -156,7 +116,7 @@
                 const form = $(this);
                 const formData = new FormData(form[0]);
 
-                const table = $('#users-table').DataTable();
+                const table = $('#cabinets-table').DataTable();
                 const method = form.attr('method');
                 const url = form.attr('action');
 
@@ -207,52 +167,31 @@
 
                 $.ajax({
                     method: method,
-                    url: `/users/${id}/edit`,
+                    url: `/cabinets/${id}/edit`,
                     data: {
                         id: id
                     },
                     success: function(res) {
                         if (res) {
-                            $('#modal').find('.modal-title').text('Edit User')
+                            $('#modal').find('.modal-title').text('Edit Kabinet')
                             $('#modal').find('.modal-footer').find('button').text('Update')
                             $('#modal').modal('show')
 
-                            $('#formModal').find('#password').remove()
-                            $('#formModal').trigger('reset')
-
                             $('#formModal').find('input[name="_method"]').val('PUT')
 
-                            $('#formModal').find('input[name="nim"]').val(res.nim)
-                            $('#formModal').find('input[name="na"]').val(res.na)
-                            $('#formModal').find('input[name="year"]').val(res.year)
-                            $('#formModal').find('input[name="nama_bagus"]').val(res.nama_bagus)
-
                             $('#formModal').find('input[name="name"]').val(res.name)
-                            $('#formModal').find('input[name="email"]').val(res.email)
+                            $('#formModal').find('textarea[name="description"]').val(res
+                                .description)
+                            $('#formModal').find('input[name="year"]').val(res.year)
+                            $('#formModal').find('select[name="is_active"]').val(res.is_active)
 
-                            if (res.avatar != null) {
-                                $('.img-holder').attr('src', `/storage/${res.avatar}`)
+                            if (res.logo != null) {
+                                $('.img-holder').attr('src', `/storage/${res.logo}`)
                             } else {
                                 $('.img-holder').attr('src', '/img/default_avatar.png')
                             }
 
-                            $('#formModal').attr('action', `/users/${id}`)
-
-                            $('#formModal')
-                                .find('#role')
-                                .find('option')
-                                .filter(function() {
-                                    return $(this).val() == res.roles[0].id
-                                })
-                                .prop('selected', true)
-
-                            $('#formModal')
-                                .find('#department')
-                                .find('option')
-                                .filter(function() {
-                                    return $(this).val() == res.department_id
-                                })
-                                .prop('selected', true)
+                            $('#formModal').attr('action', `/cabinets/${res.id}`)
                         }
                     },
                 })
@@ -263,13 +202,15 @@
 
                 $.ajax({
                     method: 'DELETE',
-                    url: "{{ route('users.destroy', ':id') }}".replace(':id', id),
+                    url: `/cabinets/${id}`,
                     data: {
                         id: id
                     },
                     success: function(res) {
-                        const table = $('#users-table').DataTable()
-                        table.ajax.reload()
+                        if (res) {
+                            const table = $('#cabinets-table').DataTable()
+                            table.ajax.reload()
+                        }
                     },
                 })
             })

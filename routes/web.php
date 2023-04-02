@@ -29,6 +29,14 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('users', \App\Http\Controllers\UserController::class);
 
+    Route::resource('cabinets', \App\Http\Controllers\CabinetController::class);
+
+    Route::resource('departments', \App\Http\Controllers\DepartmentController::class);
+
+    Route::resource('programs', \App\Http\Controllers\ProgramController::class);
+
+    Route::resource('events', \App\Http\Controllers\EventController::class);
+
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
     Route::resource('permissions', \App\Http\Controllers\PermissionController::class);
 });

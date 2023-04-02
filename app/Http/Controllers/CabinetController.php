@@ -2,64 +2,174 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\CabinetsDataTable;
 use App\Models\Cabinet;
+use App\Models\Department;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CabinetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(CabinetsDataTable $dataTable)
     {
-        //
+        return $dataTable->render('pages.cabinets.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'year' => 'required|numeric',
+            'description' => 'required',
+            'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'year' => [
+                'required' => 'Tahun harus diisi',
+                'numeric' => 'Tahun harus berupa angka',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+            ],
+            'logo' => [
+                'required' => 'Logo harus diisi',
+                'image' => 'Logo harus berupa gambar',
+                'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Logo maksimal 2 MB',
+            ],
+            'is_active' => [
+                'required' => 'Status harus diisi',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        if ($request->hasFile('logo')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('logo')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+
+            $logo = $request->file('logo')->storeAs($request->year . '-' . $request->name . '/' .  '/logo', $filename, 'public');
+        }
+
+        $cabinet = Cabinet::create([
+            'name' => $request->name,
+            'year' => $request->year,
+            'description' => $request->description,
+            'logo' => $logo,
+        ]);
+
+        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cabinet $cabinet)
+    public function edit(Cabinet $cabinet): Cabinet
     {
-        //
+        return $cabinet;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cabinet $cabinet)
+
+    public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'year' => 'required|numeric',
+            'description' => 'required',
+            'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'is_active' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'year' => [
+                'required' => 'Tahun harus diisi',
+                'numeric' => 'Tahun harus berupa angka',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+                'max' => 'Deskripsi maksimal 255 karakter',
+            ],
+            'logo' => [
+                'image' => 'Logo harus berupa gambar',
+                'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Logo maksimal 2 MB',
+            ],
+            'is_active' => [
+                'required' => 'Status harus diisi',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        $cabinet = Cabinet::find($id);
+        if ($request->hasFile('logo')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('logo')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+
+            $logo = $request->file('logo')->storeAs($request->year . '-' . $request->name .  '/logo', $filename, 'public');
+        }
+
+        $cabinet->update([
+            'name' => $request->name,
+            'year' => $request->year,
+            'description' => $request->description,
+            'logo' => $logo ?? $cabinet->logo,
+            'is_active' => $request->is_active,
+        ]);
+
+        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil diubah');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Cabinet $cabinet)
+    public function destroy($id)
     {
-        //
-    }
+        $cabinet = Cabinet::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Cabinet $cabinet)
-    {
-        //
+        // delete logo
+        unlink(public_path('storage/' . $cabinet->logo));
+
+        // delete departments
+        $departments = Department::where('cabinet_id', $cabinet->id)->get();
+
+        foreach ($departments as $department) {
+            // delete logo
+            if ($department->logo) {
+                unlink(public_path('storage/' . $department->logo));
+            }
+
+            // delete users
+            $users = User::where('department_id', $department->id)->get();
+
+            foreach ($users as $user) {
+                // delete avatar
+                if ($user->avatar) {
+                    unlink(public_path('storage/' . $user->avatar));
+                }
+
+                // delete roles
+                $roles = Role::where('user_id', $user->id)->get();
+
+                foreach ($roles as $role) {
+                    $role->delete();
+                }
+
+                $user->delete();
+            }
+
+            $department->delete();
+        }
+
+        $cabinet->delete();
+
+        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil dihapus');
     }
 }

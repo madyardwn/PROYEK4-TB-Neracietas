@@ -2,64 +2,112 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\ProgramsDataTable;
+use App\Models\Department;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProgramController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(ProgramsDataTable $dataTable)
     {
-        //
+        return $dataTable->render('pages.programs.index', [
+            'departments' => Department::all(),
+            'users' => User::all(),
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'description' => 'required',
+            'department' => 'required',
+            'user' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+            ],
+            'department' => [
+                'required' => 'Departemen harus diisi',
+            ],
+            'user' => [
+                'required' => 'Pengurus harus diisi',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        $program = Program::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'department_id' => $request->department,
+            'user_id' => $request->user,
+        ]);
+
+        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Program $program)
+    public function edit(Program $program): Program
     {
-        //
+        return $program;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Program $program)
+
+    public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'description' => 'required',
+            'department' => 'required',
+            'user' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+                'max' => 'Deskripsi maksimal 255 karakter',
+            ],
+            'department' => [
+                'required' => 'Departemen harus diisi',
+            ],
+            'user' => [
+                'required' => 'Pengurus harus diisi',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        $program = Program::find($id);
+
+
+
+        $program->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'department_id' => $request->department,
+            'user_id' => $request->user,
+        ]);
+
+        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil diubah');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Program $program)
+    public function destroy($id)
     {
-        //
-    }
+        $program = Program::find($id);
+        $program->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Program $program)
-    {
-        //
+        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil dihapus');
     }
 }

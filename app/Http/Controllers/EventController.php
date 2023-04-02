@@ -2,64 +2,165 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTables\EventsDataTable;
+use App\Models\Cabinet;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(EventsDataTable $dataTable)
     {
-        //
+        return $dataTable->render('pages.events.index', [
+            'cabinets' => Cabinet::all(),
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'description' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'date' => 'required',
+            'time' => 'required',
+            'location' => 'required',
+            'cabinet' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+            ],
+            'image' => [
+                'required' => 'Gambar harus diisi',
+                'image' => 'File harus berupa gambar',
+            ],
+            'date' => [
+                'required' => 'Tanggal harus diisi',
+            ],
+            'time' => [
+                'required' => 'Waktu harus diisi',
+            ],
+            'location' => [
+                'required' => 'Lokasi harus diisi',
+            ],
+            'cabinet' => [
+                'required' => 'Kabinet harus diisi',
+            ]
+        ];
+
+        $request->validate($rules, $message);
+
+        if ($request->hasFile('image')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('image')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+
+            $cabinet = Cabinet::find($request->cabinet);
+            $image = $request->file('image')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'events' . '/' . $request->name . '/poster', $filename, 'public');
+        }
+
+        Event::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $image,
+            'date' => $request->date,
+            'time' => $request->time,
+            'location' => $request->location,
+            'cabinet_id' => $request->cabinet,
+        ]);
+
+        return redirect()->route('events.index')->with('success', 'Event berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Event $event)
+    public function edit(Event $event): Event
     {
-        //
+        return $event;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Event $event)
+
+    public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+            'description' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'date' => 'required',
+            'time' => 'required',
+            'location' => 'required',
+            'cabinet' => 'required',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'description' => [
+                'required' => 'Deskripsi harus diisi',
+            ],
+            'image' => [
+                'image' => 'File harus berupa gambar',
+            ],
+            'date' => [
+                'required' => 'Tanggal harus diisi',
+            ],
+            'time' => [
+                'required' => 'Waktu harus diisi',
+            ],
+            'location' => [
+                'required' => 'Lokasi harus diisi',
+            ],
+
+        ];
+
+        $request->validate($rules, $message);
+
+        $event = Event::find($id);
+        if ($request->hasFile('image')) {
+            $currentDate = date('Y-m-d-H-i-s');
+            $originalName = $request->file('image')->getClientOriginalName();
+            $filename = $currentDate . '_' . $originalName;
+
+            // delete old logo
+            if ($event->image) {
+                unlink(public_path('storage/' . $event->image));
+            }
+
+            $cabinet = Cabinet::find($request->cabinet);
+
+            $image = $request->file('image')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'events' . '/' . $request->name . '/poster', $filename, 'public');
+        }
+
+        $event->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $image,
+            'date' => $request->date,
+            'time' => $request->time,
+            'location' => $request->location,
+            'cabinet_id' => $request->cabinet,
+        ]);
+
+        return redirect()->route('events.index')->with('success', 'Event berhasil diubah');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Event $event)
+    public function destroy($id)
     {
-        //
-    }
+        $event = Event::find($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Event $event)
-    {
-        //
+        // delete image
+        if ($event->image) {
+            unlink(public_path('storage/' . $event->image));
+        }
+
+        $event->delete();
+
+        return redirect()->route('events.index')->with('success', 'Event berhasil dihapus');
     }
 }

@@ -22,19 +22,78 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
+            'nim' => 'required|unique:users,nim|numeric',
+            'na' => 'required|unique:users,na|numeric',
+            'nama_bagus' => 'required|max:20',
+            'year' => 'required|numeric',
             'name' => 'required|max:50',
-            'email' => 'required|email|unique:users|max:30',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
             'role' => 'required',
-            'avatar' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'department' => 'required',
+        ];
+
+        $message = [
+            'nim' => [
+                'required' => 'NIM harus diisi',
+                'unique' => 'NIM sudah terdaftar',
+                'numeric' => 'NIM harus berupa angka',
+            ],
+            'na' => [
+                'required' => 'Nomor Anggota harus diisi',
+                'unique' => 'Nomor Anggota sudah terdaftar',
+                'numeric' => 'Nomor Anggota harus berupa angka',
+            ],
+            'nama_bagus' => [
+                'required' => 'Nama Bagus harus diisi',
+                'max' => 'Nama Bagus maksimal 20 karakter',
+            ],
+            'year' => [
+                'required' => 'Tahun harus diisi',
+                'numeric' => 'Tahun harus berupa angka',
+            ],
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'email' => [
+                'required' => 'Email harus diisi',
+                'email' => 'Email tidak valid',
+                'max' => 'Email maksimal 50 karakter',
+                'unique' => 'Email sudah terdaftar',
+            ],
+            'password' => [
+                'required' => 'Password harus diisi',
+                'min' => 'Password minimal 8 karakter',
+                'confirmed' => 'Password tidak sama',
+            ],
+            'role' => [
+                'required' => 'Role harus diisi',
+            ],
+            'avatar' => [
+                'required' => 'Avatar harus diisi',
+                'image' => 'Avatar harus berupa gambar',
+                'mimes' => 'Avatar harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Avatar maksimal 2 MB',
+            ],
+            'department' => [
+                'required' => 'User harus terdaftar di salah satu departemen',
+            ],
+        ];
+
+        $request->validate($rules, $message);
 
         if ($request->hasFile('avatar')) {
             $currentDate = date('Y-m-d-H-i-s');
             $originalName = $request->file('avatar')->getClientOriginalName();
             $filename = $currentDate . '_' . $originalName;
-            $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+            $name = $request->name;
+            $department = Department::find($request->department)->first();
+            $cabinet = Cabinet::find($department->cabinet_id)->first();
+
+            $avatar = $request->file('avatar')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . $department->name . '/' .  $name, $filename, 'public');
         }
 
         $user = User::create([
@@ -47,7 +106,6 @@ class UserController extends Controller
             'nama_bagus' => $request->nama_bagus ?? null,
             'year' => $request->year ?? null,
             'department_id' => $request->department ?? null,
-            'cabinet_id' => $request->cabinet ?? null,
         ]);
 
         $user->assignRole(Role::findOrFail(request()->role));
@@ -59,30 +117,85 @@ class UserController extends Controller
     {
         return $user
             ->load('roles')
-            ->load('department')
-            ->load('cabinet');
+            ->load('department');
     }
-    
+
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
+            'nim' => 'required|unique:users,nim,' . $id . '|numeric',
+            'na' => 'required|unique:users,na,' . $id . '|numeric',
+            'nama_bagus' => 'required|max:20',
+            'year' => 'required|numeric',
             'name' => 'required|max:50',
-            'email' => 'required|email|max:30|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email,' . $id,
             'role' => 'required',
-        ]);
+            'avatar' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'department' => 'required',
+        ];
+
+        $message = [
+            'nim' => [
+                'required' => 'NIM harus diisi',
+                'unique' => 'NIM sudah terdaftar',
+                'numeric' => 'NIM harus berupa angka',
+            ],
+            'na' => [
+                'required' => 'Nomor Anggota harus diisi',
+                'unique' => 'Nomor Anggota sudah terdaftar',
+                'numeric' => 'Nomor Anggota harus berupa angka',
+            ],
+            'nama_bagus' => [
+                'required' => 'Nama Bagus harus diisi',
+                'max' => 'Nama Bagus maksimal 20 karakter',
+            ],
+            'year' => [
+                'required' => 'Tahun harus diisi',
+                'numeric' => 'Tahun harus berupa angka',
+            ],
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+            'email' => [
+                'required' => 'Email harus diisi',
+                'email' => 'Email tidak valid',
+                'max' => 'Email maksimal 50 karakter',
+                'unique' => 'Email sudah terdaftar',
+            ],
+            'role' => [
+                'required' => 'Role harus diisi',
+            ],
+            'avatar' => [
+                'required' => 'Avatar harus diisi',
+                'image' => 'Avatar harus berupa gambar',
+                'mimes' => 'Avatar harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Avatar maksimal 2 MB',
+            ],
+            'department' => [
+                'required' => 'User harus terdaftar di salah satu departemen',
+            ],
+        ];
+
+        $request->validate($rules, $message);
 
         $user = User::where('id', $id);
-
         if ($request->hasFile('avatar')) {
             $currentDate = date('Y-m-d-H-i-s');
             $originalName = $request->file('avatar')->getClientOriginalName();
             $filename = $currentDate . '_' . $originalName;
-            $avatar = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+
+            $name = $user->first()->name;
+            $department = Department::find($request->department)->first();
+            $cabinet = Cabinet::find($department->cabinet_id)->first();
+
+            $folder = $cabinet->year . '-' . $cabinet->name . '/' . $department->name . '/' .  $name;
+            $avatar = $request->file('avatar')->storeAs($folder, $filename, 'public');
 
             // delete old avatar
             if ($user->first()->avatar) {
-                unlink(public_path('storage/' . $user->first()->avatar));
+                unlink(public_path('storage/' . $folder . '/' . $user->first()->avatar));
             }
         }
 
@@ -96,7 +209,6 @@ class UserController extends Controller
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
                 'department_id' => $request->department ?? null,
-                'cabinet_id' => $request->cabinet ?? null,
             ]
         );
 
@@ -117,7 +229,12 @@ class UserController extends Controller
         $user = User::where('id', $id);
 
         if ($user->first()->avatar) {
-            unlink(public_path('storage/' . $user->first()->avatar));
+            // find cabinet by department
+            $cabinet = Cabinet::where('department_id', $user->first()->department_id)->first();
+            $department = Department::find($user->first()->department_id);
+            $name = $user->first()->name;
+            $folder = $cabinet->name . '/' . $department->name . '/' .  $name . '/avatar';
+            unlink(public_path('storage/' . $folder . '/' . $user->first()->avatar));
         }
 
         $user->delete();

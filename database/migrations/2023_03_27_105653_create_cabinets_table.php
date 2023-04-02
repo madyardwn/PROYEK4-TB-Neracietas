@@ -10,14 +10,15 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {        
+    {
         Schema::create('cabinets', function (Blueprint $table) {
             $table->id();
-            
+
             $table->string('name');
             $table->string('logo')->nullable();
             $table->year('year');
             $table->string('description')->nullable();
+            $table->boolean('is_active')->default(true);
 
             $table->timestamps();
         });

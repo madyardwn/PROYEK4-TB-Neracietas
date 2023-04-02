@@ -15,23 +15,14 @@ class Event extends Model
         'description',
         'date',
         'time',
-        'user_id',
-        'department_id',
-        'program_id',
+        'location',
+        'image',
+        'is_active',
+        'cabinet_id',
     ];
 
     public function cabinet()
     {
         return $this->belongsTo(Cabinet::class);
-    }
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
-
-    public function program()
-    {
-        return $this->belongsTo(Program::class);
     }
 }

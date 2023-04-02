@@ -132,7 +132,7 @@
 
 
         <li class="nav-item">
-            <a class="nav-link" href="./form-elements.html">
+            <a class="nav-link" href="{{ route('cabinets.index') }}">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checklist"
@@ -152,7 +152,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="./form-elements.html">
+            <a class="nav-link" href="{{ route('departments.index') }}">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-bank"
@@ -176,7 +176,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="./form-elements.html">
+            <a class="nav-link" href="{{ route('programs.index') }}">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-upload"
@@ -196,7 +196,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="./form-elements.html">
+            <a class="nav-link" href="{{ route('events.index') }}">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event"
