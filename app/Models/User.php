@@ -24,11 +24,11 @@ class User extends Authenticatable
         'password',
         'avatar',
         'nim',
-        'na',        
-        'nama_bagus',        
+        'na',
+        'nama_bagus',
         'year',
-        'cabinet_id',
         'department_id',
+        'is_active',
     ];
 
     /**

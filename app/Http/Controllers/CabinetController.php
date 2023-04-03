@@ -64,6 +64,7 @@ class CabinetController extends Controller
             'year' => $request->year,
             'description' => $request->description,
             'logo' => $logo,
+            'is_active' => $request->is_active,
         ]);
 
         return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil ditambahkan');
@@ -126,6 +127,17 @@ class CabinetController extends Controller
             'logo' => $logo ?? $cabinet->logo,
             'is_active' => $request->is_active,
         ]);
+
+        $departments = Department::where('cabinet_id', $cabinet->id);
+
+        // update users active status
+        $users = User::where('department_id', $departments->pluck('id'))->get();
+
+        foreach ($users as $user) {
+            $user->update([
+                'is_active' => $request->is_active,
+            ]);
+        }
 
         return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil diubah');
     }

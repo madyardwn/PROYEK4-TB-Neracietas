@@ -32,15 +32,11 @@ class UsersDataTable extends DataTable
                 'users.email',
                 'users.avatar',
                 'users.year',
+                'users.is_active',
                 'roles.name as roles',
-                'departments.name as departments',
-                'cabinets.name as cabinets',
-                'cabinets.is_active as status'
             ])
             ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
-            ->leftJoin('departments', 'departments.id', '=', 'users.department_id')
-            ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id');
+            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id');
     }
 
     public function html(): HtmlBuilder
@@ -140,18 +136,17 @@ class UsersDataTable extends DataTable
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Angkatan'),
-            Column::make('cabinets.is_active')
+            Column::make('is_active')
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Status')
                 ->render('function() {
-                    if (this.status == 1) {
+                    if (this.is_active == 1) {
                         return `<span class="badge bg-success">Active</span>`
                     } else {
                         return `<span class="badge bg-danger">Inactive</span>`
                     }
-                }')
-                ->searchable(false),
+                }'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

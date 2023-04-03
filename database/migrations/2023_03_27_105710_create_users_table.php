@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('password');
             $table->year('year')->nullable();
 
+            $table->boolean('is_active')->default(true);
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade');
 
             $table->timestamp('email_verified_at')->nullable();

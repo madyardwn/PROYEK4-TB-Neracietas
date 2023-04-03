@@ -107,10 +107,18 @@ class UserController extends Controller
             'year' => $request->year ?? null,
             'department_id' => $request->department ?? null,
         ]);
-
         $user->assignRole(Role::findOrFail(request()->role));
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        $department = Department::find($request->department);
+        $cabinet = Cabinet::find($department->cabinet_id);
+
+        $user->update([
+            'is_active' => $cabinet->is_active ? 1 : 0,
+        ]);
+
+        return response()->json([
+            'message' => 'User updated successfully.',
+        ], 200);
     }
 
     public function edit(User $user): User
@@ -214,8 +222,16 @@ class UserController extends Controller
 
         $user->first()->syncRoles(Role::findOrFail(request()->role));
 
+        $department = Department::find($request->department);
+        $cabinet = Cabinet::find($department->cabinet_id);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        $user->update([
+            'is_active' => $cabinet->is_active ? 1 : 0,
+        ]);
+
+        return response()->json([
+            'message' => 'User updated successfully.',
+        ], 200);
     }
 
     public function destroy($id)

@@ -65,16 +65,32 @@ class CabinetsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('No')->title('No')->searchable(false)->orderable(false),
-            Column::make('name')->title('Name'),
+            Column::make('No')->title('No')->searchable(false)->orderable(false)
+                ->render('function() {
+                    return this.No;
+                }')
+                ->width(10),
+            Column::make('name')->title('Nama Kabinet')
+                ->width(100),
             Column::make('logo')->title('Logo')->render('function() {
                 return `<img src="/storage/${this.logo}" class="img-fluid" width="100px">`;
-            }'),
-            Column::make('year')->title('Year'),
-            Column::make('description')->title('Description'),
-            Column::make('is_active')->title('Status')->render('function() {
-                return this.is_active == 1 ? "Aktif" : "Tidak Aktif";
-            }'),
+            }')
+                ->width(100)
+                ->addClass('text-center'),
+            Column::make('year')->title('Tahun')
+                ->width(50)
+                ->addClass('text-center'),
+            Column::make('is_active')
+                ->title('Status')
+                ->render('function() {
+                    if (this.is_active == 1) {
+                        return `<span class="badge bg-success">Active</span>`
+                    } else {
+                        return `<span class="badge bg-danger">Inactive</span>`
+                    }
+            }')
+                ->width(50)
+                ->addClass('text-center'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

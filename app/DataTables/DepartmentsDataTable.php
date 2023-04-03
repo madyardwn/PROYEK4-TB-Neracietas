@@ -31,7 +31,9 @@ class DepartmentsDataTable extends DataTable
                 'departments.name',
                 'departments.logo',
                 'departments.description',
-                'cabinets.name as cabinet_name'
+                'cabinets.name as cabinet_name',
+                'cabinets.is_active as status',
+                'cabinets.year as year'
             ])
             ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id');
     }
@@ -66,16 +68,38 @@ class DepartmentsDataTable extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('No')->title('No')->searchable(false)->orderable(false),
-            Column::make('name')->title('Name'),
+            Column::make('No')->title('No')->searchable(false)->orderable(false)
+                ->render('function() {
+                    return this.No;
+                }')
+                ->width(10)
+                ->addClass('text-center'),
+            Column::make('name')->title('Nama Departemen')
+                ->width(200),
             Column::make('logo')->title('Logo')->render('function() {
-                return `<img src="/storage/${this.logo}" class="img-fluid" width="100px">`;
-            }'),
-            Column::make('description')->title('Description'),
-            Column::make('cabinets.name')->title('Cabinet')->render('function() {
+                return `<img src="/storage/${this.logo}" class="img-fluid" width="50px">`;
+            }')
+                ->width(50)
+                ->addClass('text-center'),
+            Column::make('cabinets.name')->title('Kabinet')->render('function() {
                 return this.cabinet_name;
-            }'),
-            Column::computed('action')
+            }')
+                ->width(100),
+            Column::make('cabinets.year')->title('Tahun')->render('function() {
+                return this.year;
+            }')
+                ->width(50)
+                ->addClass('text-center'),
+            Column::make('cabinets.is_active')->title('Status')->render('function() {
+                    if (this.status == 1) {
+                        return `<span class="badge bg-success">Active</span>`
+                    } else {
+                        return `<span class="badge bg-danger">Inactive</span>`
+                    }
+                }')
+                ->width(50)
+                ->addClass('text-center'),
+            Column::computed('Opsi')
                 ->exportable(false)
                 ->printable(false)
                 ->searchable(false)

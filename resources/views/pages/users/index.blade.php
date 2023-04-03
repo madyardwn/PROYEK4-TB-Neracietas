@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <div class="card">
+        <div class="card" id="card">
             <div class="card-header">Manage Users</div>
             <div class="card-body">
                 {!! $dataTable->table() !!}
@@ -185,12 +185,17 @@
                     myDropzone.removeAllFiles();
 
                     // show success message
-                    $('.card').before(
+                    $('#card').before(
                         '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
                         response.success +
                         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                         '</div>'
                     );
+
+                    // remove alert after 5 seconds
+                    setTimeout(function() {
+                        $('.alert').alert('close');
+                    }, 5000);
 
                 });
                 this.on("error", function(file, response) {
@@ -263,6 +268,17 @@
                                 .attr('disabled', false);
                             $('#modal').modal('hide');
                             table.ajax.reload();
+
+                            $('#card').before(
+                                '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                res.success +
+                                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                '</div>'
+                            );
+
+                            setTimeout(function() {
+                                $('.alert').alert('close');
+                            }, 5000);
                         }
                     },
                     error: function(err) {
@@ -349,15 +365,30 @@
             $(document).on('click', '.btnDelete', function() {
                 const id = $(this).data('id')
 
+                // remove alert
+                $('.alert').remove()
+
                 $.ajax({
                     method: 'DELETE',
                     url: "{{ route('users.destroy', ':id') }}".replace(':id', id),
                     data: {
                         id: id
                     },
+
                     success: function(res) {
                         const table = $('#users-table').DataTable()
                         table.ajax.reload()
+
+                        $('#card').before(
+                            '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                            res.message +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                            '</div>'
+                        )
+
+                        setTimeout(function() {
+                            $('.alert').alert('close')
+                        }, 5000)
                     },
                 })
             })
