@@ -101,9 +101,9 @@
 
                                 <!--- year -->
                                 <div class="form-group mb-3">
-                                    <label for="year" class="form-label">Tahun</label>
+                                    <label for="year" class="form-label">Angkatan</label>
                                     <input type="number" class="form-control" id="year" name="year"
-                                        value="{{ old('year') }}" placeholder="Masukkan Tahun">
+                                        value="{{ old('year') }}" placeholder="Masukkan Tahun Angkatan">
                                 </div>
 
                                 <div class="form-group mb-3" id="pwd">
@@ -271,7 +271,7 @@
 
                             $('#card').before(
                                 '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-                                res.success +
+                                res.message +
                                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
                                 '</div>'
                             );

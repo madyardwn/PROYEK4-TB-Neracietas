@@ -117,7 +117,7 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User updated successfully.',
+            'message' => 'User berhasil ditambahkan',
         ], 200);
     }
 
@@ -202,9 +202,7 @@ class UserController extends Controller
             $avatar = $request->file('avatar')->storeAs($folder, $filename, 'public');
 
             // delete old avatar
-            if ($user->first()->avatar) {
-                unlink(public_path('storage/' . $folder . '/' . $user->first()->avatar));
-            }
+            unlink(storage_path('app/public/' . $user->first()->avatar));
         }
 
         $user->update(
@@ -230,7 +228,7 @@ class UserController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'User updated successfully.',
+            'message' => 'User berhasil diubah',
         ], 200);
     }
 
@@ -256,7 +254,7 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json([
-            'message' => 'User deleted successfully.',
+            'message' => 'User berhasil dihapus',
         ], 200);
     }
 }
