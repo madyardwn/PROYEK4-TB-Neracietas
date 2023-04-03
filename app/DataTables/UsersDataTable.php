@@ -33,9 +33,14 @@ class UsersDataTable extends DataTable
                 'users.avatar',
                 'users.year',
                 'roles.name as roles',
+                'departments.name as departments',
+                'cabinets.name as cabinets',
+                'cabinets.is_active as status'
             ])
             ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id');
+            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->leftJoin('departments', 'departments.id', '=', 'users.department_id')
+            ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id');
     }
 
     public function html(): HtmlBuilder
@@ -77,15 +82,15 @@ class UsersDataTable extends DataTable
                     $("#formModal").attr("action", "' . route('users.store') . '");
                     $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
                 }'),
-                Button::make('export')
-                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
-                    ->titleAttr('Export'),
                 Button::make()
                     ->text('<span class="fa fa-upload"></span>&nbsp; Import')
                     ->action('function() {
                         $("#importModal").modal("show");
                     }')
                     ->titleAttr('Import'),
+                Button::make('export')
+                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
+                    ->titleAttr('Export'),
                 Button::make('reload'),
             ]);
     }
@@ -116,19 +121,17 @@ class UsersDataTable extends DataTable
                     }
                 }')
                 ->addClass('text-center'),
-            Column::make('name'),
-            Column::make('email')
+            Column::make('name')
                 ->width(100)
-                ->title('Email'),
+                ->title('Nama')
+                ->sortable(),
             Column::make('roles.name')
                 ->width(100)
                 ->addClass('text-center')
-                ->title('Role')
+                ->title('Jabatan')
                 ->render('function() {
-                    if (this.roles == "admin") {
-                        return `<span class="badge bg-danger">${this.roles}</span>`
-                    } else if (this.roles == "user") {
-                        return `<span class="badge bg-success">${this.roles}</span>`
+                    if (this.roles) {
+                        return this.roles
                     } else {
                         return ``
                     }
@@ -136,13 +139,25 @@ class UsersDataTable extends DataTable
             Column::make('year')
                 ->width(60)
                 ->addClass('text-center')
-                ->title('Year'),
+                ->title('Angkatan'),
+            Column::make('cabinets.is_active')
+                ->width(60)
+                ->addClass('text-center')
+                ->title('Status')
+                ->render('function() {
+                    if (this.status == 1) {
+                        return `<span class="badge bg-success">Active</span>`
+                    } else {
+                        return `<span class="badge bg-danger">Inactive</span>`
+                    }
+                }')
+                ->searchable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->searchable(false)
                 ->addClass('text-center')
-                ->title('Action')
+                ->title('Opsi')
                 ->render('function() {
                     return `
                         <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>

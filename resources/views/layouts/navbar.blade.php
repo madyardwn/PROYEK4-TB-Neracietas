@@ -1,22 +1,3 @@
-<div class="navbar-nav flex-row d-lg-none">
-    <div class="nav-item dropdown">
-        <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
-            <span class="avatar avatar-sm" style="background-image: url(./static/avatars/000m.jpg)"></span>
-            <div class="d-none d-xl-block ps-2">
-                <div>Paweł Kuna</div>
-                <div class="mt-1 small text-muted">UI Designer</div>
-            </div>
-        </a>
-        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-            <a href="#" class="dropdown-item">Status</a>
-            <a href="./profile.html" class="dropdown-item">Profile</a>
-            <a href="#" class="dropdown-item">Feedback</a>
-            <div class="dropdown-divider"></div>
-            <a href="./settings.html" class="dropdown-item">Settings</a>
-            <a href="./sign-in.html" class="dropdown-item">Logout</a>
-        </div>
-    </div>
-</div>
 <div class="navbar-collapse collapse show" id="sidebar-menu" style="">
     <ul class="navbar-nav pt-lg-3">
         <li class="nav-item">
@@ -41,7 +22,7 @@
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown" data-bs-auto-close="false"
-                role="button" aria-expanded="false">
+                role="button" aria-expanded="true">
                 <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <!-- Download SVG icon from http://tabler-icons.io/i/box -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24"
@@ -55,10 +36,10 @@
                     </svg>
                 </span>
                 <span class="nav-link-title">
-                    Keanggotaan
+                    Data Himakom
                 </span>
             </a>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu show">
                 <a class="dropdown-item" href="{{ route('users.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/box -->
@@ -82,8 +63,8 @@
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/box -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-open"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                            fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                             <path d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z">
                             </path>
@@ -111,101 +92,105 @@
                         Roles
                     </span>
                 </a>
+                <a class="dropdown-item" href="{{ route('cabinets.index') }}">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checklist"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9.615 20h-2.615a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8"></path>
+                            <path d="M14 19l2 2l4 -4"></path>
+                            <path d="M9 8h4"></path>
+                            <path d="M9 12h2"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Kabinet
+                    </span>
+                </a>
+                <a class="dropdown-item" href="{{ route('departments.index') }}">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-bank"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M3 21l18 0"></path>
+                            <path d="M3 10l18 0"></path>
+                            <path d="M5 6l7 -3l7 3"></path>
+                            <path d="M4 10l0 11"></path>
+                            <path d="M20 10l0 11"></path>
+                            <path d="M8 14l0 3"></path>
+                            <path d="M12 14l0 3"></path>
+                            <path d="M16 14l0 3"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Departemen
+                    </span>
+                </a>
+                <a class="dropdown-item" href="{{ route('programs.index') }}">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-upload"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M14 20h-8a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12v5"></path>
+                            <path d="M11 16h-5a2 2 0 0 0 -2 2"></path>
+                            <path d="M15 16l3 -3l3 3"></path>
+                            <path d="M18 13v9"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Program Kerja
+                    </span>
+                </a>
+                <a class="dropdown-item" href="{{ route('events.index') }}">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event"
+                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z">
+                            </path>
+                            <path d="M16 3l0 4"></path>
+                            <path d="M8 3l0 4"></path>
+                            <path d="M4 11l16 0"></path>
+                            <path d="M8 15h2v2h-2z"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-link-title">
+                        Events
+                    </span>
+                </a>
             </div>
         </li>
 
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('cabinets.index') }}">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checklist"
-                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M9.615 20h-2.615a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8"></path>
-                        <path d="M14 19l2 2l4 -4"></path>
-                        <path d="M9 8h4"></path>
-                        <path d="M9 12h2"></path>
-                    </svg>
-                </span>
-                <span class="nav-link-title">
-                    Kabinet
-                </span>
-            </a>
+
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('departments.index') }}">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-bank"
-                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M3 21l18 0"></path>
-                        <path d="M3 10l18 0"></path>
-                        <path d="M5 6l7 -3l7 3"></path>
-                        <path d="M4 10l0 11"></path>
-                        <path d="M20 10l0 11"></path>
-                        <path d="M8 14l0 3"></path>
-                        <path d="M12 14l0 3"></path>
-                        <path d="M16 14l0 3"></path>
-                    </svg>
-                </span>
-                <span class="nav-link-title">
-                    Departemen
-                </span>
-            </a>
+
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('programs.index') }}">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-upload"
-                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M14 20h-8a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12v5"></path>
-                        <path d="M11 16h-5a2 2 0 0 0 -2 2"></path>
-                        <path d="M15 16l3 -3l3 3"></path>
-                        <path d="M18 13v9"></path>
-                    </svg>
-                </span>
-                <span class="nav-link-title">
-                    Program Kerja
-                </span>
-            </a>
+
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('events.index') }}">
-                <span class="nav-link-icon d-md-none d-lg-inline-block">
-                    <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event"
-                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                        fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z">
-                        </path>
-                        <path d="M16 3l0 4"></path>
-                        <path d="M8 3l0 4"></path>
-                        <path d="M4 11l16 0"></path>
-                        <path d="M8 15h2v2h-2z"></path>
-                    </svg>
-                </span>
-                <span class="nav-link-title">
-                    Events
-                </span>
-            </a>
+
         </li>
     </ul>
 
     <div class="mt-auto mb-3">
         <ul class="navbar-nav pt-lg-3">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('home') }}">
+                <a class="nav-link" href="{{ route('profile.show') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/home -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-id"
@@ -226,8 +211,10 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('home') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                <!-- logout -->
+                <a class="nav-link" href="" id="logout">
+                    <span class="nav-link-icon d-md-none
+                    d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/home -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -246,3 +233,48 @@
         </ul>
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#logout').click(function(e) {
+                e.preventDefault();
+
+                const url = "{{ route('logout') }}";
+                const token = $('meta[name="csrf-token"]').attr('content');
+                const method = 'POST';
+
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: {
+                        _token: token
+                    },
+                    success: function(response) {
+                        window.location.href = "{{ route('login') }}";
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        // if dropdown is open, add class active
+        $('.dropdown').find('.dropdown-menu').each(function() {
+            $(this).find('a').each(function() {
+                if ($(this).attr('href') == window.location.href) {
+                    $(this).addClass('active');
+                    $(this).parents('.dropdown').addClass('active');
+                }
+            });
+        });
+
+        // if dropdown is open, add class active
+        $('.nav-item').find('.nav-link').each(function() {
+            if ($(this).attr('href') == window.location.href) {
+                $(this).addClass('active');
+                $(this).parents('.nav-item').addClass('active');
+            }
+        });
+    </script>
+@endpush
