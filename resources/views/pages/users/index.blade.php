@@ -217,6 +217,15 @@
 
                     // reset dropzone
                     myDropzone.removeAllFiles();
+
+                    // show success message
+                    $('.card-header').after(
+                        '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                        response.success +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                        '</div>'
+                    );
+
                 });
                 this.on("error", function(file, response) {
                     $('#formImport').find('.dz-error-message').remove();

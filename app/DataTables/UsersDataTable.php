@@ -109,10 +109,13 @@ class UsersDataTable extends DataTable
                 ->width(60)
                 ->title('Avatar')
                 ->render('function() {
-                    return `
-                        <img src="/storage/${this.avatar}" class="img-fluid img-thumbnail" width="100">
-                    `
-                }'),
+                    if (this.avatar) {
+                        return `<img src="/storage/${this.avatar}" class="img-fluid rounded bg-primary" style="width: 40px;">`
+                    } else {
+                        return `<img src="/img/default_avatar.png" class="img-fluid rounded bg-primary" style="width: 40px;">`
+                    }
+                }')
+                ->addClass('text-center'),
             Column::make('name'),
             Column::make('email')
                 ->width(100)

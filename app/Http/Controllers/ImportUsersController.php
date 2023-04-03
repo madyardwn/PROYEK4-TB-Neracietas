@@ -21,7 +21,7 @@ class ImportUsersController extends Controller
 
         try {
             Excel::import(new ImportUsers, $request->file('file'));
-            return redirect()->route('users.index')->with('message', 'Users imported successfully.');
+            return response()->json(['success' => 'Data berhasil diimport'], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
