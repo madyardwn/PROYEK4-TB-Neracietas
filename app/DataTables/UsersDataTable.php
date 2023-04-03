@@ -77,10 +77,15 @@ class UsersDataTable extends DataTable
                     $("#formModal").attr("action", "' . route('users.store') . '");
                     $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
                 }'),
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
+                Button::make('export')
+                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
+                    ->titleAttr('Export'),
+                Button::make()
+                    ->text('<span class="fa fa-upload"></span>&nbsp; Import')
+                    ->action('function() {
+                        $("#importModal").modal("show");
+                    }')
+                    ->titleAttr('Import'),
                 Button::make('reload'),
             ]);
     }

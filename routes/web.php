@@ -38,5 +38,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('events', \App\Http\Controllers\EventController::class);
 
     Route::resource('roles', \App\Http\Controllers\RoleController::class);
+
     Route::resource('permissions', \App\Http\Controllers\PermissionController::class);
+
+    // Excel Import
+    Route::get('import-users', [\App\Http\Controllers\ImportUsersController::class, 'index'])->name('import-users.index');
+    Route::post('import-users', [\App\Http\Controllers\ImportUsersController::class, 'import'])->name('import-users.import');
 });

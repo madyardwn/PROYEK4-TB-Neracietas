@@ -14,6 +14,8 @@ use Yajra\DataTables\Services\DataTable;
 
 class RolesDataTable extends DataTable
 {
+    private $no = 1;
+
     /**
      * Build the DataTable class.
      *
@@ -21,7 +23,11 @@ class RolesDataTable extends DataTable
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
-        return (new EloquentDataTable($query));
+
+        return (new EloquentDataTable($query))
+            ->addColumn('No', function ($role) {
+                return $this->no++;
+            });
     }
 
     /**
@@ -42,7 +48,24 @@ class RolesDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(1)
-            ->selectStyleSingle();
+            ->buttons([
+                Button::make('add')->action('function() {                    
+                    $(".is-invalid").removeClass("is-invalid");
+                    $(".invalid-feedback").remove();
+                    $("#formModal").trigger("reset");
+                    $(".img-holder").attr("src", "/img/default_avatar.png");
+                    $("#modal").find(".modal-title").text("Buat Role");
+                    $("#modal").find(".modal-footer").find("button").text("Simpan");
+                    $("#modal").modal("show");
+                    $("#formModal").attr("action", "' . route('roles.store') . '");
+                    $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
+                }'),
+                Button::make('excel'),
+                Button::make('csv'),
+                Button::make('pdf'),
+                Button::make('print'),
+                Button::make('reload'),
+            ]);
     }
 
     /**
@@ -51,10 +74,25 @@ class RolesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('No')
+                ->title('No')
+                ->searchable(false)
+                ->orderable(false)
+                ->width(30),
             Column::make('name'),
-            Column::make('guard_name'),
-            Column::make('created_at'),
-            Column::make('updated_at'),
+            Column::computed('action')
+                ->exportable(false)
+                ->printable(false)
+                ->searchable(false)
+                ->addClass('text-center')
+                ->title('Action')
+                ->render('function() {
+                return `
+                    <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
+                    <button type="button" class="btn btn-ghost-danger  btn-sm btnDelete fa fa-trash" data-id="${this.id}"></button>
+                `
+                }')
+                ->width(50),
         ];
     }
 

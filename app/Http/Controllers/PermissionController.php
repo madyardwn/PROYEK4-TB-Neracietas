@@ -13,16 +13,7 @@ class PermissionController extends Controller
      */
     public function index(PermissionsDataTable $dataTable)
     {
-        return $dataTable->render('permissions.index');
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return $dataTable->render('pages.permissions.index');
     }
 
     /**
@@ -30,15 +21,24 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $rules = [
+            'name' => 'required|max:50',
+        ];
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Permission $permission)
-    {
-        //
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        Permission::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('permissions.index')->with('success', 'Permission berhasil dibuat');
     }
 
     /**
@@ -46,7 +46,7 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        //
+        return $permission;
     }
 
     /**
@@ -54,7 +54,24 @@ class PermissionController extends Controller
      */
     public function update(Request $request, Permission $permission)
     {
-        //
+        $rules = [
+            'name' => 'required|max:50',
+        ];
+
+        $message = [
+            'name' => [
+                'required' => 'Nama harus diisi',
+                'max' => 'Nama maksimal 50 karakter',
+            ],
+        ];
+
+        $request->validate($rules, $message);
+
+        $permission->update([
+            'name' => $request->name,
+        ]);
+
+        return redirect()->route('permissions.index')->with('success', 'Permission berhasil diubah');
     }
 
     /**
@@ -62,6 +79,8 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        //
+        $permission->delete();
+
+        return redirect()->route('permissions.index')->with('success', 'Permission berhasil dihapus');
     }
 }
