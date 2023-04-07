@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('cabinet_id')->constrained('cabinets')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

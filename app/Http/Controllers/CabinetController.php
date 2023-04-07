@@ -129,14 +129,17 @@ class CabinetController extends Controller
         ]);
 
         $departments = Department::where('cabinet_id', $cabinet->id);
+        if ($departments->count() > 0) {
+            // Update user active status if department exists
+            $users = User::whereIn('department_id', $departments->pluck('id'))->get();
 
-        // update users active status
-        $users = User::where('department_id', $departments->pluck('id'))->get();
-
-        foreach ($users as $user) {
-            $user->update([
-                'is_active' => $request->is_active,
-            ]);
+            if ($users->count() > 0) {
+                foreach ($users as $user) {
+                    $user->update([
+                        'is_active' => $request->is_active,
+                    ]);
+                }
+            }
         }
 
         return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil diubah');
@@ -144,42 +147,46 @@ class CabinetController extends Controller
 
     public function destroy($id)
     {
-        $cabinet = Cabinet::find($id);
+        $cabinet = Cabinet::findOrFail($id);
+        // Lakukan pengecekan terhadap kabinet
+        if (!$cabinet) {
+            return redirect()->route('cabinets.index')->with('error', 'Kabinet tidak ditemukan');
+        }
 
-        // delete logo
-        unlink(public_path('storage/' . $cabinet->logo));
+        // Hapus logo kabinet
+        $logoPath = public_path('storage/' . $cabinet->logo);
+        if (file_exists($logoPath)) {
+            unlink($logoPath);
+        }
 
-        // delete departments
-        $departments = Department::where('cabinet_id', $cabinet->id)->get();
-
-        foreach ($departments as $department) {
-            // delete logo
-            if ($department->logo) {
-                unlink(public_path('storage/' . $department->logo));
+        // Hapus departemen dan pengguna yang terkait
+        foreach ($cabinet->departments as $department) {
+            // Hapus logo departemen
+            $logoPath = public_path('storage/' . $department->logo);
+            if (file_exists($logoPath)) {
+                unlink($logoPath);
             }
 
-            // delete users
-            $users = User::where('department_id', $department->id)->get();
-
-            foreach ($users as $user) {
-                // delete avatar
-                if ($user->avatar) {
-                    unlink(public_path('storage/' . $user->avatar));
+            // Hapus pengguna dan peran yang terkait
+            foreach ($department->users as $user) {
+                // Hapus avatar pengguna
+                $avatarPath = public_path('storage/' . $user->avatar);
+                if (file_exists($avatarPath)) {
+                    unlink($avatarPath);
                 }
 
-                // delete roles
-                $roles = Role::where('user_id', $user->id)->get();
+                // Hapus peran pengguna
+                $user->roles()->delete();
 
-                foreach ($roles as $role) {
-                    $role->delete();
-                }
-
+                // Hapus pengguna
                 $user->delete();
             }
 
+            // Hapus departemen
             $department->delete();
         }
 
+        // Hapus kabinet
         $cabinet->delete();
 
         return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil dihapus');

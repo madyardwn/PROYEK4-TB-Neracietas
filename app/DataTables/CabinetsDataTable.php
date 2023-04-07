@@ -84,9 +84,9 @@ class CabinetsDataTable extends DataTable
                 ->title('Status')
                 ->render('function() {
                     if (this.is_active == 1) {
-                        return `<span class="badge bg-success">Active</span>`
+                        return `<span class="badge bg-success">Aktif</span>`
                     } else {
-                        return `<span class="badge bg-danger">Inactive</span>`
+                        return `<span class="badge bg-danger">Tidak Aktif</span>`
                     }
             }')
                 ->width(50)
@@ -100,7 +100,7 @@ class CabinetsDataTable extends DataTable
                 ->render('function() {
                 return `
                     <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
-                    <button type="button" class="btn btn-ghost-danger  btn-sm btnDelete fa fa-trash" data-id="${this.id}"></button>
+                    <button class="btn btn-ghost-danger btn-sm fa fa-trash btnDelete" data-id="${this.id}" data-method="DELETE" data-url="' . route('cabinets.destroy', ':id') . '"></button>
                 `
                 }')
                 ->width(50),

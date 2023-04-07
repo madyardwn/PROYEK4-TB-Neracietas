@@ -41,7 +41,6 @@
             @include('layouts.footer')
         </div>
     </div>
-
     <!-- Core plugin JavaScript-->
     @vite('resources/js/app.js')
 

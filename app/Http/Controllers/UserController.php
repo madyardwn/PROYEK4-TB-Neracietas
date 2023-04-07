@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -93,7 +94,7 @@ class UserController extends Controller
             $department = Department::find($request->department)->first();
             $cabinet = Cabinet::find($department->cabinet_id)->first();
 
-            $avatar = $request->file('avatar')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . $department->name . '/' .  $name, $filename, 'public');
+            $avatar = $request->file('avatar')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'departemen' . '/' . $department->name . '/' .  $name, $filename, 'public');
         }
 
         $user = User::create([
@@ -202,7 +203,10 @@ class UserController extends Controller
             $avatar = $request->file('avatar')->storeAs($folder, $filename, 'public');
 
             // delete old avatar
-            unlink(storage_path('app/public/' . $user->first()->avatar));
+            if ($user->first()->avatar) {
+                // unlink(storage_path('app/public/' . $user->first()->avatar));
+                Storage::disk('public')->delete($user->first()->avatar);
+            }
         }
 
         $user->update(

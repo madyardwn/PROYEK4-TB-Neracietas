@@ -38,7 +38,10 @@ class RoleController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil dibuat');
+        return response()->json([
+            'success' => true,
+            'message' => 'Role berhasil ditambahkan',
+        ]);
     }
 
     /**
@@ -71,7 +74,10 @@ class RoleController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil diubah');
+        return response()->json([
+            'success' => true,
+            'message' => 'Role berhasil diubah',
+        ]);
     }
 
     /**
