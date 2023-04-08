@@ -19,6 +19,7 @@ class ImportUsers implements ToModel
             'name' => $row[1],
             'email' => $row[2],
             'password' => $row[3],
+            'year' => $row[4],
         ]);
     }
 }

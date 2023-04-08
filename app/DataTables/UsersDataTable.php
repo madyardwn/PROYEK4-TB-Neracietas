@@ -47,43 +47,12 @@ class UsersDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(1)
             ->buttons([
-                Button::make('add')->action('function() {
-                    if ($("#formModal").find("#password").length) {
-                        $("#formModal").find("#password").remove();
-                    }
-                    $(".is-invalid").removeClass("is-invalid")
-                    $(".invalid-feedback").remove()
-                    $("#formModal").find("#pwd").append(`
-                        <div class="row" id="password">
-                            <div class="col-md-6">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="password_confirmation">Confirm Password</label>
-                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
-                            </div>
-                        </div>
-                    `);
-
-                    $("#formModal").trigger("reset");
-                    $(".img-holder").attr("src", "/img/default_avatar.png");
-                    $("#modal").find(".modal-title").text("Tambah Anggota");
-                    $("#modal").find(".modal-footer").find("button").text("Simpan");
-
-
-                    $("#modal").modal("show");
-
-
-                    $("#formModal").attr("action", "' . route('users.store') . '");
-                    $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
-                }'),
+                Button::make('')
+                    ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
+                    ->addClass('btnAdd'),
                 Button::make()
                     ->text('<span class="fa fa-upload"></span>&nbsp; Import')
-                    ->action('function() {
-                        $("#importModal").modal("show");
-                    }')
-                    ->titleAttr('Import'),
+                    ->addClass('btnImport'),
                 Button::make('export')
                     ->text('<span class="fa fa-download"></span>&nbsp; Export')
                     ->titleAttr('Export'),
@@ -155,8 +124,8 @@ class UsersDataTable extends DataTable
                 ->title('Opsi')
                 ->render('function() {
                     return `
-                        <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
-                        <button class="btn btn-ghost-danger btn-sm fa fa-trash btnDelete" data-id="${this.id}"></button>
+                        <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('users.edit', ':id') . '" data-id="${this.id}"></a>
+                        <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('users.destroy', ':id') . '" data-id="${this.id}"></a>
                     `
                 }')
                 ->width(50),

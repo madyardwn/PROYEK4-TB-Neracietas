@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\DataTables\DepartmentsDataTable;
 use App\Models\Cabinet;
 use App\Models\Department;
+use App\Models\Program;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DepartmentController extends Controller
 {
@@ -48,11 +50,8 @@ class DepartmentController extends Controller
 
         if ($request->hasFile('logo')) {
             $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('logo')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
-
-            $cabinet = Cabinet::find($request->cabinet);
-            $logo = $request->file('logo')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . $request->name . '/logo', $filename, 'public');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+            $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
         }
 
         Department::create([
@@ -62,7 +61,9 @@ class DepartmentController extends Controller
             'cabinet_id' => $request->cabinet,
         ]);
 
-        return redirect()->route('departments.index')->with('success', 'Departemen berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Departemen ' . $request->name . ' berhasil ditambahkan',
+        ], 200);
     }
 
     public function edit(Department $department): Department
@@ -102,19 +103,16 @@ class DepartmentController extends Controller
         $request->validate($rules, $message);
 
         $department = Department::find($id);
-        if ($request->hasFile('logo')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('logo')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
 
+        if ($request->hasFile('logo')) {
             // delete old logo
             if ($department->logo) {
-                unlink(public_path('storage/' . $department->logo));
+                Storage::disk('public')->delete($department->logo);
             }
 
-            $cabinet = Cabinet::find($request->cabinet);
-
-            $logo = $request->file('logo')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . $request->name . '/logo', $filename, 'public');
+            $currentDate = date('Y-m-d-H-i-s');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+            $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
         }
 
         $department->update([
@@ -124,29 +122,35 @@ class DepartmentController extends Controller
             'cabinet_id' => $request->cabinet,
         ]);
 
-        return redirect()->route('departments.index')->with('success', 'Departemen berhasil diubah');
+        return response()->json([
+            'message' => 'Departemen ' . $request->name . ' berhasil diubah',
+        ], 200);
     }
 
     public function destroy($id)
     {
         $department = Department::find($id);
+        $programs = Program::where('department_id', $id)->get();
 
-        // delete logo
-        if ($department->logo) {
-            unlink(public_path('storage/' . $department->logo));
+        if ($department->users->count() > 0) {
+            return response()->json([
+                'message' => 'Departemen tidak dapat dihapus karena masih memiliki anggota',
+            ], 400);
+        } else if ($programs->count() > 0) {
+            return response()->json([
+                'message' => 'Departemen tidak dapat dihapus karena masih memiliki program',
+            ], 400);
+        } else {
+            // delete logo
+            if ($department->logo) {
+                Storage::disk('public')->delete($department->logo);
+            }
+
+            $department->delete();
+
+            return response()->json([
+                'message' => 'Departemen ' . $department->name . ' berhasil dihapus',
+            ], 200);
         }
-
-        // delete users
-        foreach ($department->users as $user) {
-            $user->delete();
-        }
-
-        // delete events
-        foreach ($department->events as $event) {
-            $event->delete();
-        }
-
-        // delete departments
-        $department->delete();
     }
 }

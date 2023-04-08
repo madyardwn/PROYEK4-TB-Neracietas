@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\EventsDataTable;
-use App\Models\Cabinet;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 
 class EventController extends Controller
 {
     public function index(EventsDataTable $dataTable)
     {
-        return $dataTable->render('pages.events.index', [
-            'cabinets' => Cabinet::all(),
-        ]);
+        return $dataTable->render('pages.events.index');
     }
 
     public function store(Request $request)
@@ -21,11 +20,10 @@ class EventController extends Controller
         $rules = [
             'name' => 'required|max:50',
             'description' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'poster' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
             'location' => 'required',
-            'cabinet' => 'required',
         ];
 
         $message = [
@@ -36,9 +34,11 @@ class EventController extends Controller
             'description' => [
                 'required' => 'Deskripsi harus diisi',
             ],
-            'image' => [
-                'required' => 'Gambar harus diisi',
-                'image' => 'File harus berupa gambar',
+            'poster' => [
+                'required' => 'Poster harus diisi',
+                'image' => 'Poster harus berupa gambar',
+                'mimes' => 'Poster harus berupa gambar dengan format jpeg, png, jpg, gif, atau svg',
+                'max' => 'Poster maksimal 2 MB',
             ],
             'date' => [
                 'required' => 'Tanggal harus diisi',
@@ -49,33 +49,28 @@ class EventController extends Controller
             'location' => [
                 'required' => 'Lokasi harus diisi',
             ],
-            'cabinet' => [
-                'required' => 'Kabinet harus diisi',
-            ]
         ];
 
         $request->validate($rules, $message);
 
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('poster')) {
             $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('image')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
-
-            $cabinet = Cabinet::find($request->cabinet);
-            $image = $request->file('image')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'events' . '/' . $request->name . '/poster', $filename, 'public');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+            $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
         }
 
         Event::create([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $image,
+            'poster' => $poster,
             'date' => $request->date,
             'time' => $request->time,
             'location' => $request->location,
-            'cabinet_id' => $request->cabinet,
         ]);
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Event ' . $request->name . ' berhasil ditambahkan',
+        ], 200);
     }
 
     public function edit(Event $event): Event
@@ -89,11 +84,10 @@ class EventController extends Controller
         $rules = [
             'name' => 'required|max:50',
             'description' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
             'location' => 'required',
-            'cabinet' => 'required',
         ];
 
         $message = [
@@ -104,8 +98,10 @@ class EventController extends Controller
             'description' => [
                 'required' => 'Deskripsi harus diisi',
             ],
-            'image' => [
-                'image' => 'File harus berupa gambar',
+            'poster' => [
+                'image' => 'Poster harus berupa gambar',
+                'mimes' => 'Poster harus berupa gambar dengan format jpeg, png, jpg, gif, atau svg',
+                'max' => 'Poster maksimal 2 MB',
             ],
             'date' => [
                 'required' => 'Tanggal harus diisi',
@@ -116,51 +112,49 @@ class EventController extends Controller
             'location' => [
                 'required' => 'Lokasi harus diisi',
             ],
-
         ];
 
         $request->validate($rules, $message);
 
         $event = Event::find($id);
-        if ($request->hasFile('image')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('image')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
 
-            // delete old logo
-            if ($event->image) {
-                unlink(public_path('storage/' . $event->image));
+        if ($request->hasFile('poster')) {
+            // delete old image
+            if ($event->poster) {
+                Storage::disk('public')->delete($event->poster);
             }
 
-            $cabinet = Cabinet::find($request->cabinet);
-
-            $image = $request->file('image')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'events' . '/' . $request->name . '/poster', $filename, 'public');
+            $currentDate = date('Y-m-d-H-i-s');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+            $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
         }
 
         $event->update([
             'name' => $request->name,
             'description' => $request->description,
-            'image' => $image,
+            'poster' => $poster ?? $event->poster,
             'date' => $request->date,
             'time' => $request->time,
             'location' => $request->location,
-            'cabinet_id' => $request->cabinet,
         ]);
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil diubah');
+        return response()->json([
+            'message' => 'Event ' . $event->name . ' berhasil diubah',
+        ], 200);
     }
 
     public function destroy($id)
     {
         $event = Event::find($id);
 
-        // delete image
-        if ($event->image) {
-            unlink(public_path('storage/' . $event->image));
+        if ($event->poster) {
+            Storage::disk('public')->delete($event->poster);
         }
 
         $event->delete();
 
-        return redirect()->route('events.index')->with('success', 'Event berhasil dihapus');
+        return response()->json([
+            'message' => 'Event ' . $event->name . ' berhasil dihapus',
+        ], 200);
     }
 }

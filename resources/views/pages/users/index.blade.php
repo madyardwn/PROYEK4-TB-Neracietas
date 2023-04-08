@@ -9,11 +9,26 @@
             </div>
         </div>
     </div>
+    <div class="form-group mb-3">
+        <label for="role" class="form-label">Role</label>
+        <select class="form-select" id="role" name="role[]" multiple="multiple">
+            <option value="" selected disabled>Pilih Role</option>
+            @foreach ($roles as $role)
+                <option value="{{ $role->id }}">{{ $role->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    @include('pages.users.actions')
     @include('pages.users.import')
-    @include('pages.users.form')
-    @include('pages.users.delete')
 @endsection
 
 @push('scripts')
     {!! $dataTable->scripts() !!}
+
+    <script>
+        $(document).ready(function() {
+                    $('#role').select2();
+    </script>
 @endpush

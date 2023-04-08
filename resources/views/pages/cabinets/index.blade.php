@@ -3,14 +3,13 @@
 @section('content')
     <div class="container">
         <div class="card">
-            <div class="card-header">Manage Users</div>
+            <div class="card-header">Manajemen Kabinet</div>
             <div class="card-body">
                 {!! $dataTable->table() !!}
             </div>
         </div>
     </div>
-    @include('pages.cabinets.form')
-    @include('pages.cabinets.delete')
+    @include('pages.cabinets.actions')
 @endsection
 
 @push('scripts')

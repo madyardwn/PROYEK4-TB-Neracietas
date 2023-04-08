@@ -26,9 +26,4 @@ class Cabinet extends Model
     {
         return $this->hasMany(User::class);
     }
-
-    public function events()
-    {
-        return $this->hasMany(Event::class);
-    }
 }

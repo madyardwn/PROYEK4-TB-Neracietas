@@ -16,12 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('location')->nullable();
-            $table->string('image')->nullable();
+            $table->string('poster')->nullable();
             $table->date('date');
             $table->time('time');
             $table->boolean('is_active')->default(true);
-
-            $table->foreignId('cabinet_id')->constrained('cabinets')->onDelete('cascade');
 
             $table->timestamps();
         });

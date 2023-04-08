@@ -33,11 +33,9 @@ class EventsDataTable extends DataTable
                 'events.date',
                 'events.time',
                 'events.location',
-                'events.image',
+                'events.poster',
                 'events.is_active',
-                'cabinets.name as cabinet',
-            ])
-            ->join('cabinets', 'cabinets.id', '=', 'events.cabinet_id');
+            ]);
     }
 
     public function html(): HtmlBuilder
@@ -48,21 +46,12 @@ class EventsDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(1)
             ->buttons([
-                Button::make('add')->action('function() {                    
-                    $(".is-invalid").removeClass("is-invalid");
-                    $(".invalid-feedback").remove();
-                    $("#formModal").trigger("reset");
-                    $(".img-holder").attr("src", "/img/default_avatar.png");
-                    $("#modal").find(".modal-title").text("Buat Event");
-                    $("#modal").find(".modal-footer").find("button").text("Simpan");
-                    $("#modal").modal("show");
-                    $("#formModal").attr("action", "' . route('events.store') . '");
-                    $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
-                }'),
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
+                Button::make('')
+                    ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
+                    ->addClass('btnAdd'),
+                Button::make('export')
+                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
+                    ->titleAttr('Export'),
                 Button::make('reload'),
             ]);
     }
@@ -72,8 +61,8 @@ class EventsDataTable extends DataTable
         return [
             Column::make('No')->title('No')->searchable(false)->orderable(false),
             Column::make('name')->title('Name'),
-            Column::make('image')->title('Image')->render('function() {
-                return `<img src="/storage/${this.image}" class="img-fluid" width="100px">`;
+            Column::make('poster')->title('Poster')->render('function() {
+                return `<img src="/storage/${this.poster}" class="img-fluid" width="100px">`;
             }'),
             Column::make('description')->title('Description'),
             Column::make('location')->title('Location'),
@@ -81,9 +70,6 @@ class EventsDataTable extends DataTable
             Column::make('time')->title('Time'),
             Column::make('is_active')->title('Is Active')->render('function() {
                 return this.is_active == 1 ? "Active" : "Inactive";
-            }'),
-            Column::make('cabinets.name')->title('Cabinet')->render('function() {
-                return this.cabinet;
             }'),
             Column::computed('action')
                 ->exportable(false)
@@ -93,8 +79,8 @@ class EventsDataTable extends DataTable
                 ->title('Action')
                 ->render('function() {
                 return `
-                    <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
-                    <button type="button" class="btn btn-ghost-danger  btn-sm btnDelete fa fa-trash" data-id="${this.id}"></button>
+                    <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
+                    <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
                 `
                 }')
                 ->width(50),

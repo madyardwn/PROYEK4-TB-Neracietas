@@ -52,7 +52,9 @@ class ProgramController extends Controller
             'user_id' => $request->user,
         ]);
 
-        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Program ' . $program->name . ' berhasil ditambahkan',
+        ], 200);
     }
 
     public function edit(Program $program): Program
@@ -91,8 +93,6 @@ class ProgramController extends Controller
 
         $program = Program::find($id);
 
-
-
         $program->update([
             'name' => $request->name,
             'description' => $request->description,
@@ -100,7 +100,9 @@ class ProgramController extends Controller
             'user_id' => $request->user,
         ]);
 
-        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil diubah');
+        return response()->json([
+            'message' => 'Program ' . $program->name . ' berhasil diubah',
+        ], 200);
     }
 
     public function destroy($id)
@@ -108,6 +110,8 @@ class ProgramController extends Controller
         $program = Program::find($id);
         $program->delete();
 
-        return redirect()->route('programs.index')->with('success', 'Program ' . $program->name . ' berhasil dihapus');
+        return response()->json([
+            'message' => 'Program ' . $program->name . ' berhasil dihapus',
+        ], 200);
     }
 }

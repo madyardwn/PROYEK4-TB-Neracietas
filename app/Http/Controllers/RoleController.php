@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\RolesDataTable;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -22,13 +23,13 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'name' => 'required|max:50',
+            'name' => 'required|max:20',
         ];
 
         $message = [
             'name' => [
                 'required' => 'Nama harus diisi',
-                'max' => 'Nama maksimal 50 karakter',
+                'max' => 'Nama maksimal 20 karakter',
             ],
         ];
 
@@ -84,24 +85,45 @@ class RoleController extends Controller
      * Remove the specified resource from storage.
      */
 
-    public function destroy(Role $role)
+    public function destroy($id)
     {
-        $role->delete();
+        $role = Role::find($id);
+        if ($role->name == 'superadmin') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Role superadmin tidak dapat dihapus',
+            ]);
+        }
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil dihapus');
+        $user = User::role($role->name);
+
+        if ($user->count() > 0) {
+            return response()->json([
+                'message' => 'Role tidak dapat dihapus karena masih digunakan',
+            ], 422);
+        } else {
+            $role->delete();
+            return response()->json([
+                'message' => 'Role berhasil dihapus',
+            ], 200);
+        }
     }
 
     public function assignPermission(Request $request, Role $role)
     {
         $role->syncPermissions($request->permissions);
 
-        return redirect()->route('roles.index')->with('success', 'Permission berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Permission berhasil ditambahkan',
+        ], 200);
     }
 
     public function removePermission(Request $request, Role $role)
     {
         $role->revokePermissionTo($request->permissions);
 
-        return redirect()->route('roles.index')->with('success', 'Permission berhasil dihapus');
+        return response()->json([
+            'message' => 'Permission berhasil dihapus',
+        ], 200);
     }
 }

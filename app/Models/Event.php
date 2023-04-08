@@ -16,13 +16,7 @@ class Event extends Model
         'date',
         'time',
         'location',
-        'image',
+        'poster',
         'is_active',
-        'cabinet_id',
     ];
-
-    public function cabinet()
-    {
-        return $this->belongsTo(Cabinet::class);
-    }
 }

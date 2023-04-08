@@ -44,20 +44,12 @@ class ProgramsDataTable extends DataTable
             ->minifiedAjax()
             ->orderBy(1)
             ->buttons([
-                Button::make('add')->action('function() {                    
-                    $(".is-invalid").removeClass("is-invalid");
-                    $(".invalid-feedback").remove();
-                    $("#formModal").trigger("reset");                    
-                    $("#modal").find(".modal-title").text("Buat Program");
-                    $("#modal").find(".modal-footer").find("button").text("Simpan");
-                    $("#modal").modal("show");
-                    $("#formModal").attr("action", "' . route('programs.store') . '");
-                    $("#formModal").find(' . "'input[name=_method]'" . ').val("POST");
-                }'),
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
+                Button::make('')
+                    ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
+                    ->addClass('btnAdd'),
+                Button::make('export')
+                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
+                    ->titleAttr('Export'),
                 Button::make('reload'),
             ]);
     }
@@ -80,8 +72,8 @@ class ProgramsDataTable extends DataTable
                 ->title('Action')
                 ->render('function() {
                 return `
-                    <button type="button" class="btn btn-ghost-primary  btn-sm btnEdit fa fa-edit" data-id="${this.id}"></button>
-                    <button type="button" class="btn btn-ghost-danger  btn-sm btnDelete fa fa-trash" data-id="${this.id}"></button>
+                    <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('programs.edit', ':id') . '" data-id="${this.id}"></a>
+                    <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('programs.destroy', ':id') . '" data-id="${this.id}"></a>
                 `
                 }')
                 ->width(50),

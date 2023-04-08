@@ -38,7 +38,9 @@ class PermissionController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('permissions.index')->with('success', 'Permission berhasil dibuat');
+        return response()->json([
+            'message' => 'Permission berhasil ditambahkan',
+        ], 200);
     }
 
     /**
@@ -71,16 +73,22 @@ class PermissionController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('permissions.index')->with('success', 'Permission berhasil diubah');
+        return response()->json([
+            'message' => 'Permission berhasil diubah',
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permission $permission)
+    public function destroy($id)
     {
+        $permission = Permission::find($id);
+
         $permission->delete();
 
-        return redirect()->route('permissions.index')->with('success', 'Permission berhasil dihapus');
+        return response()->json([
+            'message' => 'Permission berhasil dihapus',
+        ], 200);
     }
 }

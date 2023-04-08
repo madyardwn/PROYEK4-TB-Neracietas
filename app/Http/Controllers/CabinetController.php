@@ -8,6 +8,7 @@ use App\Models\Department;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CabinetController extends Controller
 {
@@ -53,21 +54,21 @@ class CabinetController extends Controller
 
         if ($request->hasFile('logo')) {
             $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('logo')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
-
-            $logo = $request->file('logo')->storeAs($request->year . '-' . $request->name . '/' .  '/logo', $filename, 'public');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+            $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
         }
 
-        $cabinet = Cabinet::create([
+        Cabinet::create([
             'name' => $request->name,
             'year' => $request->year,
             'description' => $request->description,
-            'logo' => $logo,
+            'logo' => $logo ?? null,
             'is_active' => $request->is_active,
         ]);
 
-        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
+        ], 200);
     }
 
     public function edit(Cabinet $cabinet): Cabinet
@@ -112,12 +113,15 @@ class CabinetController extends Controller
         $request->validate($rules, $message);
 
         $cabinet = Cabinet::find($id);
-        if ($request->hasFile('logo')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('logo')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
 
-            $logo = $request->file('logo')->storeAs($request->year . '-' . $request->name .  '/logo', $filename, 'public');
+        if ($request->hasFile('logo')) {
+            if ($cabinet->logo) {
+                Storage::disk('public')->delete($cabinet->logo);
+            }
+
+            $currentDate = date('Y-m-d-H-i-s');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+            $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
         }
 
         $cabinet->update([
@@ -129,6 +133,7 @@ class CabinetController extends Controller
         ]);
 
         $departments = Department::where('cabinet_id', $cabinet->id);
+
         if ($departments->count() > 0) {
             // Update user active status if department exists
             $users = User::whereIn('department_id', $departments->pluck('id'))->get();
@@ -142,53 +147,32 @@ class CabinetController extends Controller
             }
         }
 
-        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil diubah');
+        return response()->json([
+            'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
+        ], 200);
     }
 
     public function destroy($id)
     {
-        $cabinet = Cabinet::findOrFail($id);
-        // Lakukan pengecekan terhadap kabinet
-        if (!$cabinet) {
-            return redirect()->route('cabinets.index')->with('error', 'Kabinet tidak ditemukan');
-        }
+        $cabinet = Cabinet::find($id);
 
-        // Hapus logo kabinet
-        $logoPath = public_path('storage/' . $cabinet->logo);
-        if (file_exists($logoPath)) {
-            unlink($logoPath);
-        }
+        $departments = Department::where('cabinet_id', $cabinet->id);
 
-        // Hapus departemen dan pengguna yang terkait
-        foreach ($cabinet->departments as $department) {
-            // Hapus logo departemen
-            $logoPath = public_path('storage/' . $department->logo);
-            if (file_exists($logoPath)) {
-                unlink($logoPath);
+        if ($departments->count() > 0) {
+
+            return response()->json([
+                'message' => 'Kabinet tidak dapat dihapus karena masih memiliki departemen',
+            ], 422);
+        } else {
+            if ($cabinet->logo) {
+                Storage::disk('public')->delete($cabinet->logo);
             }
 
-            // Hapus pengguna dan peran yang terkait
-            foreach ($department->users as $user) {
-                // Hapus avatar pengguna
-                $avatarPath = public_path('storage/' . $user->avatar);
-                if (file_exists($avatarPath)) {
-                    unlink($avatarPath);
-                }
+            $cabinet->delete();
 
-                // Hapus peran pengguna
-                $user->roles()->delete();
-
-                // Hapus pengguna
-                $user->delete();
-            }
-
-            // Hapus departemen
-            $department->delete();
+            return response()->json([
+                'message' => 'Kabinet ' . $cabinet->name . ' berhasil dihapus',
+            ], 200);
         }
-
-        // Hapus kabinet
-        $cabinet->delete();
-
-        return redirect()->route('cabinets.index')->with('success', 'Kabinet berhasil dihapus');
     }
 }

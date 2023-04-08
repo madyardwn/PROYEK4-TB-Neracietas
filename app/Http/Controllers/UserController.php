@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\UsersDataTable;
 use App\Models\Cabinet;
 use App\Models\Department;
+use App\Models\Program;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,7 +18,6 @@ class UserController extends Controller
         return $dataTable->render('pages.users.index', [
             'roles' => Role::all(),
             'departments' => Department::all(),
-            'cabinets' => Cabinet::all(),
         ]);
     }
 
@@ -76,11 +76,11 @@ class UserController extends Controller
             'avatar' => [
                 'required' => 'Avatar harus diisi',
                 'image' => 'Avatar harus berupa gambar',
-                'mimes' => 'Avatar harus berupa gambar dengan format jpeg, png, atau jpg',
+                'mimes' => 'Avatar harus berupa gambar dengan format png',
                 'max' => 'Avatar maksimal 2 MB',
             ],
             'department' => [
-                'required' => 'User harus terdaftar di salah satu departemen',
+                'required' => 'Departemen harus diisi',
             ],
         ];
 
@@ -88,37 +88,36 @@ class UserController extends Controller
 
         if ($request->hasFile('avatar')) {
             $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('avatar')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
-            $name = $request->name;
-            $department = Department::find($request->department)->first();
-            $cabinet = Cabinet::find($department->cabinet_id)->first();
-
-            $avatar = $request->file('avatar')->storeAs($cabinet->year . '-' . $cabinet->name . '/' . 'departemen' . '/' . $department->name . '/' .  $name, $filename, 'public');
+            $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
+            $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
         }
 
         $user = User::create([
+            'nim' => $request->nim,
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'avatar' => $avatar ?? null,
-            'nim' => $request->nim ?? null,
+
+            'avatar' => $path ?? null,
             'na' => $request->na ?? null,
             'nama_bagus' => $request->nama_bagus ?? null,
             'year' => $request->year ?? null,
             'department_id' => $request->department ?? null,
         ]);
+
         $user->assignRole(Role::findOrFail(request()->role));
 
-        $department = Department::find($request->department);
-        $cabinet = Cabinet::find($department->cabinet_id);
+        if ($request->department) {
+            $department = Department::find($request->department);
+            $cabinet = Cabinet::find($department->cabinet_id);
 
-        $user->update([
-            'is_active' => $cabinet->is_active ? 1 : 0,
-        ]);
+            $user->update([
+                'is_active' => $cabinet->is_active ? 1 : 0,
+            ]);
+        }
 
         return response()->json([
-            'message' => 'User berhasil ditambahkan',
+            'message' => 'User ' . $user->name . ' berhasil ditambahkan',
         ], 200);
     }
 
@@ -183,56 +182,50 @@ class UserController extends Controller
                 'max' => 'Avatar maksimal 2 MB',
             ],
             'department' => [
-                'required' => 'User harus terdaftar di salah satu departemen',
+                'required' => 'Departemen harus diisi',
             ],
         ];
 
         $request->validate($rules, $message);
 
-        $user = User::where('id', $id);
+        $user = User::find($id);
+
         if ($request->hasFile('avatar')) {
             $currentDate = date('Y-m-d-H-i-s');
-            $originalName = $request->file('avatar')->getClientOriginalName();
-            $filename = $currentDate . '_' . $originalName;
+            $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
 
-            $name = $user->first()->name;
-            $department = Department::find($request->department)->first();
-            $cabinet = Cabinet::find($department->cabinet_id)->first();
+            $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
-            $folder = $cabinet->year . '-' . $cabinet->name . '/' . $department->name . '/' .  $name;
-            $avatar = $request->file('avatar')->storeAs($folder, $filename, 'public');
-
-            // delete old avatar
-            if ($user->first()->avatar) {
-                // unlink(storage_path('app/public/' . $user->first()->avatar));
-                Storage::disk('public')->delete($user->first()->avatar);
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
             }
         }
 
-        $user->update(
-            [
-                'name' => $request->name,
-                'email' => $request->email,
-                'avatar' => $avatar ?? $user->first()->avatar,
-                'nim' => $request->nim ?? null,
-                'na' => $request->na ?? null,
-                'nama_bagus' => $request->nama_bagus ?? null,
-                'year' => $request->year ?? null,
-                'department_id' => $request->department ?? null,
-            ]
-        );
-
-        $user->first()->syncRoles(Role::findOrFail(request()->role));
-
-        $department = Department::find($request->department);
-        $cabinet = Cabinet::find($department->cabinet_id);
-
         $user->update([
-            'is_active' => $cabinet->is_active ? 1 : 0,
+            'nim' => $request->nim,
+            'name' => $request->name,
+            'email' => $request->email,
+            'year' => $request->year,
+
+            'avatar' => $path ?? $user->avatar ?? null,
+            'na' => $request->na ?? $user->na ?? null,
+            'nama_bagus' => $request->nama_bagus ?? $user->nama_bagus ?? null,
+            'department_id' => $request->department ?? $user->department_id ?? null,
         ]);
 
+        $user->syncRoles(Role::findOrFail(request()->role));
+
+        if ($request->department) {
+            $department = Department::find($request->department);
+            $cabinet = Cabinet::find($department->cabinet_id);
+
+            $user->update([
+                'is_active' => $cabinet->is_active ? 1 : 0,
+            ]);
+        }
+
         return response()->json([
-            'message' => 'User berhasil diubah',
+            'message' => 'User ' . $user->name . ' berhasil diubah',
         ], 200);
     }
 
@@ -240,25 +233,29 @@ class UserController extends Controller
     {
         if (auth()->user()->id == $id) {
             return response()->json([
-                'message' => 'You cannot delete yourself.',
+                'message' => 'User tidak dapat menghapus dirinya sendiri',
             ], 403);
         }
 
-        $user = User::where('id', $id);
+        $user = User::find($id);
 
-        if ($user->first()->avatar) {
-            // find cabinet by department
-            $cabinet = Cabinet::where('department_id', $user->first()->department_id)->first();
-            $department = Department::find($user->first()->department_id);
-            $name = $user->first()->name;
-            $folder = $cabinet->name . '/' . $department->name . '/' .  $name . '/avatar';
-            unlink(public_path('storage/' . $folder . '/' . $user->first()->avatar));
+        $programs = Program::where('user_id', $id)->get();
+
+        if ($programs->count() > 0) {
+
+            return response()->json([
+                'message' => 'User tidak dapat dihapus karena masih menjadi ketua program',
+            ], 403);
+        } else {
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $user->delete();
+
+            return response()->json([
+                'message' => 'User ' . $user->name . ' berhasil dihapus',
+            ], 200);
         }
-
-        $user->delete();
-
-        return response()->json([
-            'message' => 'User berhasil dihapus',
-        ], 200);
     }
 }
