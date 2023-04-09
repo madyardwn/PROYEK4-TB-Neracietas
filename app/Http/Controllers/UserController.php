@@ -229,33 +229,41 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($ids)
     {
-        if (auth()->user()->id == $id) {
-            return response()->json([
-                'message' => 'User tidak dapat menghapus dirinya sendiri',
-            ], 403);
-        }
+        $ids = explode(',', $ids);
 
-        $user = User::find($id);
+        $deletedUsers = [];
 
-        $programs = Program::where('user_id', $id)->get();
-
-        if ($programs->count() > 0) {
-
-            return response()->json([
-                'message' => 'User tidak dapat dihapus karena masih menjadi ketua program',
-            ], 403);
-        } else {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+        foreach ($ids as $id) {
+            if (auth()->user()->id == $id) {
+                continue;
             }
 
-            $user->delete();
+            $user = User::find($id);
 
+            $programs = Program::where('user_id', $id)->get();
+
+            if ($programs->count() > 0) {
+                continue;
+            } else {
+                if ($user->avatar) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+
+                $user->delete();
+                $deletedUsers[] = $user;
+            }
+        }
+
+        if (count($deletedUsers) > 0) {
             return response()->json([
-                'message' => 'User ' . $user->name . ' berhasil dihapus',
+                'message' => 'Berhasil menghapus ' . count($deletedUsers) . ' pengguna',
             ], 200);
+        } else {
+            return response()->json([
+                'message' => 'Tidak ada pengguna yang berhasil dihapus',
+            ], 403);
         }
     }
 }

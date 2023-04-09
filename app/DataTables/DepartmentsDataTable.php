@@ -68,7 +68,11 @@ class DepartmentsDataTable extends DataTable
             Column::make('name')->title('Nama Departemen')
                 ->width(200),
             Column::make('logo')->title('Logo')->render('function() {
-                return `<img src="/storage/${this.logo}" class="img-fluid" width="50px">`;
+                if (this.logo != null) {
+                    return `<img src="' . asset('storage') . '/${this.logo}" width="50" height="50" />`
+                } else {
+                    return ``;
+                }
             }')
                 ->width(50)
                 ->addClass('text-center'),
@@ -83,9 +87,9 @@ class DepartmentsDataTable extends DataTable
                 ->addClass('text-center'),
             Column::make('cabinets.is_active')->title('Status')->render('function() {
                     if (this.status == 1) {
-                        return `<span class="badge bg-success">Active</span>`
+                        return `<span class="badge bg-success">Aktif</span>`
                     } else {
-                        return `<span class="badge bg-danger">Inactive</span>`
+                        return `<span class="badge bg-danger">Tidak Aktif</span>`
                     }
                 }')
                 ->width(50)

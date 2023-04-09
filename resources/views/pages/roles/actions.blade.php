@@ -9,14 +9,23 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <!-- role -->
-                        <div class="form-group mb-3">
-                            <label for="role" class="form-label">Nama Role</label>
-                            <input type="text" class="form-control" id="name" name="name"
-                                value="{{ old('name') }}" placeholder="Masukkan Nama" max="50">
-                        </div>
+                    <!-- role -->
+                    <div class="form-group mb-3">
+                        <label for="role" class="form-label">Nama Role</label>
+                        <input type="text" class="form-control" id="name" name="name"
+                            value="{{ old('name') }}" placeholder="Masukkan Nama" max="50">
                     </div>
+
+                    <div class="form-group mb-3">
+                        <label for="permissions" class="form-label">Permissions</label>
+                        <select class="form-control" id="permissions" name="permissions[]" multiple
+                            aria-placeholder="Pilih Permissions">
+                            @foreach ($permissions as $permission)
+                                <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex justify-content-between w-100">
@@ -36,6 +45,15 @@
 
             // inisialisasi datatable
             const table = $('#roles-table');
+
+            const tomselect = new TomSelect('#permissions', {
+                plugins: {
+                    remove_button: {
+                        title: 'Hapus'
+                    }
+                },
+                placeholder: 'Pilih Permissions',
+            });
 
             // ajax header csrf token
             $ajaxSetup = $.ajaxSetup({
@@ -129,6 +147,7 @@
             $(document).on('click', '.btnAdd', function() {
                 // Modal Setup
                 resetForm();
+
                 $('.modal-title').text('Buat Role Baru')
                 $('.modal-footer').find('button').text('Simpan')
 
@@ -137,7 +156,6 @@
 
                 // Assign POST Method
                 $('input[name="_method"]').val('POST');
-
             });
 
             // -------------------------------------------------
@@ -162,6 +180,7 @@
                             // Assign Value to Form
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
+                            tomselect.setValue(res.permissions.map(permission => permission.id))
 
                             // Assign Action to Form
                             $('form').attr('action', "{{ route('roles.update', ':id') }}"
@@ -234,16 +253,18 @@
                     }
                 })
             });
-        })
 
-        // -------------------------------------------------
-        // FUNCTION
-        // -------------------------------------------------
-        function resetForm() {
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').remove();
-            $('form')[0].reset();
-            $('.action-modal').modal('show')
-        }
+
+            // -------------------------------------------------
+            // FUNCTION
+            // -------------------------------------------------
+            function resetForm() {
+                tomselect.clear(true);
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                $('form')[0].reset();
+                $('.action-modal').modal('show')
+            }
+        })
     </script>
 @endpush

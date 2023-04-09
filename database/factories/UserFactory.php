@@ -18,8 +18,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'nim' => $this->faker->unique()->numerify('########'),
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
+            'password' => 'password', // password
+            'year' => $this->faker->year,
             'email_verified_at' => now(),
             'password' => 'password', // password
             'remember_token' => Str::random(10),

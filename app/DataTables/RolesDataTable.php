@@ -35,7 +35,12 @@ class RolesDataTable extends DataTable
      */
     public function query(Role $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->select([
+                'id',
+                'name',
+            ])
+            ->with('permissions');
     }
 
     /**
@@ -71,6 +76,13 @@ class RolesDataTable extends DataTable
                 ->orderable(false)
                 ->width(30),
             Column::make('name'),
+            Column::make('permissions')
+                ->title('Permissions')
+                ->render('function() {
+                return this.permissions.map(function(permission) {
+                    return `<span class="badge badge-pill badge-primary" style="margin-bottom: 5px;">${permission.name}</span>`
+                }).join(" ")
+                }'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

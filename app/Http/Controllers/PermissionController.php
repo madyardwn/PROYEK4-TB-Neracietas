@@ -85,10 +85,17 @@ class PermissionController extends Controller
     {
         $permission = Permission::find($id);
 
-        $permission->delete();
+        // jika permission masih digunakan oleh role maka tidak bisa dihapus
+        if ($permission->roles->count() > 0) {
+            return response()->json([
+                'message' => 'Permission ' . $permission->name . ' masih digunakan oleh role',
+            ], 422);
+        } else {
+            $permission->delete();
 
-        return response()->json([
-            'message' => 'Permission berhasil dihapus',
-        ], 200);
+            return response()->json([
+                'message' => 'Permission berhasil dihapus',
+            ], 200);
+        }
     }
 }

@@ -33,10 +33,9 @@ class UsersDataTable extends DataTable
                 'users.avatar',
                 'users.year',
                 'users.is_active',
-                'roles.name as roles',
+                'departments.name as departments',
             ])
-            ->leftJoin('model_has_roles', 'model_has_roles.model_id', '=', 'users.id')
-            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id');
+            ->leftJoin('departments', 'departments.id', '=', 'users.department_id');
     }
 
     public function html(): HtmlBuilder
@@ -57,12 +56,29 @@ class UsersDataTable extends DataTable
                     ->text('<span class="fa fa-download"></span>&nbsp; Export')
                     ->titleAttr('Export'),
                 Button::make('reload'),
+                Button::make('')
+                    ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
+                    ->attr([
+                        'id' => 'selectedDelete',
+                        'disabled' => 'disabled'
+                    ])
             ]);
     }
 
     public function getColumns(): array
     {
         return [
+            Column::make('checkbox')
+                ->width(10)
+                ->addClass('text-center')
+                ->sortable(false)
+                ->searchable(false)
+                ->title(
+                    '<input type="checkbox" class="form-check-input" id="checkAll">'
+                )
+                ->render('function() {
+                    return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
+            }'),
             Column::make('No')
                 ->width(10)
                 ->addClass('text-center')
@@ -90,13 +106,13 @@ class UsersDataTable extends DataTable
                 ->width(100)
                 ->title('Nama')
                 ->sortable(),
-            Column::make('roles.name')
+            Column::make('departments.name')
                 ->width(100)
                 ->addClass('text-center')
-                ->title('Jabatan')
+                ->title('Departemen')
                 ->render('function() {
-                    if (this.roles) {
-                        return this.roles
+                    if (this.departments) {
+                        return this.departments
                     } else {
                         return ``
                     }

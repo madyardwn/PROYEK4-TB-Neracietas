@@ -119,14 +119,108 @@
             // inisialisasi datatable
             const table = $('#users-table');
 
-            // ajax header csrf token
+            // -------------------------------------------------
+            // AJAX SETUP
+            // -------------------------------------------------       
             $ajaxSetup = $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            })
+            });
 
-            // avatar preview
+
+
+            // -------------------------------------------------
+            //  CHECKBOX ACTION
+            // ------------------------------------------------- 
+            const ids = [];
+
+            // Checkbox All
+            $(document).on('click', '#checkAll', function() {
+                if ($(this).is(':checked')) {
+                    ids.splice(0, ids.length);
+                    $('.checkItem').prop('checked', true);
+                    $('.checkItem').each(function() {
+                        ids.push($(this).val());
+                    });
+                } else {
+                    $('.checkItem').prop('checked', false);
+                    ids.splice(0, ids.length);
+                }
+
+                $('#selectedDelete').prop('disabled', ids.length === 0);
+            });
+
+            // Checkbox Single
+            $(document).on('click', '.checkItem', function() {
+                if ($(this).is(':checked')) {
+                    ids.push($(this).val());
+                    $('#checkAll').prop('checked', $('.checkItem:checked').length === $('.checkItem')
+                        .length);
+                } else {
+                    ids.splice(ids.indexOf($(this).val()), 1);
+                    $('#checkAll').prop('checked', false);
+                }
+
+                $('#selectedDelete').prop('disabled', ids.length === 0);
+            });
+
+            // Checkboxes Deletion
+            $(document).on('click', '#selectedDelete', function() {
+                $.ajax({
+                    url: "{{ route('users.destroy', ':id') }}".replace(':id', ids),
+                    method: 'DELETE',
+                    data: {
+                        ids: ids
+                    },
+                    success: function(res) {
+                        if (res) {
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    html: res.message,
+                                    showConfirmButton: true
+                                })
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        table.DataTable().ajax.reload();
+                                        ids.splice(0, ids.length);
+                                        $('#checkAll').prop('checked', false);
+                                        $('#selectedDelete').prop('disabled', true);
+
+                                        $('#card').before(
+                                            '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                            res.message +
+                                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                            '</div>'
+                                        );
+
+                                        $('.alert').delay(3000).slideUp(300,
+                                            function() {
+                                                $(this).alert('close');
+                                            });
+                                    }
+                                });
+                        }
+                    },
+                    error: function(err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: err.responseJSON.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+
+
+
+
+            // -------------------------------------------------
+            // IMAGE PREVIEW
+            // -------------------------------------------------            
             $('input[name="avatar"]').on('change', function() {
                 const file = $(this)[0].files[0]
                 const reader = new FileReader()
@@ -136,7 +230,7 @@
                 }
 
                 reader.readAsDataURL(file)
-            })
+            });
 
 
             // -------------------------------------------------
@@ -175,8 +269,10 @@
                                     timer: 1500
                                 })
                                 .then(() => {
-                                    $('button[type="submit"]').attr('disabled', false);
-                                    $('button[type="submit"]').removeClass('btn-loading');
+                                    $('button[type="submit"]').attr('disabled',
+                                        false);
+                                    $('button[type="submit"]').removeClass(
+                                        'btn-loading');
                                     $('.action-modal').modal('hide');
 
                                     // Reload Datatable
@@ -190,9 +286,10 @@
                                         '</div>'
                                     );
 
-                                    $('.alert').delay(3000).slideUp(300, function() {
-                                        $(this).alert('close');
-                                    });
+                                    $('.alert').delay(3000).slideUp(300,
+                                        function() {
+                                            $(this).alert('close');
+                                        });
                                 })
                         }
                     },
@@ -203,7 +300,8 @@
                             $('button[type="submit"]').removeClass('btn-loading');
 
                             $.each(err.responseJSON.errors, function(key, value) {
-                                $('form').find(`#${key}`).addClass('is-invalid');
+                                $('form').find(`#${key}`).addClass(
+                                    'is-invalid');
                                 for (let i = 0; i < value.length; i++) {
                                     $('form').find(`#${key}`).after(`
                                     <div class="invalid-feedback">
@@ -286,11 +384,13 @@
                             // Avatar Preview
                             $('.img-holder').attr('src',
                                 res.avatar ?
-                                `/storage/${res.avatar}` : `/img/default_avatar.png`
+                                `/storage/${res.avatar}` :
+                                `/img/default_avatar.png`
                             )
 
                             // Assign Action to Form
-                            $('form').attr('action', "{{ route('users.update', ':id') }}"
+                            $('form').attr('action',
+                                "{{ route('users.update', ':id') }}"
                                 .replace(':id', res.id))
 
                             // Assign Selected Role
@@ -347,7 +447,8 @@
                                         if (result.isConfirmed) {
 
                                             // Reload Datatable
-                                            table.DataTable().ajax.reload();
+                                            table.DataTable().ajax
+                                                .reload();
 
                                             // Show Alert
                                             $('#card').before(
@@ -357,10 +458,15 @@
                                                 '</div>'
                                             );
 
-                                            $('.alert').delay(3000).slideUp(300,
-                                                function() {
-                                                    $(this).alert('close');
-                                                });
+                                            $('.alert').delay(3000)
+                                                .slideUp(
+                                                    300,
+                                                    function() {
+                                                        $(this)
+                                                            .alert(
+                                                                'close'
+                                                            );
+                                                    });
                                         }
                                     })
                                 }

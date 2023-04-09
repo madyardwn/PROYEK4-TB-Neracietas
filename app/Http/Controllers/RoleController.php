@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\RolesDataTable;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +15,9 @@ class RoleController extends Controller
      */
     public function index(RolesDataTable $dataTable)
     {
-        return $dataTable->render('pages.roles.index');
+        return $dataTable->render('pages.roles.index', [
+            'permissions' => Permission::all(),
+        ]);
     }
 
     /**
@@ -24,6 +27,7 @@ class RoleController extends Controller
     {
         $rules = [
             'name' => 'required|max:20',
+            'permissions' => 'required',
         ];
 
         $message = [
@@ -31,13 +35,18 @@ class RoleController extends Controller
                 'required' => 'Nama harus diisi',
                 'max' => 'Nama maksimal 20 karakter',
             ],
+            'permissions' => [
+                'required' => 'Permission harus dipilih',
+            ],
         ];
 
         $request->validate($rules, $message);
 
-        Role::create([
+        $role = Role::create([
             'name' => $request->name,
         ]);
+
+        $role->syncPermissions($request->permissions);
 
         return response()->json([
             'success' => true,
@@ -50,7 +59,8 @@ class RoleController extends Controller
      */
     public function edit(Role $role): Role
     {
-        return $role;
+        return $role
+            ->load('permissions');
     }
 
     /**
@@ -60,12 +70,16 @@ class RoleController extends Controller
     {
         $rules = [
             'name' => 'required|max:50',
+            'permissions' => 'required',
         ];
 
         $message = [
             'name' => [
                 'required' => 'Nama harus diisi',
                 'max' => 'Nama maksimal 50 karakter',
+            ],
+            'permissions' => [
+                'required' => 'Permission harus dipilih',
             ],
         ];
 
@@ -75,9 +89,11 @@ class RoleController extends Controller
             'name' => $request->name,
         ]);
 
+        $role->syncPermissions($request->permissions);
+
         return response()->json([
             'success' => true,
-            'message' => 'Role berhasil diubah',
+            'message' => 'Role berhasil diperbarui',
         ]);
     }
 
