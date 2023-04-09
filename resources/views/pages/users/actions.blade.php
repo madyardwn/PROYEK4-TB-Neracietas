@@ -167,6 +167,20 @@
 
             // Checkboxes Deletion
             $(document).on('click', '#selectedDelete', function() {
+
+                Swal.fire({
+                    didOpen: () => {
+                        Swal.showLoading()
+                    },
+                    title: 'Mohon Tunggu',
+                    html: 'Sedang menghapus data',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    stopKeydownPropagation: false,
+                })
+
                 $.ajax({
                     url: "{{ route('users.destroy', ':id') }}".replace(':id', ids),
                     method: 'DELETE',

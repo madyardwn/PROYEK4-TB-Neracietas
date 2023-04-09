@@ -231,9 +231,10 @@ class UserController extends Controller
 
     public function destroy($ids)
     {
-        $ids = explode(',', $ids);
-
-        $deletedUsers = [];
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
+        $count = 0;
 
         foreach ($ids as $id) {
             if (auth()->user()->id == $id) {
@@ -252,13 +253,13 @@ class UserController extends Controller
                 }
 
                 $user->delete();
-                $deletedUsers[] = $user;
+                $count++;
             }
         }
 
-        if (count($deletedUsers) > 0) {
+        if ($count > 0) {
             return response()->json([
-                'message' => 'Berhasil menghapus ' . count($deletedUsers) . ' pengguna',
+                'message' => 'Berhasil menghapus ' . $count . ' pengguna',
             ], 200);
         } else {
             return response()->json([
