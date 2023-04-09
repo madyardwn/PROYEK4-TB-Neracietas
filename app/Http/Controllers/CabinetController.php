@@ -218,27 +218,47 @@ class CabinetController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $cabinet = Cabinet::find($id);
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
 
-        $departments = Department::where('cabinet_id', $cabinet->id);
+        $count = 0;
 
-        if ($departments->count() > 0) {
+        foreach ($ids as $id) {
+            $cabinet = Cabinet::find($id);
 
-            return response()->json([
-                'message' => 'Kabinet tidak dapat dihapus karena masih memiliki departemen',
-            ], 422);
-        } else {
+            $departmentsCount = Department::where('cabinet_id', $id)->count();
+
+            if ($departmentsCount > 0) {
+                continue;
+            }
+
             if ($cabinet->logo) {
                 Storage::disk('public')->delete($cabinet->logo);
             }
 
             $cabinet->delete();
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' kabinet';
+
+            if ($count != count($ids)) {
+                $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . ' 
+                kabinet yang dipilih, karena masih ada kabinet yang memiliki departemen';
+            }
 
             return response()->json([
-                'message' => 'Kabinet ' . $cabinet->name . ' berhasil dihapus',
+                'message' => $message,
             ], 200);
         }
+
+        return response()->json([
+            'message' => 'Tidak ada kabinet yang berhasil dihapus 
+            karena masih ada kabinet yang memiliki departemen',
+        ], 403);
     }
 }

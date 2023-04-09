@@ -170,8 +170,7 @@
                             icon: 'error',
                             title: 'Oops...',
                             text: err.responseJSON.message,
-                            timer: 2000,
-                            showConfirmButton: false
+                            showConfirmButton: true
                         });
                     }
                 });

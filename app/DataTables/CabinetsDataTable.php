@@ -51,12 +51,29 @@ class CabinetsDataTable extends DataTable
                     ->text('<span class="fa fa-download"></span>&nbsp; Export')
                     ->titleAttr('Export'),
                 Button::make('reload'),
+                Button::make('')
+                    ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
+                    ->attr([
+                        'id' => 'selectedDelete',
+                        'disabled' => 'disabled'
+                    ])
             ]);
     }
 
     public function getColumns(): array
     {
         return [
+            Column::make('checkbox')
+                ->width(10)
+                ->addClass('text-center')
+                ->sortable(false)
+                ->searchable(false)
+                ->title(
+                    '<input type="checkbox" class="form-check-input" id="checkAll">'
+                )
+                ->render('function() {
+                    return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
+            }'),
             Column::make('No')->title('No')->searchable(false)->orderable(false)
                 ->render('function() {
                     return this.No;
