@@ -92,7 +92,8 @@
                                 <select class="form-select" id="department" name="department">
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}
+                                        <option value="{{ $department->id }}">{{ $department->cabinet_name }} -
+                                            {{ $department->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -133,9 +134,17 @@
             // -------------------------------------------------
             //  CHECKBOX ACTION
             // ------------------------------------------------- 
+
+            // array for store id
             const ids = [];
 
-            // Checkbox All
+            // table on refresh or change page, disable button delete and uncheck all checkbox
+            table.on('draw.dt', function() {
+                $('#selectedDelete').prop('disabled', true);
+                $('#checkAll').prop('checked', false);
+            });
+
+            // Checkbox All : check all checkbox in current page
             $(document).on('click', '#checkAll', function() {
                 if ($(this).is(':checked')) {
                     ids.splice(0, ids.length);
@@ -151,7 +160,7 @@
                 $('#selectedDelete').prop('disabled', ids.length === 0);
             });
 
-            // Checkbox Single
+            // Checkbox Single : check single checkbox and push id to array
             $(document).on('click', '.checkItem', function() {
                 if ($(this).is(':checked')) {
                     ids.push($(this).val());

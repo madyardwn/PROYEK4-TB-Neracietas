@@ -33,9 +33,15 @@ class UsersDataTable extends DataTable
                 'users.avatar',
                 'users.year',
                 'users.is_active',
+                'roles.name as roles',
                 'departments.name as departments',
             ])
-            ->leftJoin('departments', 'departments.id', '=', 'users.department_id');
+            // leftjoin with role from spatie
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+
+            // leftjoin with department
+            ->leftJoin('departments', 'users.department_id', '=', 'departments.id');
     }
 
     public function html(): HtmlBuilder
@@ -44,7 +50,9 @@ class UsersDataTable extends DataTable
             ->setTableId('users-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
+            // order by year desc and  nim asc
+            ->orderBy(5, 'desc')
+            ->orderBy(2, 'desc')
             ->buttons([
                 Button::make('')
                     ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
@@ -113,6 +121,17 @@ class UsersDataTable extends DataTable
                 ->render('function() {
                     if (this.departments) {
                         return this.departments
+                    } else {
+                        return ``
+                    }
+                }'),
+            Column::make('roles.name')
+                ->width(70)
+                ->addClass('text-center')
+                ->title('Role')
+                ->render('function() {
+                    if (this.roles) {
+                        return this.roles
                     } else {
                         return ``
                     }

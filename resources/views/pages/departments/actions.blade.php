@@ -71,7 +71,116 @@
                 }
             })
 
-            // avatar preview
+            // -------------------------------------------------
+            //  CHECKBOX ACTION
+            // ------------------------------------------------- 
+            // array for store id
+            const ids = [];
+
+            // table on refresh or change page, disable button delete and uncheck all checkbox
+            table.on('draw.dt', function() {
+                $('#selectedDelete').prop('disabled', true);
+                $('#checkAll').prop('checked', false);
+            });
+
+            // Checkbox All : check all checkbox in current page
+            $(document).on('click', '#checkAll', function() {
+                if ($(this).is(':checked')) {
+                    ids.splice(0, ids.length);
+                    $('.checkItem').prop('checked', true);
+                    $('.checkItem').each(function() {
+                        ids.push($(this).val());
+                    });
+                } else {
+                    $('.checkItem').prop('checked', false);
+                    ids.splice(0, ids.length);
+                }
+
+                $('#selectedDelete').prop('disabled', ids.length === 0);
+            });
+
+            // Checkbox Single : check single checkbox and push id to array
+            $(document).on('click', '.checkItem', function() {
+                if ($(this).is(':checked')) {
+                    ids.push($(this).val());
+                    $('#checkAll').prop('checked', $('.checkItem:checked').length === $('.checkItem')
+                        .length);
+                } else {
+                    ids.splice(ids.indexOf($(this).val()), 1);
+                    $('#checkAll').prop('checked', false);
+                }
+
+                $('#selectedDelete').prop('disabled', ids.length === 0);
+            });
+
+            // Checkboxes Deletion
+            $(document).on('click', '#selectedDelete', function() {
+
+                Swal.fire({
+                    didOpen: () => {
+                        Swal.showLoading()
+                    },
+                    title: 'Mohon Tunggu',
+                    html: 'Sedang menghapus data',
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    stopKeydownPropagation: false,
+                })
+
+                $.ajax({
+                    url: "{{ route('departments.destroy', ':id') }}".replace(':id', ids),
+                    method: 'DELETE',
+                    data: {
+                        ids: ids
+                    },
+                    success: function(res) {
+                        if (res) {
+                            Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    html: res.message,
+                                    showConfirmButton: true
+                                })
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        table.DataTable().ajax.reload();
+                                        ids.splice(0, ids.length);
+                                        $('#checkAll').prop('checked', false);
+                                        $('#selectedDelete').prop('disabled', true);
+
+                                        $('#card').before(
+                                            '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                            res.message +
+                                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                            '</div>'
+                                        );
+
+                                        $('.alert').delay(3000).slideUp(300,
+                                            function() {
+                                                $(this).alert('close');
+                                            });
+                                    }
+                                });
+                        }
+                    },
+                    error: function(err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: err.responseJSON.message,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }
+                });
+            });
+
+
+            // -------------------------------------------------
+            // IMAGE PREVIEW
+            // -------------------------------------------------            
             $('input[name="logo"]').on('change', function() {
                 const file = $(this)[0].files[0]
                 const reader = new FileReader()
@@ -81,7 +190,7 @@
                 }
 
                 reader.readAsDataURL(file)
-            })
+            });
 
 
             // -------------------------------------------------
@@ -180,7 +289,7 @@
 
                 // Assign POST Method
                 $('input[name="_method"]').val('POST');
-
+                avatar
             });
 
             // -------------------------------------------------

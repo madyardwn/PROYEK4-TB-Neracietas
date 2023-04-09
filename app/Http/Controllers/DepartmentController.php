@@ -6,6 +6,7 @@ use App\DataTables\DepartmentsDataTable;
 use App\Models\Cabinet;
 use App\Models\Department;
 use App\Models\Program;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -127,30 +128,48 @@ class DepartmentController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $department = Department::find($id);
-        $programs = Program::where('department_id', $id)->get();
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
 
-        if ($department->users->count() > 0) {
-            return response()->json([
-                'message' => 'Departemen tidak dapat dihapus karena masih memiliki anggota',
-            ], 400);
-        } else if ($programs->count() > 0) {
-            return response()->json([
-                'message' => 'Departemen tidak dapat dihapus karena masih memiliki program',
-            ], 400);
-        } else {
-            // delete logo
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $department = Department::find($id);
+
+            $programsCount = Program::where('department_id', $id)->count();
+            $usersCount = User::where('department_id', $id)->count();
+
+            if ($programsCount > 0 || $usersCount > 0) {
+                continue;
+            }
+
             if ($department->logo) {
                 Storage::disk('public')->delete($department->logo);
             }
 
             $department->delete();
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' departemen';
+
+            if ($count != count($ids)) {
+                $message = 'Berhasil menghapus ' . $count . ' departemen dari ' . count($ids) . ' 
+                departemen yang dipilih, karena masih ada departemen yang memiliki program atau user';
+            }
 
             return response()->json([
-                'message' => 'Departemen ' . $department->name . ' berhasil dihapus',
+                'message' => $message,
             ], 200);
         }
+
+        return response()->json([
+            'message' => 'Tidak ada departemen yang berhasil dihapus 
+            karena masih ada departemen yang memiliki program atau user',
+        ], 403);
     }
 }

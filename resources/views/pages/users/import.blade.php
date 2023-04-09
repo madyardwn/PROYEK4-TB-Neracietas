@@ -11,7 +11,6 @@
                 <div class="modal-body">
                     @csrf
                     <div class="form-group">
-
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="dropzone">
@@ -29,7 +28,7 @@
                                 </div>
                             </div>
                             <div class="col-md-7">
-                                <div class="alert alert-info import-info">
+                                <div class="import-info">
                                     <p><strong>File yang diizinkan: </strong> .csv, .xlsx</p>
                                     <p><strong>Ukuran maksimal file: </strong> 5 MB</p>
                                     <!-- attribute pada file sebagai berikut: -->
