@@ -45,16 +45,22 @@ class ProgramController extends Controller
 
         $request->validate($rules, $message);
 
-        $program = Program::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'department_id' => $request->department,
-            'user_id' => $request->user,
-        ]);
+        try {
+            $program = Program::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $request->department,
+                'user_id' => $request->user,
+            ]);
 
-        return response()->json([
-            'message' => 'Program ' . $program->name . ' berhasil ditambahkan',
-        ], 200);
+            return response()->json([
+                'message' => 'Program ' . $program->name . ' berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function edit(Program $program): Program
@@ -91,18 +97,24 @@ class ProgramController extends Controller
 
         $request->validate($rules, $message);
 
-        $program = Program::find($id);
+        try {
+            $program = Program::find($id);
 
-        $program->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'department_id' => $request->department,
-            'user_id' => $request->user,
-        ]);
+            $program->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'department_id' => $request->department,
+                'user_id' => $request->user,
+            ]);
 
-        return response()->json([
-            'message' => 'Program ' . $program->name . ' berhasil diubah',
-        ], 200);
+            return response()->json([
+                'message' => 'Program ' . $program->name . ' berhasil diubah',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($ids)
@@ -113,24 +125,29 @@ class ProgramController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $program = Program::find($id);
+        try {
+            foreach ($ids as $id) {
+                $program = Program::find($id);
 
-            $program->delete();
+                $program->delete();
+                $count++;
+            }
 
-            $count++;
-        }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' program';
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' program';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
+            }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada program yang berhasil dihapus',
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada program yang berhasil dihapus',
-        ], 403);
     }
 }

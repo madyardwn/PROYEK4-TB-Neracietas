@@ -42,16 +42,21 @@ class RoleController extends Controller
 
         $request->validate($rules, $message);
 
-        $role = Role::create([
-            'name' => $request->name,
-        ]);
+        try {
+            $role = Role::create([
+                'name' => $request->name,
+            ]);
 
-        $role->syncPermissions($request->permissions);
+            $role->syncPermissions($request->permissions);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Role berhasil ditambahkan',
-        ]);
+            return response()->json([
+                'message' => 'Role berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -85,16 +90,21 @@ class RoleController extends Controller
 
         $request->validate($rules, $message);
 
-        $role->update([
-            'name' => $request->name,
-        ]);
+        try {
+            $role->update([
+                'name' => $request->name,
+            ]);
 
-        $role->syncPermissions($request->permissions);
+            $role->syncPermissions($request->permissions);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Role berhasil diperbarui',
-        ]);
+            return response()->json([
+                'message' => 'Role berhasil diperbarui',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($ids)
@@ -105,56 +115,74 @@ class RoleController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $role = Role::find($id);
+        try {
+            foreach ($ids as $id) {
+                $role = Role::find($id);
 
-            $usersCount = User::whereHas('roles', function ($query) use ($role) {
-                $query->where('name', $role->name);
-            })->count();
+                $usersCount = User::whereHas('roles', function ($query) use ($role) {
+                    $query->where('name', $role->name);
+                })->count();
 
-            if ($usersCount > 0) {
-                continue;
+                if ($usersCount > 0) {
+                    continue;
+                }
+
+                $role->permissions()->detach();
+                $role->delete();
+                $count++;
             }
 
-            $role->permissions()->detach();
-            $role->delete();
-            $count++;
-        }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' role';
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' role';
+                if ($count != count($ids)) {
+                    $message = 'Berhasil menghapus ' . $count . ' role dari ' . count($ids) . ' 
+                    role yang dipilih, karena masih ada role yang dimiliki user';
+                }
 
-            if ($count != count($ids)) {
-                $message = 'Berhasil menghapus ' . $count . ' role dari ' . count($ids) . ' 
-                role yang dipilih, karena masih ada role yang dimiliki user';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
             }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada role yang berhasil dihapus 
+                karena masih ada role yang dimiliki user',
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada role yang berhasil dihapus 
-            karena masih ada role yang dimiliki user',
-        ], 403);
     }
 
     public function assignPermission(Request $request, Role $role)
     {
-        $role->syncPermissions($request->permissions);
+        try {
+            $role->givePermissionTo($request->permissions);
 
-        return response()->json([
-            'message' => 'Permission berhasil ditambahkan',
-        ], 200);
+            return response()->json([
+                'message' => 'Permission berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function removePermission(Request $request, Role $role)
     {
-        $role->revokePermissionTo($request->permissions);
+        try {
+            $role->permissions()->detach($request->permissions);
 
-        return response()->json([
-            'message' => 'Permission berhasil dihapus',
-        ], 200);
+            return response()->json([
+                'message' => 'Permission berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

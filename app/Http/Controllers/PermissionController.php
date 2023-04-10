@@ -34,13 +34,19 @@ class PermissionController extends Controller
 
         $request->validate($rules, $message);
 
-        Permission::create([
-            'name' => $request->name,
-        ]);
+        try {
+            Permission::create([
+                'name' => $request->name,
+            ]);
 
-        return response()->json([
-            'message' => 'Permission berhasil ditambahkan',
-        ], 200);
+            return response()->json([
+                'message' => 'Permission berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -69,13 +75,19 @@ class PermissionController extends Controller
 
         $request->validate($rules, $message);
 
-        $permission->update([
-            'name' => $request->name,
-        ]);
+        try {
+            $permission->update([
+                'name' => $request->name,
+            ]);
 
-        return response()->json([
-            'message' => 'Permission berhasil diubah',
-        ], 200);
+            return response()->json([
+                'message' => 'Permission berhasil diubah',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($ids)
@@ -86,35 +98,41 @@ class PermissionController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $permission = Permission::find($id);
+        try {
+            foreach ($ids as $id) {
+                $permission = Permission::find($id);
 
-            $rolesCount = $permission->roles()->count();
+                $rolesCount = $permission->roles()->count();
 
-            if ($rolesCount > 0) {
-                continue;
+                if ($rolesCount > 0) {
+                    continue;
+                }
+
+                $permission->delete();
+                $count++;
             }
 
-            $permission->delete();
-            $count++;
-        }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' permission';
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' permission';
+                if ($count != count($ids)) {
+                    $message = 'Berhasil menghapus ' . $count . ' permission dari ' . count($ids) . ' 
+                    permission yang dipilih, karena masih ada permission yang digunakan role';
+                }
 
-            if ($count != count($ids)) {
-                $message = 'Berhasil menghapus ' . $count . ' permission dari ' . count($ids) . ' 
-                permission yang dipilih, karena masih ada permission yang digunakan role';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
             }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada permission yang berhasil dihapus 
+                karena masih ada permission yang digunakan role',
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada permission yang berhasil dihapus 
-            karena masih ada permission yang digunakan role',
-        ], 403);
     }
 }

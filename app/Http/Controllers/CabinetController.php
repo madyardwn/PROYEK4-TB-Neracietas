@@ -52,25 +52,31 @@ class CabinetController extends Controller
 
         $request->validate($rules, $message);
 
-        if ($request->hasFile('logo')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
-            $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
+        try {
+            if ($request->hasFile('logo')) {
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+                $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
+            }
+
+            $cabinet = Cabinet::create([
+                'name' => $request->name,
+                'year' => $request->year,
+                'description' => $request->description,
+                'logo' => $logo,
+                'is_active' => $request->is_active,
+            ]);
+
+            $this->generateDepartments($cabinet);
+
+            return response()->json([
+                'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Kabinet ' . $request->name . ' gagal ditambahkan',
+            ], 500);
         }
-
-        $cabinet = Cabinet::create([
-            'name' => $request->name,
-            'year' => $request->year,
-            'description' => $request->description,
-            'logo' => $logo,
-            'is_active' => $request->is_active,
-        ]);
-
-        $this->generateDepartments($cabinet);
-
-        return response()->json([
-            'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
-        ], 200);
     }
 
     public function generateDepartments(Cabinet $cabinet)
@@ -92,11 +98,10 @@ class CabinetController extends Controller
                 'description' => 'Biro Kewirausahaan bertanggung jawab atas segala urusan kewirausahaan Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
-                'name' => 'Biro Luar Himpunan',
+                'name' => 'Departemen Luar Himpunan',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Biro Luar Himpunan.png',
                 'description' => 'Biro Luar Himpunan bertanggung jawab atas segala urusan luar Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
-
             [
                 'name' => 'Departemen Riset, Pendidikan, dan Teknologi',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Riset, Pendidikan, dan Teknologi.png',
@@ -112,7 +117,6 @@ class CabinetController extends Controller
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Komunikasi & Informasi.png',
                 'description' => 'Departemen Komunikasi & Informasi bertanggung jawab atas segala urusan komunikasi dan informasi Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
-
             [
                 'name' => 'Unit Teknologi',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Unit Teknologi.png',
@@ -125,16 +129,23 @@ class CabinetController extends Controller
             ],
         ];
 
-        foreach ($departments as $department) {
-            Department::create([
-                'name' => $department['name'],
-                'cabinet_id' => $cabinet->id,
-            ]);
-        }
+        try {
+            foreach ($departments as $department) {
+                Department::create([
+                    'name' => $department['name'],
+                    // 'description' => $department['description'],
+                    'cabinet_id' => $cabinet->id,
+                ]);
+            }
 
-        return response()->json([
-            'message' => 'Departemen berhasil dibuat',
-        ], 200);
+            return response()->json([
+                'message' => 'Departemen berhasil dibuat',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Departemen gagal dibuat',
+            ], 500);
+        }
     }
 
     public function edit(Cabinet $cabinet): Cabinet
@@ -178,44 +189,50 @@ class CabinetController extends Controller
 
         $request->validate($rules, $message);
 
-        $cabinet = Cabinet::find($id);
+        try {
+            $cabinet = Cabinet::find($id);
 
-        if ($request->hasFile('logo')) {
-            if ($cabinet->logo) {
-                Storage::disk('public')->delete($cabinet->logo);
+            if ($request->hasFile('logo')) {
+                if ($cabinet->logo) {
+                    Storage::disk('public')->delete($cabinet->logo);
+                }
+
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+                $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
             }
 
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
-            $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
-        }
+            $cabinet->update([
+                'name' => $request->name,
+                'year' => $request->year,
+                'description' => $request->description,
+                'logo' => $logo ?? $cabinet->logo,
+                'is_active' => $request->is_active,
+            ]);
 
-        $cabinet->update([
-            'name' => $request->name,
-            'year' => $request->year,
-            'description' => $request->description,
-            'logo' => $logo ?? $cabinet->logo,
-            'is_active' => $request->is_active,
-        ]);
+            $departments = Department::where('cabinet_id', $cabinet->id);
 
-        $departments = Department::where('cabinet_id', $cabinet->id);
+            if ($departments->count() > 0) {
+                // Update user active status if department exists
+                $users = User::whereIn('department_id', $departments->pluck('id'))->get();
 
-        if ($departments->count() > 0) {
-            // Update user active status if department exists
-            $users = User::whereIn('department_id', $departments->pluck('id'))->get();
-
-            if ($users->count() > 0) {
-                foreach ($users as $user) {
-                    $user->update([
-                        'is_active' => $request->is_active,
-                    ]);
+                if ($users->count() > 0) {
+                    foreach ($users as $user) {
+                        $user->update([
+                            'is_active' => $request->is_active,
+                        ]);
+                    }
                 }
             }
-        }
 
-        return response()->json([
-            'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
-        ], 200);
+            return response()->json([
+                'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Kabinet gagal diperbarui',
+            ], 500);
+        }
     }
 
     public function destroy($ids)
@@ -226,39 +243,45 @@ class CabinetController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $cabinet = Cabinet::find($id);
+        try {
+            foreach ($ids as $id) {
+                $cabinet = Cabinet::find($id);
 
-            $departmentsCount = Department::where('cabinet_id', $id)->count();
+                $departmentsCount = Department::where('cabinet_id', $id)->count();
 
-            if ($departmentsCount > 0) {
-                continue;
+                if ($departmentsCount > 0) {
+                    continue;
+                }
+
+                if ($cabinet->logo) {
+                    Storage::disk('public')->delete($cabinet->logo);
+                }
+
+                $cabinet->delete();
+                $count++;
             }
 
-            if ($cabinet->logo) {
-                Storage::disk('public')->delete($cabinet->logo);
-            }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' kabinet';
 
-            $cabinet->delete();
-            $count++;
-        }
+                if ($count != count($ids)) {
+                    $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . ' 
+                    kabinet yang dipilih, karena masih ada kabinet yang memiliki departemen';
+                }
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' kabinet';
-
-            if ($count != count($ids)) {
-                $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . ' 
-                kabinet yang dipilih, karena masih ada kabinet yang memiliki departemen';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
             }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada kabinet yang berhasil dihapus 
+                karena masih ada kabinet yang memiliki departemen',
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Kabinet gagal dihapus',
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada kabinet yang berhasil dihapus 
-            karena masih ada kabinet yang memiliki departemen',
-        ], 403);
     }
 }

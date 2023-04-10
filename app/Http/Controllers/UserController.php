@@ -89,39 +89,40 @@ class UserController extends Controller
 
         $request->validate($rules, $message);
 
-        if ($request->hasFile('avatar')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
-            $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
-        }
+        try {
+            $user = User::create([
+                'nim' => $request->nim,
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
 
-        $user = User::create([
-            'nim' => $request->nim,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-
-            'avatar' => $path ?? null,
-            'na' => $request->na ?? null,
-            'nama_bagus' => $request->nama_bagus ?? null,
-            'year' => $request->year ?? null,
-            'department_id' => $request->department ?? null,
-        ]);
-
-        $user->assignRole(Role::findOrFail(request()->role));
-
-        if ($request->department) {
-            $department = Department::find($request->department);
-            $cabinet = Cabinet::find($department->cabinet_id);
-
-            $user->update([
-                'is_active' => $cabinet->is_active ? 1 : 0,
+                'avatar' => $path ?? null,
+                'na' => $request->na ?? null,
+                'nama_bagus' => $request->nama_bagus ?? null,
+                'year' => $request->year ?? null,
+                'department_id' => $request->department ?? null,
             ]);
-        }
 
-        return response()->json([
-            'message' => 'User ' . $user->name . ' berhasil ditambahkan',
-        ], 200);
+            $user->assignRole(Role::findOrFail(request()->role));
+
+            if ($request->department) {
+                $department = Department::find($request->department);
+                $cabinet = Cabinet::find($department->cabinet_id);
+
+                $user->update([
+                    'is_active' => $cabinet->is_active ? 1 : 0,
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'User ' . $user->name . ' berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'User gagal ditambahkan',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function edit(User $user): User
@@ -191,45 +192,52 @@ class UserController extends Controller
 
         $request->validate($rules, $message);
 
-        $user = User::find($id);
+        try {
+            $user = User::find($id);
 
-        if ($request->hasFile('avatar')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
+            if ($request->hasFile('avatar')) {
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
 
-            $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+                $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+                if ($user->avatar) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
             }
-        }
-
-        $user->update([
-            'nim' => $request->nim,
-            'name' => $request->name,
-            'email' => $request->email,
-            'year' => $request->year,
-
-            'avatar' => $path ?? $user->avatar ?? null,
-            'na' => $request->na ?? $user->na ?? null,
-            'nama_bagus' => $request->nama_bagus ?? $user->nama_bagus ?? null,
-            'department_id' => $request->department ?? $user->department_id ?? null,
-        ]);
-
-        $user->syncRoles(Role::findOrFail(request()->role));
-
-        if ($request->department) {
-            $department = Department::find($request->department);
-            $cabinet = Cabinet::find($department->cabinet_id);
 
             $user->update([
-                'is_active' => $cabinet->is_active ? 1 : 0,
-            ]);
-        }
+                'nim' => $request->nim,
+                'name' => $request->name,
+                'email' => $request->email,
+                'year' => $request->year,
 
-        return response()->json([
-            'message' => 'User ' . $user->name . ' berhasil diubah',
-        ], 200);
+                'avatar' => $path ?? $user->avatar ?? null,
+                'na' => $request->na ?? $user->na ?? null,
+                'nama_bagus' => $request->nama_bagus ?? $user->nama_bagus ?? null,
+                'department_id' => $request->department ?? $user->department_id ?? null,
+            ]);
+
+            $user->syncRoles(Role::findOrFail(request()->role));
+
+            if ($request->department) {
+                $department = Department::find($request->department);
+                $cabinet = Cabinet::find($department->cabinet_id);
+
+                $user->update([
+                    'is_active' => $cabinet->is_active ? 1 : 0,
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'User ' . $user->name . ' berhasil diubah',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'User gagal diubah',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy($ids)
@@ -239,35 +247,42 @@ class UserController extends Controller
         }
         $count = 0;
 
-        foreach ($ids as $id) {
-            if (auth()->user()->id == $id) {
-                continue;
-            }
-
-            $user = User::find($id);
-
-            $programs = Program::where('user_id', $id)->get();
-
-            if ($programs->count() > 0) {
-                continue;
-            } else {
-                if ($user->avatar) {
-                    Storage::disk('public')->delete($user->avatar);
+        try {
+            foreach ($ids as $id) {
+                if (auth()->user()->id == $id) {
+                    continue;
                 }
 
-                $user->delete();
-                $count++;
-            }
-        }
+                $user = User::find($id);
 
-        if ($count > 0) {
+                $programs = Program::where('user_id', $id)->get();
+
+                if ($programs->count() > 0) {
+                    continue;
+                } else {
+                    if ($user->avatar) {
+                        Storage::disk('public')->delete($user->avatar);
+                    }
+
+                    $user->delete();
+                    $count++;
+                }
+            }
+
+            if ($count > 0) {
+                return response()->json([
+                    'message' => 'Berhasil menghapus ' . $count . ' pengguna',
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Tidak ada pengguna yang berhasil dihapus',
+                ], 403);
+            }
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Berhasil menghapus ' . $count . ' pengguna',
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Tidak ada pengguna yang berhasil dihapus',
-            ], 403);
+                'message' => 'Pengguna gagal dihapus',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

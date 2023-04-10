@@ -17,7 +17,7 @@
         <div class="container-tight py-4">
             <div class="text-center mb-4">
                 <a href="{{ config('app.url') }}" class="navbar-brand navbar-brand-autodark">
-                    <img src="{{ url('img/logo.svg') }}" height="36" alt="" />
+                    <img src="{{ url('img/himakom.png') }}" height="36" alt="" />
                 </a>
             </div>
             <div class="container" style="max-width: 400px">

@@ -53,24 +53,30 @@ class EventController extends Controller
 
         $request->validate($rules, $message);
 
-        if ($request->hasFile('poster')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
-            $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
+        try {
+            if ($request->hasFile('poster')) {
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
+            }
+
+            Event::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'poster' => $poster,
+                'date' => $request->date,
+                'time' => $request->time,
+                'location' => $request->location,
+            ]);
+
+            return response()->json([
+                'message' => 'Event ' . $request->name . ' berhasil ditambahkan',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Event ' . $request->name . ' gagal ditambahkan',
+            ], 500);
         }
-
-        Event::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'poster' => $poster,
-            'date' => $request->date,
-            'time' => $request->time,
-            'location' => $request->location,
-        ]);
-
-        return response()->json([
-            'message' => 'Event ' . $request->name . ' berhasil ditambahkan',
-        ], 200);
     }
 
     public function edit(Event $event): Event
@@ -116,31 +122,37 @@ class EventController extends Controller
 
         $request->validate($rules, $message);
 
-        $event = Event::find($id);
+        try {
+            $event = Event::find($id);
 
-        if ($request->hasFile('poster')) {
-            // delete old image
-            if ($event->poster) {
-                Storage::disk('public')->delete($event->poster);
+            if ($request->hasFile('poster')) {
+                // delete old image
+                if ($event->poster) {
+                    Storage::disk('public')->delete($event->poster);
+                }
+
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
             }
 
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
-            $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
+            $event->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'poster' => $poster ?? $event->poster,
+                'date' => $request->date,
+                'time' => $request->time,
+                'location' => $request->location,
+            ]);
+
+            return response()->json([
+                'message' => 'Event ' . $event->name . ' berhasil diubah',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat mengubah event',
+            ], 500);
         }
-
-        $event->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'poster' => $poster ?? $event->poster,
-            'date' => $request->date,
-            'time' => $request->time,
-            'location' => $request->location,
-        ]);
-
-        return response()->json([
-            'message' => 'Event ' . $event->name . ' berhasil diubah',
-        ], 200);
     }
 
     public function destroy($ids)
@@ -151,27 +163,33 @@ class EventController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $event = Event::find($id);
+        try {
+            foreach ($ids as $id) {
+                $event = Event::find($id);
 
-            if ($event->poster) {
-                Storage::disk('public')->delete($event->poster);
+                if ($event->poster) {
+                    Storage::disk('public')->delete($event->poster);
+                }
+
+                $event->delete();
+                $count++;
             }
 
-            $event->delete();
-            $count++;
-        }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' event';
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' event';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
+            }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada event yang berhasil dihapus',
+            ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus event',
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada event yang berhasil dihapus',
-        ], 403);
     }
 }

@@ -49,22 +49,28 @@ class DepartmentController extends Controller
 
         $request->validate($rules, $message);
 
-        if ($request->hasFile('logo')) {
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
-            $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
+        try {
+            if ($request->hasFile('logo')) {
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+                $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
+            }
+
+            Department::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'logo' => $logo,
+                'cabinet_id' => $request->cabinet,
+            ]);
+
+            return response()->json([
+                'message' => 'Departemen ' . $request->name . ' berhasil ditambahkan',
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Departemen ' . $request->name . ' gagal ditambahkan',
+            ], 500);
         }
-
-        Department::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'logo' => $logo,
-            'cabinet_id' => $request->cabinet,
-        ]);
-
-        return response()->json([
-            'message' => 'Departemen ' . $request->name . ' berhasil ditambahkan',
-        ], 200);
     }
 
     public function edit(Department $department): Department
@@ -103,29 +109,35 @@ class DepartmentController extends Controller
 
         $request->validate($rules, $message);
 
-        $department = Department::find($id);
+        try {
+            $department = Department::find($id);
 
-        if ($request->hasFile('logo')) {
-            // delete old logo
-            if ($department->logo) {
-                Storage::disk('public')->delete($department->logo);
+            if ($request->hasFile('logo')) {
+                // delete old logo
+                if ($department->logo) {
+                    Storage::disk('public')->delete($department->logo);
+                }
+
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
+                $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
             }
 
-            $currentDate = date('Y-m-d-H-i-s');
-            $filename = $currentDate . '_' . $request->name . '.' . $request->logo->extension();
-            $logo = $request->logo->storeAs('cabinets/departments/logo', $filename, 'public');
+            $department->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'logo' => $logo ?? $department->logo,
+                'cabinet_id' => $request->cabinet,
+            ]);
+
+            return response()->json([
+                'message' => 'Departemen ' . $request->name . ' berhasil diubah',
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Departemen ' . $request->name . ' gagal diubah',
+            ], 500);
         }
-
-        $department->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'logo' => $logo ?? $department->logo,
-            'cabinet_id' => $request->cabinet,
-        ]);
-
-        return response()->json([
-            'message' => 'Departemen ' . $request->name . ' berhasil diubah',
-        ], 200);
     }
 
     public function destroy($ids)
@@ -136,40 +148,46 @@ class DepartmentController extends Controller
 
         $count = 0;
 
-        foreach ($ids as $id) {
-            $department = Department::find($id);
+        try {
+            foreach ($ids as $id) {
+                $department = Department::find($id);
 
-            $programsCount = Program::where('department_id', $id)->count();
-            $usersCount = User::where('department_id', $id)->count();
+                $programsCount = Program::where('department_id', $id)->count();
+                $usersCount = User::where('department_id', $id)->count();
 
-            if ($programsCount > 0 || $usersCount > 0) {
-                continue;
+                if ($programsCount > 0 || $usersCount > 0) {
+                    continue;
+                }
+
+                if ($department->logo) {
+                    Storage::disk('public')->delete($department->logo);
+                }
+
+                $department->delete();
+                $count++;
             }
 
-            if ($department->logo) {
-                Storage::disk('public')->delete($department->logo);
-            }
+            if ($count > 0) {
+                $message = 'Berhasil menghapus ' . $count . ' departemen';
 
-            $department->delete();
-            $count++;
-        }
+                if ($count != count($ids)) {
+                    $message = 'Berhasil menghapus ' . $count . ' departemen dari ' . count($ids) . ' 
+                    departemen yang dipilih, karena masih ada departemen yang memiliki program atau user';
+                }
 
-        if ($count > 0) {
-            $message = 'Berhasil menghapus ' . $count . ' departemen';
-
-            if ($count != count($ids)) {
-                $message = 'Berhasil menghapus ' . $count . ' departemen dari ' . count($ids) . ' 
-                departemen yang dipilih, karena masih ada departemen yang memiliki program atau user';
+                return response()->json([
+                    'message' => $message,
+                ], 200);
             }
 
             return response()->json([
-                'message' => $message,
-            ], 200);
+                'message' => 'Tidak ada departemen yang berhasil dihapus 
+                karena masih ada departemen yang memiliki program atau user',
+            ], 403);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Departemen gagal dihapus',
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Tidak ada departemen yang berhasil dihapus 
-            karena masih ada departemen yang memiliki program atau user',
-        ], 403);
     }
 }
