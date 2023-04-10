@@ -53,22 +53,39 @@ class EventsDataTable extends DataTable
                     ->text('<span class="fa fa-download"></span>&nbsp; Export')
                     ->titleAttr('Export'),
                 Button::make('reload'),
+                Button::make('')
+                    ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
+                    ->attr([
+                        'id' => 'selectedDelete',
+                        'disabled' => 'disabled'
+                    ])
             ]);
     }
 
     public function getColumns(): array
     {
         return [
+            Column::make('checkbox')
+                ->width(10)
+                ->addClass('text-center')
+                ->sortable(false)
+                ->searchable(false)
+                ->title(
+                    '<input type="checkbox" class="form-check-input" id="checkAll">'
+                )
+                ->render('function() {
+                    return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
+            }'),
             Column::make('No')->title('No')->searchable(false)->orderable(false),
-            Column::make('name')->title('Name'),
+            Column::make('name')->title('Event'),
             Column::make('poster')->title('Poster')->render('function() {
                 return `<img src="/storage/${this.poster}" class="img-fluid" width="100px">`;
             }'),
-            Column::make('description')->title('Description'),
-            Column::make('location')->title('Location'),
-            Column::make('date')->title('Date'),
-            Column::make('time')->title('Time'),
-            Column::make('is_active')->title('Is Active')->render('function() {
+            Column::make('description')->title('Deksripsi'),
+            Column::make('location')->title('Lokasi'),
+            Column::make('date')->title('Tanggal'),
+            Column::make('time')->title('Jam'),
+            Column::make('is_active')->title('Status')->render('function() {
                 return this.is_active == 1 ? "Active" : "Inactive";
             }'),
             Column::computed('action')
@@ -76,7 +93,7 @@ class EventsDataTable extends DataTable
                 ->printable(false)
                 ->searchable(false)
                 ->addClass('text-center')
-                ->title('Action')
+                ->title('Opsi')
                 ->render('function() {
                 return `
                     <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>

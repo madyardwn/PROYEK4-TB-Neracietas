@@ -101,7 +101,7 @@ class UsersDataTable extends DataTable
                 ->sortable(),
             Column::make('avatar')
                 ->width(60)
-                ->title('Avatar')
+                ->title('Foto')
                 ->render('function() {
                     if (this.avatar) {
                         return `<img src="/storage/${this.avatar}" class="img-fluid rounded bg-primary" style="width: 40px;">`

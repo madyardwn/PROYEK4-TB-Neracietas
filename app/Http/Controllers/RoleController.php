@@ -97,32 +97,47 @@ class RoleController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $role = Role::find($id);
-        if ($role->name == 'superadmin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Role superadmin tidak dapat dihapus',
-            ]);
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
         }
 
-        $user = User::role($role->name);
+        $count = 0;
 
-        if ($user->count() > 0) {
-            return response()->json([
-                'message' => 'Role tidak dapat dihapus karena masih digunakan',
-            ], 422);
-        } else {
+        foreach ($ids as $id) {
+            $role = Role::find($id);
+
+            $usersCount = User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role->name);
+            })->count();
+
+            if ($usersCount > 0) {
+                continue;
+            }
+
+            $role->permissions()->detach();
             $role->delete();
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' role';
+
+            if ($count != count($ids)) {
+                $message = 'Berhasil menghapus ' . $count . ' role dari ' . count($ids) . ' 
+                role yang dipilih, karena masih ada role yang dimiliki user';
+            }
+
             return response()->json([
-                'message' => 'Role berhasil dihapus',
+                'message' => $message,
             ], 200);
         }
+
+        return response()->json([
+            'message' => 'Tidak ada role yang berhasil dihapus 
+            karena masih ada role yang dimiliki user',
+        ], 403);
     }
 
     public function assignPermission(Request $request, Role $role)

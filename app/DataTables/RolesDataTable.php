@@ -61,6 +61,12 @@ class RolesDataTable extends DataTable
                     ->text('<span class="fa fa-download"></span>&nbsp; Export')
                     ->titleAttr('Export'),
                 Button::make('reload'),
+                Button::make('')
+                    ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
+                    ->attr([
+                        'id' => 'selectedDelete',
+                        'disabled' => 'disabled'
+                    ])
             ]);
     }
 
@@ -70,19 +76,33 @@ class RolesDataTable extends DataTable
     public function getColumns(): array
     {
         return [
+            Column::make('checkbox')
+                ->width(10)
+                ->addClass('text-center')
+                ->sortable(false)
+                ->searchable(false)
+                ->title(
+                    '<input type="checkbox" class="form-check-input" id="checkAll">'
+                )
+                ->render('function() {
+                    return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
+            }'),
             Column::make('No')
                 ->title('No')
                 ->searchable(false)
                 ->orderable(false)
                 ->width(30),
-            Column::make('name'),
+            Column::make('name')
+                ->title('Nama Role'),
             Column::make('permissions')
-                ->title('Permissions')
+                ->title('Nama Permission')
                 ->render('function() {
                 return this.permissions.map(function(permission) {
                     return `<span class="badge badge-pill badge-primary" style="margin-bottom: 5px;">${permission.name}</span>`
                 }).join(" ")
-                }'),
+                }')
+                ->searchable(false)
+                ->orderable(false),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)

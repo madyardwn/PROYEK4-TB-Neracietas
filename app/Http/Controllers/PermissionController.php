@@ -78,24 +78,43 @@ class PermissionController extends Controller
         ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $permission = Permission::find($id);
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
 
-        // jika permission masih digunakan oleh role maka tidak bisa dihapus
-        if ($permission->roles->count() > 0) {
-            return response()->json([
-                'message' => 'Permission ' . $permission->name . ' masih digunakan oleh role',
-            ], 422);
-        } else {
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $permission = Permission::find($id);
+
+            $rolesCount = $permission->roles()->count();
+
+            if ($rolesCount > 0) {
+                continue;
+            }
+
             $permission->delete();
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' permission';
+
+            if ($count != count($ids)) {
+                $message = 'Berhasil menghapus ' . $count . ' permission dari ' . count($ids) . ' 
+                permission yang dipilih, karena masih ada permission yang digunakan role';
+            }
 
             return response()->json([
-                'message' => 'Permission berhasil dihapus',
+                'message' => $message,
             ], 200);
         }
+
+        return response()->json([
+            'message' => 'Tidak ada permission yang berhasil dihapus 
+            karena masih ada permission yang digunakan role',
+        ], 403);
     }
 }

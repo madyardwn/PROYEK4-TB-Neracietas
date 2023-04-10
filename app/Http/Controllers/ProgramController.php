@@ -105,13 +105,32 @@ class ProgramController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $program = Program::find($id);
-        $program->delete();
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
+        }
+
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $program = Program::find($id);
+
+            $program->delete();
+
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' program';
+
+            return response()->json([
+                'message' => $message,
+            ], 200);
+        }
 
         return response()->json([
-            'message' => 'Program ' . $program->name . ' berhasil dihapus',
-        ], 200);
+            'message' => 'Tidak ada program yang berhasil dihapus',
+        ], 403);
     }
 }

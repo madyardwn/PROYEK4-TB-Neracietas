@@ -143,18 +143,35 @@ class EventController extends Controller
         ], 200);
     }
 
-    public function destroy($id)
+    public function destroy($ids)
     {
-        $event = Event::find($id);
-
-        if ($event->poster) {
-            Storage::disk('public')->delete($event->poster);
+        if (!is_array($ids)) {
+            $ids = explode(',', $ids);
         }
 
-        $event->delete();
+        $count = 0;
+
+        foreach ($ids as $id) {
+            $event = Event::find($id);
+
+            if ($event->poster) {
+                Storage::disk('public')->delete($event->poster);
+            }
+
+            $event->delete();
+            $count++;
+        }
+
+        if ($count > 0) {
+            $message = 'Berhasil menghapus ' . $count . ' event';
+
+            return response()->json([
+                'message' => $message,
+            ], 200);
+        }
 
         return response()->json([
-            'message' => 'Event ' . $event->name . ' berhasil dihapus',
-        ], 200);
+            'message' => 'Tidak ada event yang berhasil dihapus',
+        ], 403);
     }
 }
