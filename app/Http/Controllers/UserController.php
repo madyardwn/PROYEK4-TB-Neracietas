@@ -96,7 +96,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
 
-                'avatar' => $path ?? null,
+                'avatar' => $request->file('avatar')->store('avatars', 'public'),
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,

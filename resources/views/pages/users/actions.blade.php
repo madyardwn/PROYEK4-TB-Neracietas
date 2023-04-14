@@ -280,13 +280,13 @@
 
                     success: function(res) {
                         if (res) {
-
                             Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
                                     text: res.message,
                                     showConfirmButton: false,
-                                    timer: 1500
+                                    timer: 1500,
+                                    timerProgressBar: true,
                                 })
                                 .then(() => {
                                     $('button[type="submit"]').attr('disabled',
@@ -315,7 +315,6 @@
                     },
                     error: function(err) {
                         if (err) {
-
                             $('button[type="submit"]').attr('disabled', false);
                             $('button[type="submit"]').removeClass('btn-loading');
 
@@ -454,6 +453,16 @@
 
                 }).then((result) => {
                     if (result.isConfirmed) {
+
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Sedang menghapus data...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        })
+
                         $.ajax({
                             method: 'DELETE',
                             url: action.replace(':id', id),
