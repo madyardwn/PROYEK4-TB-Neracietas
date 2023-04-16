@@ -24,24 +24,35 @@
                                 <textarea class="form-control" id="description" name="description" placeholder="Masukkan Deskripsi" rows="3"></textarea>
                             </div>
 
-                            <!-- cabinet -->
+                            <!-- department -->
                             <div class="form-group mb-3">
-                                <label for="cabinet" class="form-label">Departemen</label>
-                                <select class="form-select" id="department" name="department">
+                                <label for="department" class="form-label">Departemen</label>
+                                <select class="" id="department" name="department">
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        <option value="{{ $department->id }}">
+                                            ({{ $department->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
+                                            {{ $department->cabinet_name }} -
+                                            {{ $department->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
 
                             <!-- users -->
                             <div class="form-group mb-3">
-                                <label for="users" class="form-label">Ketua Pelaksana</label>
-                                <select class="form-select" id="user" name="user">
+                                <label for="user" class="form-label">Ketua Pelaksana</label>
+                                <select class="" id="user" name="user">
                                     <option value="" selected disabled>Pilih Ketua Pelaksana</option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        {{-- make option value based on selected department --}}
+                                        <option value="{{ $user->id }}"
+                                            data-department="{{ $user->department_id }}">
+                                            ({{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
+                                            {{ $user->department_name }} -
+                                            {{ $user->role_name }} -
+                                            {{ $user->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -66,6 +77,9 @@
 
             // inisialisasi datatable
             const table = $('#programs-table');
+
+            const tomselectDepartment = new TomSelect('#department');
+            const tomselectUser = new TomSelect('#user');
 
             // ajax header csrf token
             $ajaxSetup = $.ajaxSetup({
@@ -274,6 +288,25 @@
                 // Assign POST Method
                 $('input[name="_method"]').val('POST');
 
+                // on change department, filter user
+                $(document).on('change', '#department', function() {
+                    const departmentId = $(this).val();
+                    const options = $('#user option');
+
+                    // reset user select
+                    tomselectUser.clear();
+                    tomselectUser.clearOptions();
+
+                    // filter user
+                    options.each(function() {
+                        if ($(this).data('department') == departmentId) {
+                            tomselectUser.addOption({
+                                value: $(this).val(),
+                                text: $(this).text()
+                            });
+                        }
+                    });
+                });
             });
 
             // -------------------------------------------------
@@ -299,8 +332,8 @@
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
                             $('textarea[name="description"]').val(res.description)
-                            $('select[name="department"]').val(res.department_id)
-                            $('select[name="user"]').val(res.user_id)
+                            tomselectDepartment.setValue(res.department_id)
+                            tomselectUser.setValue(res.user_id)
 
                             // Assign Action to Form
                             $('form').attr('action', "{{ route('programs.update', ':id') }}"
@@ -373,16 +406,17 @@
                     }
                 })
             });
+            // -------------------------------------------------
+            // FUNCTION
+            // -------------------------------------------------
+            function resetForm() {
+                tomselectDepartment.clear(true);
+                tomselectUser.clear(true);
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                $('form')[0].reset();
+                $('.action-modal').modal('show')
+            }
         })
-
-        // -------------------------------------------------
-        // FUNCTION
-        // -------------------------------------------------
-        function resetForm() {
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').remove();
-            $('form')[0].reset();
-            $('.action-modal').modal('show')
-        }
     </script>
 @endpush

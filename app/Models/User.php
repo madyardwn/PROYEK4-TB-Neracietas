@@ -55,11 +55,6 @@ class User extends Authenticatable
         return $this->belongsTo(Department::class);
     }
 
-    public function cabinet()
-    {
-        return $this->belongsTo(Cabinet::class);
-    }
-
     public function program()
     {
         return $this->belongsTo(Program::class);

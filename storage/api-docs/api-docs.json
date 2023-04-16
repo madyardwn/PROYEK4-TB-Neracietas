@@ -1,0 +1,70 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Docs",
+        "description": "Dokumentasi API untuk aplikasi mobile Himakom",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/cabinets": {
+            "get": {
+                "summary": "GET cabinets",
+                "description": "Return data cabinets yang akan ditampilkan pada halaman dashboard mobile",
+                "operationId": "a0bb0ac7fe50ff6e3cdd3988523b7d49",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                }
+            }
+        },
+        "/api/departments": {
+            "get": {
+                "summary": "GET departments",
+                "description": "Return data departments yang akan ditampilkan pada halaman departemen mobile",
+                "operationId": "609fe4b236597615a801133f5a5c618d",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                }
+            }
+        },
+        "/api/events": {
+            "get": {
+                "summary": "GET events",
+                "description": "Return data events yang akan ditampilkan pada halaman dashboard mobile",
+                "operationId": "02564acadf6f48e7cf453bb2319ac1b4",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "get": {
+                "summary": "GET users",
+                "description": "Return data users yang akan ditampilkan pada halaman dashboard mobile",
+                "operationId": "c5ccc940808f87add4da9d1db1317605",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -13,8 +13,24 @@ class ProgramController extends Controller
     public function index(ProgramsDataTable $dataTable)
     {
         return $dataTable->render('pages.programs.index', [
-            'departments' => Department::all(),
-            'users' => User::all(),
+            'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
+                ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
+                ->get(),
+            'users' => User::leftJoin('departments', 'users.department_id', '=', 'departments.id')
+                ->leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
+                // join with table roles from spatie/laravel-permission
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->select(
+                    'users.id',
+                    'users.name',
+                    'departments.name as department_name',
+                    'departments.id as department_id',
+                    'cabinets.name as cabinet_name',
+                    'cabinets.is_active as status',
+                    'roles.name as role_name',
+                )
+                ->get(),
         ]);
     }
 
