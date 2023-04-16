@@ -18,8 +18,7 @@ class UserController extends Controller
         return $dataTable->render('pages.users.index', [
             'roles' => Role::all(),
             'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
-                ->where('cabinets.is_active', 1)
-                ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name')
+                ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
                 ->get(),
         ]);
     }

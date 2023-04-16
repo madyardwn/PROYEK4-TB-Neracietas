@@ -22,17 +22,11 @@ class UserRolePermissionSeeder extends Seeder
         ];
 
         $admin = User::create(array_merge([
-            'name' => '',
+            'name' => 'Admin',
             'email' => 'admin@example.com',
         ], $defaultUser));
 
-        $user = User::create(array_merge([
-            'name' => 'madya',
-            'email' => 'madya@example.com',
-        ], $defaultUser));
-
-        $role_admin = Role::create(['name' => 'admin']);
-        $role_user = Role::create(['name' => 'user']);
+        $role_superadmin = Role::create(['name' => 'superadmin']);
 
         $permission = [
             'read',
@@ -45,6 +39,10 @@ class UserRolePermissionSeeder extends Seeder
             'user',
             'role',
             'permission',
+            'cabinet',
+            'department',
+            'event',
+            'program',
         ];
 
         foreach ($models as $model) {
@@ -53,14 +51,8 @@ class UserRolePermissionSeeder extends Seeder
             }
         }
 
-        $role_admin->givePermissionTo(Permission::all());
-        $role_user->givePermissionTo([
-            'read user',
-            'read role',
-            'read permission',
-        ]);
+        $role_superadmin->givePermissionTo(Permission::all());
 
-        $admin->assignRole($role_admin);
-        $user->assignRole($role_user);
+        $admin->assignRole($role_superadmin);
     }
 }

@@ -41,19 +41,10 @@
 
                             <div class="form-group mb-3">
                                 <label for="department" class="form-label">Status</label>
-                                <select class="form-select" id="is_active" name="is_active">
-                                    <option value="" selected disabled>Pilih Status</option>
-                                    @if (old('is_active') == '')
-                                        <option value="1">Aktif</option>
-                                        <option value="0">Tidak Aktif</option>
-                                    @elseif (old('is_active') == 1)
-                                        <option value="1" selected>Aktif</option>
-                                        <option value="0">Tidak Aktif</option>
-                                    @else
-                                        <option value="1">Aktif</option>
-                                        <option value="0" selected>Tidak Aktif</option>
-                                    @endif
-                                </select>
+                                <input type="checkbox" name="is_active" id="is_active" data-toggle="toggle"
+                                    value="1" data-onlabel="<i class='fa fa-check'></i> Aktif"
+                                    data-offlabel="<i class='fa fa-times p-1'></i> Tidak Aktif" data-onstyle="success"
+                                    data-offstyle="secondary" data-width="120" data-height="100%">
                             </div>
                         </div>
                     </div>
@@ -328,7 +319,16 @@
                             $('input[name="name"]').val(res.name)
                             $('textarea[name="description"]').val(res.description)
                             $('input[name="year"]').val(res.year)
-                            $('select[name="is_active"]').val(res.is_active)
+                            if (res.is_active == 1) {
+                                $('input[name="is_active"]')
+                                    .prop('checked', true)
+                                    .parent().removeClass('off')
+                            } else {
+                                $('input[name="is_active"]')
+                                    .prop('checked', false)
+                                    .parent().addClass('off')
+                            }
+
 
                             // Avatar Preview
                             $('.img-holder').attr('src',
@@ -413,6 +413,9 @@
         // FUNCTION
         // -------------------------------------------------
         function resetForm() {
+            $('input[name="is_active"]')
+                .prop('checked', false)
+                .parent().addClass('off');
             $('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').remove();
             $('form')[0].reset();

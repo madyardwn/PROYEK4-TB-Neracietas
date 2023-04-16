@@ -35,7 +35,7 @@
                             <!-- cabinet -->
                             <div class="form-group mb-3">
                                 <label for="cabinet" class="form-label">Kabinet</label>
-                                <select class="form-select" id="cabinet" name="cabinet">
+                                <select class="" id="cabinet" name="cabinet">
                                     <option value="" selected disabled>Pilih Kabinet</option>
                                     @foreach ($cabinets as $cabinet)
                                         <option value="{{ $cabinet->id }}">{{ $cabinet->name }}</option>
@@ -62,7 +62,9 @@
         $(document).ready(function() {
 
             // inisialisasi datatable
-            const table = $('#departments-table')
+            const table = $('#departments-table');
+
+            const tomselect = new TomSelect('#cabinet');
 
             // ajax header csrf token
             $ajaxSetup = $.ajaxSetup({
@@ -314,7 +316,7 @@
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
                             $('textarea[name="description"]').val(res.description)
-                            $('select[name="cabinet"]').val(res.cabinet_id)
+                            tomselect.setValue(res.cabinet_id)
 
                             // Avatar Preview
                             $('.img-holder').attr('src',
@@ -393,16 +395,17 @@
                     }
                 })
             });
-        })
 
-        // -------------------------------------------------
-        // FUNCTION
-        // -------------------------------------------------
-        function resetForm() {
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').remove();
-            $('form')[0].reset();
-            $('.action-modal').modal('show')
-        }
+            // -------------------------------------------------
+            // FUNCTION
+            // -------------------------------------------------
+            function resetForm() {
+                tomselect.clear(true);
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                $('form')[0].reset();
+                $('.action-modal').modal('show')
+            }
+        })
     </script>
 @endpush

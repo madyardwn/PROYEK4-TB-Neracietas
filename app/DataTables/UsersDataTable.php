@@ -41,8 +41,18 @@ class UsersDataTable extends DataTable
             ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
 
             // leftjoin with department
-            ->leftJoin('departments', 'users.department_id', '=', 'departments.id');
+            ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+
+            // exclude users with superadmin role
+            ->whereNotExists(function ($query) {
+                // superadmin role name
+                $query->select(DB::raw(1))
+                    ->from('model_has_roles')
+                    ->whereRaw('model_has_roles.model_id = users.id')
+                    ->where('model_has_roles.role_id', '=', 1);
+            });
     }
+
 
     public function html(): HtmlBuilder
     {
@@ -81,6 +91,8 @@ class UsersDataTable extends DataTable
                 ->addClass('text-center')
                 ->sortable(false)
                 ->searchable(false)
+                ->printable(false)
+                ->exportable(false)
                 ->title(
                     '<input type="checkbox" class="form-check-input" id="checkAll">'
                 )
@@ -122,7 +134,7 @@ class UsersDataTable extends DataTable
                     if (this.departments) {
                         return this.departments
                     } else {
-                        return ``
+                        return `Belum Ada`
                     }
                 }'),
             Column::make('roles.name')
@@ -133,7 +145,7 @@ class UsersDataTable extends DataTable
                     if (this.roles) {
                         return this.roles
                     } else {
-                        return ``
+                        return `Belum Ada`
                     }
                 }'),
             Column::make('year')

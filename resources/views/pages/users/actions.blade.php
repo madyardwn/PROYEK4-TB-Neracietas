@@ -78,7 +78,7 @@
 
                             <div class="form-group mb-3">
                                 <label for="role" class="form-label">Role</label>
-                                <select class="form-select" id="role" name="role">
+                                <select class="" id="role" name="role">
                                     <option value="" selected disabled>Pilih Role</option>
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}">{{ $role->name }}
@@ -89,10 +89,12 @@
 
                             <div class="form-group mb-3">
                                 <label for="department" class="form-label">Departemen</label>
-                                <select class="form-select" id="department" name="department">
+                                <select class="" id="department" name="department">
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}">{{ $department->cabinet_name }} -
+                                        <option value="{{ $department->id }}">
+                                            ({{ $department->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
+                                            {{ $department->cabinet_name }} -
                                             {{ $department->name }}
                                         </option>
                                     @endforeach
@@ -120,6 +122,9 @@
             // inisialisasi datatable
             const table = $('#users-table');
 
+            const tomselectDepartment = new TomSelect('#department');
+            const tomselectRole = new TomSelect('#role');
+
             // -------------------------------------------------
             // AJAX SETUP
             // -------------------------------------------------       
@@ -128,8 +133,6 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-
 
             // -------------------------------------------------
             //  CHECKBOX ACTION
@@ -413,22 +416,10 @@
                                 .replace(':id', res.id))
 
                             // Assign Selected Role
-                            $('form')
-                                .find('#role')
-                                .find('option')
-                                .filter(function() {
-                                    return $(this).val() == res.roles[0].id
-                                })
-                                .prop('selected', true)
+                            tomselectRole.setValue(res.roles[0].id)
 
                             // Assign Selected Department
-                            $('form')
-                                .find('#department')
-                                .find('option')
-                                .filter(function() {
-                                    return $(this).val() == res.department_id
-                                })
-                                .prop('selected', true)
+                            tomselectDepartment.setValue(res.department_id)
                         }
                     },
                 })
@@ -513,16 +504,17 @@
                     }
                 })
             });
+            // -------------------------------------------------
+            // FUNCTION
+            // -------------------------------------------------
+            function resetForm() {
+                tomselectDepartment.clear(true);
+                tomselectRole.clear(true);
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                $('form')[0].reset();
+                $('.action-modal').modal('show')
+            }
         })
-
-        // -------------------------------------------------
-        // FUNCTION
-        // -------------------------------------------------
-        function resetForm() {
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').remove();
-            $('form')[0].reset();
-            $('.action-modal').modal('show')
-        }
     </script>
 @endpush

@@ -24,7 +24,6 @@ class CabinetController extends Controller
             'year' => 'required|numeric',
             'description' => 'required',
             'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'is_active' => 'required',
         ];
 
         $message = [
@@ -45,10 +44,9 @@ class CabinetController extends Controller
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
             ],
-            'is_active' => [
-                'required' => 'Status harus diisi',
-            ],
         ];
+
+
 
         $request->validate($rules, $message);
 
@@ -64,7 +62,7 @@ class CabinetController extends Controller
                 'year' => $request->year,
                 'description' => $request->description,
                 'logo' => $logo,
-                'is_active' => $request->is_active,
+                'is_active' => $request->is_active ?? 0,
             ]);
 
             $this->generateDepartments($cabinet);
@@ -161,7 +159,6 @@ class CabinetController extends Controller
             'year' => 'required|numeric',
             'description' => 'required',
             'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'is_active' => 'required',
         ];
 
         $message = [
@@ -181,9 +178,6 @@ class CabinetController extends Controller
                 'image' => 'Logo harus berupa gambar',
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
-            ],
-            'is_active' => [
-                'required' => 'Status harus diisi',
             ],
         ];
 
@@ -207,7 +201,7 @@ class CabinetController extends Controller
                 'year' => $request->year,
                 'description' => $request->description,
                 'logo' => $logo ?? $cabinet->logo,
-                'is_active' => $request->is_active,
+                'is_active' => $request->is_active ?? 0,
             ]);
 
             $departments = Department::where('cabinet_id', $cabinet->id);
@@ -219,7 +213,7 @@ class CabinetController extends Controller
                 if ($users->count() > 0) {
                     foreach ($users as $user) {
                         $user->update([
-                            'is_active' => $request->is_active,
+                            'is_active' => $request->is_active ?? 0,
                         ]);
                     }
                 }
@@ -230,7 +224,7 @@ class CabinetController extends Controller
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Kabinet gagal diperbarui',
+                'message' => 'Kabinet gagal diperbarui, ' . $e->getMessage(),
             ], 500);
         }
     }

@@ -18,7 +18,7 @@
 
                     <div class="form-group mb-3">
                         <label for="permissions" class="form-label">Permissions</label>
-                        <select class="form-control" id="permissions" name="permissions[]" multiple
+                        <select class="" id="permissions" name="permissions[]" multiple
                             aria-placeholder="Pilih Permissions">
                             @foreach ($permissions as $permission)
                                 <option value="{{ $permission->id }}">{{ $permission->name }}</option>

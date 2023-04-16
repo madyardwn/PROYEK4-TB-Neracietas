@@ -32,7 +32,7 @@
                                     <p><strong>File yang diizinkan: </strong> .csv, .xlsx</p>
                                     <p><strong>Ukuran maksimal file: </strong> 5 MB</p>
                                     <!-- attribute pada file sebagai berikut: -->
-                                    <p><strong>Attribute: </strong> <br>nim, nama, email, password, tahun, </p>
+                                    <p><strong>Kolom: </strong> <br>nim, nama, email, password, tahun, </p>
                                 </div>
                             </div>
                         </div>
