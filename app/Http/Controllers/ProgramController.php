@@ -15,20 +15,19 @@ class ProgramController extends Controller
         return $dataTable->render('pages.programs.index', [
             'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
                 ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
+                ->where('cabinets.is_active', 1)
                 ->get(),
-            'users' => User::leftJoin('departments', 'users.department_id', '=', 'departments.id')
-                ->leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
-                // join with table roles from spatie/laravel-permission
-                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            'users' => User::leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+                ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
                 ->select(
                     'users.id',
                     'users.name',
-                    'departments.name as department_name',
+                    'roles.name as role',
                     'departments.id as department_id',
-                    'cabinets.name as cabinet_name',
-                    'cabinets.is_active as status',
-                    'roles.name as role_name',
+                    'departments.name as department',
+                    'users_departments.is_active as status'
                 )
                 ->get(),
         ]);

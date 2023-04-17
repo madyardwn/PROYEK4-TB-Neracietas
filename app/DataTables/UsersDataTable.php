@@ -32,16 +32,15 @@ class UsersDataTable extends DataTable
                 'users.email',
                 'users.avatar',
                 'users.year',
-                'users.is_active',
                 'roles.name as roles',
                 'departments.name as departments',
+                'users_departments.is_active as status'
             ])
-            // leftjoin with role from spatie
-            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-
             // leftjoin with department
-            ->leftJoin('departments', 'users.department_id', '=', 'departments.id')
+            ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+            // leftjoin with role
+            ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
 
             // exclude users with superadmin role
             ->whereNotExists(function ($query) {
@@ -152,12 +151,12 @@ class UsersDataTable extends DataTable
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Angkatan'),
-            Column::make('is_active')
+            Column::make('users_departments.is_active')
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Status')
                 ->render('function() {
-                    if (this.is_active == 1) {
+                    if (this.status == 1) {
                         return `<span class="badge bg-success">Aktif</span>`
                     } else {
                         return `<span class="badge bg-danger">Tidak Aktif</span>`

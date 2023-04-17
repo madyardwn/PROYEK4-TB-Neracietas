@@ -93,7 +93,6 @@
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">
-                                            ({{ $department->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
                                             {{ $department->cabinet_name }} -
                                             {{ $department->name }}
                                         </option>
@@ -416,7 +415,7 @@
                                 .replace(':id', res.id))
 
                             // Assign Selected Role
-                            tomselectRole.setValue(res.roles[0].id)
+                            tomselectRole.setValue(res.role_id)
 
                             // Assign Selected Department
                             tomselectDepartment.setValue(res.department_id)

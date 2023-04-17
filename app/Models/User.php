@@ -50,9 +50,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function department()
+    public function departments()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsToMany(Department::class, 'users_departments', 'user_id', 'department_id');
     }
 
     public function program()

@@ -31,7 +31,6 @@
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">
-                                            ({{ $department->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
                                             {{ $department->cabinet_name }} -
                                             {{ $department->name }}
                                         </option>
@@ -48,9 +47,8 @@
                                         {{-- make option value based on selected department --}}
                                         <option value="{{ $user->id }}"
                                             data-department="{{ $user->department_id }}">
-                                            ({{ $user->status == 1 ? 'Aktif' : 'Tidak Aktif' }})
-                                            {{ $user->department_name }} -
-                                            {{ $user->role_name }} -
+                                            {{ $user->role }}
+                                            {{ $user->department }} -
                                             {{ $user->name }}
                                         </option>
                                     @endforeach

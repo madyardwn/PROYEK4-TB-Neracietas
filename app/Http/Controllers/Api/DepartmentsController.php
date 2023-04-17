@@ -41,8 +41,8 @@ class DepartmentsController extends Controller
         $departments = $departments->map(function ($department) {
             $department->users = $department->users()
                 ->select(['users.id', 'users.name', 'users.avatar', 'roles.name as role'])
-                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                ->where('users_departments.is_active', 1)
                 ->where('roles.name', 'like', '%Ketua Divisi%')
                 ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%')
                 ->get()

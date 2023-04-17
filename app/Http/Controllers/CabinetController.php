@@ -46,8 +46,6 @@ class CabinetController extends Controller
             ],
         ];
 
-
-
         $request->validate($rules, $message);
 
         try {
@@ -208,14 +206,8 @@ class CabinetController extends Controller
 
             if ($departments->count() > 0) {
                 // Update user active status if department exists
-                $users = User::whereIn('department_id', $departments->pluck('id'))->get();
-
-                if ($users->count() > 0) {
-                    foreach ($users as $user) {
-                        $user->update([
-                            'is_active' => $request->is_active ?? 0,
-                        ]);
-                    }
+                foreach ($departments->get() as $department) {
+                    $department->users()->update(['is_active' => $request->is_active ?? 0]);
                 }
             }
 

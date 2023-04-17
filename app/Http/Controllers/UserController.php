@@ -19,6 +19,7 @@ class UserController extends Controller
             'roles' => Role::all(),
             'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
                 ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
+                ->where('cabinets.is_active', 1)
                 ->get(),
         ]);
     }
@@ -99,19 +100,18 @@ class UserController extends Controller
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
-                'department_id' => $request->department ?? null,
             ]);
 
+            // attach role
             $user->assignRole(Role::findOrFail(request()->role));
 
-            if ($request->department) {
-                $department = Department::find($request->department);
-                $cabinet = Cabinet::find($department->cabinet_id);
+            // attach department
+            $user->departments()->attach($request->department, ['position' => $user->roles->first()->id]);
 
-                $user->update([
-                    'is_active' => $cabinet->is_active ? 1 : 0,
-                ]);
-            }
+            // update status users_departments
+            $department = Department::find($request->department);
+            $cabinet = Cabinet::find($department->cabinet_id);
+            $user->departments()->updateExistingPivot($request->department, ['is_active' => $cabinet->is_active]);
 
             return response()->json([
                 'message' => 'User ' . $user->name . ' berhasil ditambahkan',
@@ -127,8 +127,23 @@ class UserController extends Controller
     public function edit(User $user): User
     {
         return $user
-            ->load('roles')
-            ->load('department');
+            ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+            ->select(
+                'users.id',
+                'users.na',
+                'users.nim',
+                'users.nama_bagus',
+                'users.year',
+                'users.name',
+                'users.email',
+                'users.avatar',
+                'users_departments.department_id',
+                'users_departments.position as role_id',
+                'users_departments.is_active',
+            )
+            ->where('users.id', $user->id)
+            ->first();
     }
 
 
@@ -209,24 +224,17 @@ class UserController extends Controller
                 'nim' => $request->nim,
                 'name' => $request->name,
                 'email' => $request->email,
-                'year' => $request->year,
-
-                'avatar' => $path ?? $user->avatar ?? null,
-                'na' => $request->na ?? $user->na ?? null,
-                'nama_bagus' => $request->nama_bagus ?? $user->nama_bagus ?? null,
-                'department_id' => $request->department ?? $user->department_id ?? null,
+                'avatar' => $path ?? $user->avatar,
+                'na' => $request->na ?? null,
+                'nama_bagus' => $request->nama_bagus ?? null,
+                'year' => $request->year ?? null,
             ]);
 
+            // attach role
             $user->syncRoles(Role::findOrFail(request()->role));
 
-            if ($request->department) {
-                $department = Department::find($request->department);
-                $cabinet = Cabinet::find($department->cabinet_id);
-
-                $user->update([
-                    'is_active' => $cabinet->is_active ? 1 : 0,
-                ]);
-            }
+            // sync department
+            $user->departments()->sync([$request->department => ['position' => $user->roles->first()->id]]);
 
             return response()->json([
                 'message' => 'User ' . $user->name . ' berhasil diubah',
