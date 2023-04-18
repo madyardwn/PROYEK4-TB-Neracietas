@@ -31,11 +31,25 @@ class UsersController extends Controller
         $users = User::query()
             ->select([
                 'users.name',
-                'roles.name as role',
+                DB::raw(
+                    // "IF(roles.name = 'Ketua Himpunan', roles.name, IF(roles.name = 'Wakil Ketua Himpunan', roles.name, IF(roles.name = 'Bendahara', roles.name, IF(roles.name = 'Ketua', CONCAT(roles.name, ' ', departments.short_name), IF(roles.name = 'Wakil', CONCAT(roles.name, ' ', departments.short_name), roles.name))))) as role"
+                    // use if and else if
+                    "IF(roles.name = 'Ketua Himpunan' OR
+                        roles.name = 'Wakil Ketua Himpunan' OR
+                        roles.name = 'Bendahara', 
+                        roles.name,
+                        IF(roles.name = 'Ketua Divisi' OR
+                            roles.name = 'Wakil Ketua Divisi', 
+                            CONCAT(roles.name, ' ', departments.name),
+                            roles.name
+                        )
+                    ) as role"
+                ),
                 DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
             ])
             ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
             ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
             ->where(function ($query) {
                 $query->where('roles.name', 'like', '%Ketua Himpunan%')
                     ->orWhere('roles.name', 'like', '%Wakil Ketua Himpunan%')
