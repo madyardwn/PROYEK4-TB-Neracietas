@@ -30,6 +30,7 @@ class DepartmentsController extends Controller
             ->select([
                 'departments.id',
                 'departments.name',
+                'departments.short_name',
                 'departments.description',
                 'cabinets.name as cabinet_name',
                 DB::raw("CONCAT('" . asset('/storage') . "/', departments.logo) as logo"),

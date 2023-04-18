@@ -29,6 +29,7 @@ class DepartmentsDataTable extends DataTable
             ->select([
                 'departments.id',
                 'departments.name',
+                'departments.short_name',
                 'departments.logo',
                 'departments.description',
                 'cabinets.name as cabinet_name',
@@ -85,6 +86,8 @@ class DepartmentsDataTable extends DataTable
                 ->addClass('text-center'),
             Column::make('name')->title('Nama Departemen')
                 ->width(200),
+            Column::make('short_name')->title('Singkatan')
+                ->width(100),
             Column::make('logo')->title('Logo')->render('function() {
                 if (this.logo != null) {
                     return `<img src="' . asset('storage') . '/${this.logo}" width="50" height="50" />`

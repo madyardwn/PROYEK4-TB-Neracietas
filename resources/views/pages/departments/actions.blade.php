@@ -26,6 +26,13 @@
                                     value="{{ old('name') }}" placeholder="Masukkan Nama" max="50">
                             </div>
 
+                            <!-- short_name -->
+                            <div class="form-group mb-3">
+                                <label for="short_name" class="form-label">Nama Singkat</label>
+                                <input type="text" class="form-control" id="short_name" name="short_name"
+                                    value="{{ old('short_name') }}" placeholder="Masukkan Nama Singkat" max="50">
+                            </div>
+
                             <!-- description -->
                             <div class="form-group mb-3">
                                 <label for="description" class="form-label">Deskripsi</label>
@@ -315,6 +322,7 @@
                             // Assign Value to Form
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
+                            $('input[name="short_name"]').val(res.short_name)
                             $('textarea[name="description"]').val(res.description)
                             tomselect.setValue(res.cabinet_id)
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('name');
+            $table->string('short_name');
             $table->string('logo')->nullable();
             $table->string('description')->nullable();
             $table->foreignId('cabinet_id')->constrained('cabinets')->onDelete('cascade');

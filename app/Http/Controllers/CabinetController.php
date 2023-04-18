@@ -80,46 +80,55 @@ class CabinetController extends Controller
         $departments = [
             [
                 'name' => 'Biro Administrasi & Sekretariat',
+                'short_name' => 'Adkes',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Biro Administrasi & Sekretariat.png',
                 'description' => 'Biro Administrasi & Sekretariat bertanggung jawab atas segala urusan administrasi dan keuangan Himpunan Mahasiswa Teknik Komputer Polban. Selain itu, Biro Administrasi & Sekretariat juga bertanggung jawab atas segala urusan keuangan Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Biro Keuangan',
+                'short_name' => 'Keuangan',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Biro Keuangan.png',
                 'description' => 'Biro Keuangan bertanggung jawab atas segala urusan keuangan Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Biro Kewirausahaan',
+                'short_name' => 'Kewirausahaan',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Biro Kewirausahaan.png',
                 'description' => 'Biro Kewirausahaan bertanggung jawab atas segala urusan kewirausahaan Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Departemen Luar Himpunan',
+                'short_name' => 'Luhim',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Biro Luar Himpunan.png',
                 'description' => 'Biro Luar Himpunan bertanggung jawab atas segala urusan luar Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Departemen Riset, Pendidikan, dan Teknologi',
+                'short_name' => 'Risetdikti',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Riset, Pendidikan, dan Teknologi.png',
                 'description' => 'Departemen Riset, Pendidikan, dan Teknologi bertanggung jawab atas segala urusan riset, pendidikan, dan teknologi Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Departemen Pengembangan Sumber Daya Anggota',
+                'short_name' => 'PSDA',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Pengembangan Sumber Daya Anggota.png',
                 'description' => 'Departemen Pengembangan Sumber Daya Anggota bertanggung jawab atas segala urusan pengembangan sumber daya anggota Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Departemen Komunikasi & Informasi',
+                'short_name' => 'Kominfo',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Komunikasi & Informasi.png',
                 'description' => 'Departemen Komunikasi & Informasi bertanggung jawab atas segala urusan komunikasi dan informasi Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Unit Teknologi',
+                'short_name' => 'Tekno',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Unit Teknologi.png',
                 'description' => 'Unit Teknologi bertanggung jawab atas segala urusan teknologi Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
             [
                 'name' => 'Departemen Seni & Olahraga',
+                'short_name' => 'Senor',
                 'logo' => 'cabinets/logo/2021-06-01-10-00-00_Departemen Seni & Olahraga.png',
                 'description' => 'Departemen Seni & Olahraga bertanggung jawab atas segala urusan seni dan olahraga Himpunan Mahasiswa Teknik Komputer Polban.',
             ],
@@ -129,6 +138,7 @@ class CabinetController extends Controller
             foreach ($departments as $department) {
                 Department::create([
                     'name' => $department['name'],
+                    'short_name' => $department['short_name'],
                     // 'description' => $department['description'],
                     'cabinet_id' => $cabinet->id,
                 ]);

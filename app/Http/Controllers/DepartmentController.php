@@ -26,6 +26,7 @@ class DepartmentController extends Controller
             'description' => 'required',
             'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'cabinet' => 'required',
+            'short_name' => 'required|max:10',
         ];
 
         $message = [
@@ -45,6 +46,10 @@ class DepartmentController extends Controller
             'cabinet' => [
                 'required' => 'Kabinet harus diisi',
             ],
+            'short_name' => [
+                'required' => 'Nama singkat harus diisi',
+                'max' => 'Nama singkat maksimal 10 karakter',
+            ],
         ];
 
         $request->validate($rules, $message);
@@ -60,6 +65,7 @@ class DepartmentController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'logo' => $logo,
+                'short_name' => $request->short_name,
                 'cabinet_id' => $request->cabinet,
             ]);
 
@@ -86,6 +92,7 @@ class DepartmentController extends Controller
             'description' => 'required',
             'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
             'cabinet' => 'required',
+            'short_name' => 'required|max:10',
         ];
 
         $message = [
@@ -104,6 +111,10 @@ class DepartmentController extends Controller
             ],
             'cabinet' => [
                 'required' => 'Kabinet harus diisi',
+            ],
+            'short_name' => [
+                'required' => 'Nama singkat harus diisi',
+                'max' => 'Nama singkat maksimal 10 karakter',
             ],
         ];
 
@@ -128,6 +139,7 @@ class DepartmentController extends Controller
                 'description' => $request->description,
                 'logo' => $logo ?? $department->logo,
                 'cabinet_id' => $request->cabinet,
+                'short_name' => $request->short_name,
             ]);
 
             return response()->json([
