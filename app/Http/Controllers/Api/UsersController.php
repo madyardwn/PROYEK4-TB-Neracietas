@@ -32,18 +32,14 @@ class UsersController extends Controller
             ->select([
                 'users.name',
                 DB::raw(
-                    // "IF(roles.name = 'Ketua Himpunan', roles.name, IF(roles.name = 'Wakil Ketua Himpunan', roles.name, IF(roles.name = 'Bendahara', roles.name, IF(roles.name = 'Ketua', CONCAT(roles.name, ' ', departments.short_name), IF(roles.name = 'Wakil', CONCAT(roles.name, ' ', departments.short_name), roles.name))))) as role"
-                    // use if and else if
-                    "IF(roles.name = 'Ketua Himpunan' OR
-                        roles.name = 'Wakil Ketua Himpunan' OR
-                        roles.name = 'Bendahara', 
-                        roles.name,
-                        IF(roles.name = 'Ketua Divisi' OR
-                            roles.name = 'Wakil Ketua Divisi', 
-                            CONCAT(roles.name, ' ', departments.name),
-                            roles.name
-                        )
-                    ) as role"
+                    "
+                        CASE
+                            WHEN roles.name IN ('Ketua Himpunan', 'Wakil Ketua Himpunan', 'Bendahara') THEN roles.name
+                            WHEN roles.name = 'Ketua Divisi' THEN CONCAT('Ketua', ' ', departments.name)
+                            WHEN roles.name = 'Wakil Divisi' THEN CONCAT('Wakil Ketua', ' ', departments.name)
+                            ELSE roles.name
+                        END as role
+                    "
                 ),
                 DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
             ])
