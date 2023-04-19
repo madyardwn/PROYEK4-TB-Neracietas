@@ -34,9 +34,16 @@ class UsersController extends Controller
                 DB::raw(
                     "
                         CASE
-                            WHEN roles.name IN ('Ketua Himpunan', 'Wakil Ketua Himpunan', 'Bendahara') THEN roles.name
-                            WHEN roles.name = 'Ketua Divisi' THEN CONCAT('Ketua', ' ', departments.name)
-                            WHEN roles.name = 'Wakil Divisi' THEN CONCAT('Wakil Ketua', ' ', departments.name)
+                            WHEN roles.name IN (
+                                'Ketua Himpunan', 
+                                'Wakil Ketua Himpunan', 
+                                'Bendahara', 
+                                'Sekretaris'
+                                ) THEN roles.name
+                            WHEN roles.name = 'Ketua Divisi' 
+                                THEN CONCAT('Ketua', ' ', departments.name)
+                            WHEN roles.name = 'Wakil Ketua Divisi' 
+                                THEN CONCAT('Wakil Ketua', ' ', departments.name)
                             ELSE roles.name
                         END as role
                     "
@@ -55,7 +62,6 @@ class UsersController extends Controller
             })
             ->where('users_departments.is_active', 1)
             ->get();
-
 
         // return response
         return response()->json([

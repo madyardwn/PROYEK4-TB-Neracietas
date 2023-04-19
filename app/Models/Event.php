@@ -17,6 +17,7 @@ class Event extends Model
         'time',
         'location',
         'poster',
+        'type',
         'is_active',
     ];
 }

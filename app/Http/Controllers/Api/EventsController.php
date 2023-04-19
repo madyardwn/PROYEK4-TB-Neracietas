@@ -13,7 +13,7 @@ class EventsController extends Controller
      * @OA\Get(
      *     path="/api/events",
      *     summary="GET events",
-     *     description="Return data events yang akan ditampilkan pada halaman dashboard mobile",
+     *     description="Return data events yang akan ditampilkan pada halaman events mobile",
      *     @OA\Response(
      *         response=200,
      *         description="Success"
@@ -30,6 +30,11 @@ class EventsController extends Controller
         $events = Event::query()
             ->select([
                 DB::raw("CONCAT('" . asset('/storage') . "/', events.poster) as poster"),
+                'events.name',
+                'events.description',
+                'events.date',
+                'events.location',
+                'events.time',
             ])
             ->where('events.is_active', 1)
             ->get();

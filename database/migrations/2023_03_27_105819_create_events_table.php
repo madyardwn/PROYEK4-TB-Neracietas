@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('poster')->nullable();
             $table->date('date');
             $table->time('time');
+            $table->enum('type', [
+                'proker',
+                'kegiatan',
+                'lomba',
+            ])->default('kegiatan');
             $table->boolean('is_active')->default(true);
 
             $table->timestamps();

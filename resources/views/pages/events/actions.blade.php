@@ -33,6 +33,17 @@
                                 <textarea class="form-control" id="description" name="description" placeholder="Masukkan Deskripsi" rows="3"></textarea>
                             </div>
 
+                            {{-- type --}}
+                            <div class="form-group mb-3">
+                                <label for="type" class="form-label">Tipe</label>
+                                <select class="" id="type" name="type">
+                                    <option value="" disabled selected>Pilih Tipe</option>
+                                    <option value="proker">Proker</option>
+                                    <option value="kegiatan">Kegiatan</option>
+                                    <option value="lomba">Lomba</option>
+                                </select>
+                            </div>
+
                             <!-- location -->
                             <div class="form-group mb-3">
                                 <label for="location" class="form-label">Lokasi</label>
@@ -87,6 +98,8 @@
             // ------------------------------------------------- 
             // array for store id
             const ids = [];
+
+            const tomselectType = new TomSelect('#type');
 
             // table on refresh or change page, disable button delete and uncheck all checkbox
             table.on('draw.dt', function() {
@@ -325,6 +338,7 @@
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
                             $('textarea[name="description"]').val(res.description)
+                            tomselectType.setValue(res.type)
                             $('input[name="date"]').val(res.date)
                             $('input[name="time"]').val(res.time)
                             $('input[name="location"]').val(res.location)
@@ -406,16 +420,16 @@
                     }
                 })
             });
+            // -------------------------------------------------
+            // FUNCTION
+            // -------------------------------------------------
+            function resetForm() {
+                tomselectType.clear();
+                $('.is-invalid').removeClass('is-invalid');
+                $('.invalid-feedback').remove();
+                $('form')[0].reset();
+                $('.action-modal').modal('show')
+            }
         })
-
-        // -------------------------------------------------
-        // FUNCTION
-        // -------------------------------------------------
-        function resetForm() {
-            $('.is-invalid').removeClass('is-invalid');
-            $('.invalid-feedback').remove();
-            $('form')[0].reset();
-            $('.action-modal').modal('show')
-        }
     </script>
 @endpush

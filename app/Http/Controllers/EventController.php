@@ -23,6 +23,7 @@ class EventController extends Controller
             'poster' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
+            'type' => 'required|in:proker,kegiatan,lomba',
             'location' => 'required',
         ];
 
@@ -46,6 +47,10 @@ class EventController extends Controller
             'time' => [
                 'required' => 'Waktu harus diisi',
             ],
+            'type' => [
+                'required' => 'Tipe harus diisi',
+                'in' => 'Tipe harus berupa proker, kegiatan, atau lomba',
+            ],
             'location' => [
                 'required' => 'Lokasi harus diisi',
             ],
@@ -67,6 +72,7 @@ class EventController extends Controller
                 'date' => $request->date,
                 'time' => $request->time,
                 'location' => $request->location,
+                'type' => $request->type,
             ]);
 
             return response()->json([
@@ -93,6 +99,7 @@ class EventController extends Controller
             'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
+            'type' => 'required|in:proker,kegiatan,lomba',
             'location' => 'required',
         ];
 
@@ -117,6 +124,10 @@ class EventController extends Controller
             ],
             'location' => [
                 'required' => 'Lokasi harus diisi',
+            ],
+            'type' => [
+                'required' => 'Tipe harus diisi',
+                'in' => 'Tipe harus berupa proker, kegiatan, atau lomba',
             ],
         ];
 
@@ -143,6 +154,7 @@ class EventController extends Controller
                 'date' => $request->date,
                 'time' => $request->time,
                 'location' => $request->location,
+                'type' => $request->type,
             ]);
 
             return response()->json([

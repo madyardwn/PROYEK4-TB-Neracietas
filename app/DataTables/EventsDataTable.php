@@ -30,6 +30,7 @@ class EventsDataTable extends DataTable
                 'events.id',
                 'events.name',
                 'events.description',
+                'events.type',
                 'events.date',
                 'events.time',
                 'events.location',
@@ -82,6 +83,7 @@ class EventsDataTable extends DataTable
                 return `<img src="/storage/${this.poster}" class="img-fluid" width="100px">`;
             }'),
             Column::make('description')->title('Deksripsi'),
+            Column::make('type')->title('Tipe'),
             Column::make('location')->title('Lokasi'),
             Column::make('date')->title('Tanggal'),
             Column::make('time')->title('Jam'),
