@@ -39,7 +39,7 @@
         "/api/events": {
             "get": {
                 "summary": "GET events",
-                "description": "Return data events yang akan ditampilkan pada halaman dashboard mobile",
+                "description": "Return data events yang akan ditampilkan pada halaman events mobile",
                 "operationId": "02564acadf6f48e7cf453bb2319ac1b4",
                 "responses": {
                     "200": {
