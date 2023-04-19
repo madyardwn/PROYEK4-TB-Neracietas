@@ -29,6 +29,7 @@ class EventsController extends Controller
         // get all events
         $events = Event::query()
             ->select([
+                'events.id',
                 DB::raw("CONCAT('" . asset('/storage') . "/', events.poster) as poster"),
                 'events.name',
                 'events.description',
