@@ -35,6 +35,7 @@ class EventsController extends Controller
                 'events.date',
                 'events.location',
                 'events.time',
+                'events.type'
             ])
             ->where('events.is_active', 1)
             ->get();
