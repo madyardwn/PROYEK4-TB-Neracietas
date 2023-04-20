@@ -23,7 +23,7 @@ class EventController extends Controller
             'poster' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
-            'type' => 'required|in:proker,kegiatan,lomba',
+            'type' => 'required|in:proker,kegiatan,lomba,pekerjaan',
             'location' => 'required',
         ];
 
@@ -49,7 +49,7 @@ class EventController extends Controller
             ],
             'type' => [
                 'required' => 'Tipe harus diisi',
-                'in' => 'Tipe harus berupa proker, kegiatan, atau lomba',
+                'in' => 'Tipe harus berupa proker, kegiatan, lomba, atau pekerjaan',
             ],
             'location' => [
                 'required' => 'Lokasi harus diisi',
@@ -99,7 +99,7 @@ class EventController extends Controller
             'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'date' => 'required',
             'time' => 'required',
-            'type' => 'required|in:proker,kegiatan,lomba',
+            'type' => 'required|in:proker,kegiatan,lomba,pekerjaan',
             'location' => 'required',
         ];
 
@@ -127,7 +127,7 @@ class EventController extends Controller
             ],
             'type' => [
                 'required' => 'Tipe harus diisi',
-                'in' => 'Tipe harus berupa proker, kegiatan, atau lomba',
+                'in' => 'Tipe harus berupa proker, kegiatan, lomba, atau pekerjaan',
             ],
         ];
 

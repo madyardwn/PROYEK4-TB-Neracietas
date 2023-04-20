@@ -41,6 +41,7 @@
                                     <option value="proker">Proker</option>
                                     <option value="kegiatan">Kegiatan</option>
                                     <option value="lomba">Lomba</option>
+                                    <option value="pekerjaan">Pekerjaan</option>
                                 </select>
                             </div>
 
