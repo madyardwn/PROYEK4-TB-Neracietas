@@ -8,8 +8,11 @@
     "paths": {
         "/api/cabinets": {
             "get": {
+                "tags": [
+                    "Cabinets"
+                ],
                 "summary": "GET cabinets",
-                "description": "Return data cabinets yang akan ditampilkan pada halaman dashboard mobile",
+                "description": "Return data departments yang akan ditampilkan pada halaman cabinets mobile",
                 "operationId": "a0bb0ac7fe50ff6e3cdd3988523b7d49",
                 "responses": {
                     "200": {
@@ -18,11 +21,19 @@
                     "403": {
                         "description": "Access Denied"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/departments": {
             "get": {
+                "tags": [
+                    "Departments"
+                ],
                 "summary": "GET departments",
                 "description": "Return data departments yang akan ditampilkan pada halaman departemen mobile",
                 "operationId": "609fe4b236597615a801133f5a5c618d",
@@ -33,11 +44,19 @@
                     "403": {
                         "description": "Access Denied"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/events": {
             "get": {
+                "tags": [
+                    "Events"
+                ],
                 "summary": "GET events",
                 "description": "Return data events yang akan ditampilkan pada halaman events mobile",
                 "operationId": "02564acadf6f48e7cf453bb2319ac1b4",
@@ -48,11 +67,19 @@
                     "403": {
                         "description": "Access Denied"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/users": {
             "get": {
+                "tags": [
+                    "Users"
+                ],
                 "summary": "GET users",
                 "description": "Return data users yang akan ditampilkan pada halaman dashboard mobile",
                 "operationId": "c5ccc940808f87add4da9d1db1317605",
@@ -63,7 +90,91 @@
                     "403": {
                         "description": "Access Denied"
                     }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login",
+                "description": "Autentikasi user dan mengembalikan token",
+                "operationId": "3673edffcdc18c06ac5aef5e2219d774",
+                "requestBody": {
+                    "description": "User credentials",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
                 }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout",
+                "description": "Logout user",
+                "operationId": "5e29d25372d83a1ff5c3165a43f3302d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "name": "Authorization Control",
+                "scheme": "bearer"
             }
         }
     }

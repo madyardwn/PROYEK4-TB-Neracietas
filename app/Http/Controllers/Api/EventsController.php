@@ -14,11 +14,13 @@ class EventsController extends Controller
      *     path="/api/events",
      *     summary="GET events",
      *     description="Return data events yang akan ditampilkan pada halaman events mobile",
-     *     @OA\Response(
+     *     tags={"Events"},
+     *     security={{"sanctum":{}}},
+     * @OA\Response(
      *         response=200,
      *         description="Success"
      *     ),
-     *     @OA\Response(
+     * @OA\Response(
      *         response=403,
      *         description="Access Denied"
      *     )
@@ -28,23 +30,27 @@ class EventsController extends Controller
     {
         // get all events
         $events = Event::query()
-            ->select([
-                'events.id',
-                DB::raw("CONCAT('" . asset('/storage') . "/', events.poster) as poster"),
-                'events.name',
-                'events.description',
-                'events.date',
-                'events.time',
-                'events.location',
-                'events.type'
-            ])
+            ->select(
+                [
+                    'events.id',
+                    DB::raw("CONCAT('" . asset('/storage') . "/', events.poster) as poster"),
+                    'events.name',
+                    'events.description',
+                    'events.date',
+                    'events.time',
+                    'events.location',
+                    'events.type'
+                ]
+            )
             ->where('events.is_active', 1)
             ->get();
 
         // return response
-        return response()->json([
-            'status' => 'success',
-            'data' => $events
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'data' => $events
+            ]
+        );
     }
 }

@@ -14,11 +14,13 @@ class DepartmentsController extends Controller
      *     path="/api/departments",
      *     summary="GET departments",
      *     description="Return data departments yang akan ditampilkan pada halaman departemen mobile",
-     *     @OA\Response(
+     *     tags={"Departments"},
+     *     security={{"sanctum":{}}},
+     * @OA\Response(
      *         response=200,
      *         description="Success"
      *     ),
-     *     @OA\Response(
+     * @OA\Response(
      *         response=403,
      *         description="Access Denied"
      *     )
@@ -27,52 +29,64 @@ class DepartmentsController extends Controller
     public function index()
     {
         $departments = Department::query()
-            ->select([
-                'departments.id',
-                'departments.name',
-                'departments.short_name',
-                'departments.description',
-                'cabinets.name as cabinet_name',
-                DB::raw("CONCAT('" . asset('/storage') . "/', departments.logo) as logo"),
-            ])
+            ->select(
+                [
+                    'departments.id',
+                    'departments.name',
+                    'departments.short_name',
+                    'departments.description',
+                    'cabinets.name as cabinet_name',
+                    DB::raw("CONCAT('" . asset('/storage') . "/', departments.logo) as logo"),
+                ]
+            )
             ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id')
             ->where('cabinets.is_active', 1)
             ->get();
 
-        $departments = $departments->map(function ($department) {
-            $department->users = $department->users()
-                ->select(['users.id', 'users.name', 'users.avatar', 'roles.name as role'])
-                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
-                ->where('users_departments.is_active', 1)
-                ->where('roles.name', 'like', '%Ketua Divisi%')
-                ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%')
-                ->get()
-                ->map(function ($user) {
-                    $user->avatar = asset('/storage/' . $user->avatar);
-                    return $user;
-                });
-            return $department;
-        });
+        $departments = $departments->map(
+            function ($department) {
+                $department->users = $department->users()
+                    ->select(['users.id', 'users.name', 'users.avatar', 'roles.name as role'])
+                    ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                    ->where('users_departments.is_active', 1)
+                    ->where('roles.name', 'like', '%Ketua Divisi%')
+                    ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%')
+                    ->get()
+                    ->map(
+                        function ($user) {
+                            $user->avatar = asset('/storage/' . $user->avatar);
+                            return $user;
+                        }
+                    );
+                return $department;
+            }
+        );
 
         // programs
-        $departments = $departments->map(function ($department) {
-            $department->programs = $department->programs()
-                ->select([
-                    'programs.id',
-                    'programs.name',
-                    'programs.description',
-                    'programs.progress',
-                    'users.name as ketua_pelaksana'
-                ])
-                ->leftJoin('users', 'users.id', '=', 'programs.user_id')
-                ->get();
-            return $department;
-        });
+        $departments = $departments->map(
+            function ($department) {
+                $department->programs = $department->programs()
+                    ->select(
+                        [
+                            'programs.id',
+                            'programs.name',
+                            'programs.description',
+                            'programs.progress',
+                            'users.name as ketua_pelaksana'
+                        ]
+                    )
+                    ->leftJoin('users', 'users.id', '=', 'programs.user_id')
+                    ->get();
+                return $department;
+            }
+        );
 
         // return response
-        return response()->json([
-            'status' => 'success',
-            'data' => $departments
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'data' => $departments
+            ]
+        );
     }
 }

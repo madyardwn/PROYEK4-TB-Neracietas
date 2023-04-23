@@ -15,11 +15,13 @@ class UsersController extends Controller
      *     path="/api/users",
      *     summary="GET users",
      *     description="Return data users yang akan ditampilkan pada halaman dashboard mobile",
-     *     @OA\Response(
+     *     tags={"Users"},
+     *     security={{"sanctum":{}}},
+     * @OA\Response(
      *         response=200,
      *         description="Success"
      *     ),
-     *     @OA\Response(
+     * @OA\Response(
      *         response=403,
      *         description="Access Denied"
      *     )
@@ -29,44 +31,50 @@ class UsersController extends Controller
     {
         // get all users
         $users = User::query()
-            ->select([
-                'users.name',
-                DB::raw(
-                    "
+            ->select(
+                [
+                    'users.name',
+                    DB::raw(
+                        "
                         CASE
                             WHEN roles.name IN (
-                                'Ketua Himpunan', 
-                                'Wakil Ketua Himpunan', 
-                                'Bendahara', 
+                                'Ketua Himpunan',
+                                'Wakil Ketua Himpunan',
+                                'Bendahara',
                                 'Sekretaris'
                                 ) THEN roles.name
-                            WHEN roles.name = 'Ketua Divisi' 
+                            WHEN roles.name = 'Ketua Divisi'
                                 THEN CONCAT('Ketua', ' ', departments.name)
-                            WHEN roles.name = 'Wakil Ketua Divisi' 
+                            WHEN roles.name = 'Wakil Ketua Divisi'
                                 THEN CONCAT('Wakil Ketua', ' ', departments.name)
                             ELSE roles.name
                         END as role
                     "
-                ),
-                DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
-            ])
+                    ),
+                    DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                ]
+            )
             ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
             ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
             ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
-            ->where(function ($query) {
-                $query->where('roles.name', 'like', '%Ketua Himpunan%')
-                    ->orWhere('roles.name', 'like', '%Wakil Ketua Himpunan%')
-                    ->orWhere('roles.name', 'like', '%Bendahara%')
-                    ->orWhere('roles.name', 'like', '%Ketua%')
-                    ->orWhere('roles.name', 'like', '%Wakil%');
-            })
+            ->where(
+                function ($query) {
+                    $query->where('roles.name', 'like', '%Ketua Himpunan%')
+                        ->orWhere('roles.name', 'like', '%Wakil Ketua Himpunan%')
+                        ->orWhere('roles.name', 'like', '%Bendahara%')
+                        ->orWhere('roles.name', 'like', '%Ketua%')
+                        ->orWhere('roles.name', 'like', '%Wakil%');
+                }
+            )
             ->where('users_departments.is_active', 1)
             ->get();
 
         // return response
-        return response()->json([
-            'status' => 'success',
-            'data' => $users
-        ]);
+        return response()->json(
+            [
+                'status' => 'success',
+                'data' => $users
+            ]
+        );
     }
 }
