@@ -44,7 +44,7 @@ class LoginController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/login",
+     *     path="/api/loginApi",
      *     summary="Login",
      *     description="Autentikasi user dan mengembalikan token",
      *     tags={"Authentication"},
@@ -70,7 +70,7 @@ class LoginController extends Controller
      *     )
      * )
      */
-    public function login(Request $request)
+    public function loginApi(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
@@ -91,11 +91,11 @@ class LoginController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/logout",
+     *     path="/api/logoutApi",
      *     summary="Logout",
      *     description="Logout user",
      *     tags={"Authentication"},
-     *     security={{"sanctum":{}}},
+     *     security={{"sanctum": {}}},
      * @OA\Response(
      *         response=200,
      *         description="Successful operation"
@@ -107,10 +107,9 @@ class LoginController extends Controller
      *  )
      * )
      */
-    public function logout(Request $request)
+    public function logoutApi(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
-        return response()->json(['message' => 'Logged out'], 200);
+        return response()->json(['message' => 'Logged out.'], 200);
     }
 }

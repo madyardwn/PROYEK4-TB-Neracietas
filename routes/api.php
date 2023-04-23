@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // api login
-Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+Route::post('/loginApi', [App\Http\Controllers\Auth\LoginController::class, 'loginApi']);
 
 // should be protected by auth:sanctum
 Route::middleware('auth:sanctum')->group(
@@ -33,7 +33,13 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/departments', [App\Http\Controllers\Api\DepartmentsController::class, 'index']);
 
         // api logout
-        Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout']);
+        Route::post(
+            '/logoutApi',
+            function (Request $request) {
+                $request->user()->currentAccessToken()->delete();
+                return response()->json(['message' => 'Logged out.'], 200);
+            }
+        );
     }
 );
 

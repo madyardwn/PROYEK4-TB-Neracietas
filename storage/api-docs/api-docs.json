@@ -98,14 +98,14 @@
                 ]
             }
         },
-        "/api/login": {
+        "/api/loginApi": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Login",
                 "description": "Autentikasi user dan mengembalikan token",
-                "operationId": "3673edffcdc18c06ac5aef5e2219d774",
+                "operationId": "5a8b60d1273fdaa798460c9a585719f5",
                 "requestBody": {
                     "description": "User credentials",
                     "required": true,
@@ -145,14 +145,14 @@
                 }
             }
         },
-        "/api/logout": {
+        "/api/logoutApi": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Logout",
                 "description": "Logout user",
-                "operationId": "5e29d25372d83a1ff5c3165a43f3302d",
+                "operationId": "60739dcf4867e33ca373fbc907872c32",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
