@@ -17,22 +17,26 @@ class CabinetsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('No', function ($cabinet) {
-                return $this->no++;
-            });
+            ->addColumn(
+                'No', function ($cabinet) {
+                    return $this->no++;
+                }
+            );
     }
 
     public function query(Cabinet $model): QueryBuilder
     {
         return $model
-            ->select([
+            ->select(
+                [
                 'cabinets.id',
                 'cabinets.name',
                 'cabinets.logo',
                 'cabinets.year',
                 'cabinets.description',
                 'cabinets.is_active',
-            ]);
+                ]
+            );
     }
 
     public function html(): HtmlBuilder
@@ -43,7 +47,8 @@ class CabinetsDataTable extends DataTable
             ->minifiedAjax()
             // order by year
             ->orderBy(4)
-            ->buttons([
+            ->buttons(
+                [
                 Button::make('')
                     ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
                     ->addClass('btnAdd'),
@@ -53,11 +58,14 @@ class CabinetsDataTable extends DataTable
                 Button::make('reload'),
                 Button::make('')
                     ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
-                    ->attr([
+                    ->attr(
+                        [
                         'id' => 'selectedDelete',
                         'disabled' => 'disabled'
-                    ])
-            ]);
+                        ]
+                    )
+                ]
+            );
     }
 
     public function getColumns(): array
@@ -71,19 +79,25 @@ class CabinetsDataTable extends DataTable
                 ->title(
                     '<input type="checkbox" class="form-check-input" id="checkAll">'
                 )
-                ->render('function() {
+                ->render(
+                    'function() {
                     return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
-            }'),
+            }'
+                ),
             Column::make('No')->title('No')->searchable(false)->orderable(false)
-                ->render('function() {
+                ->render(
+                    'function() {
                     return this.No;
-                }')
+                }'
+                )
                 ->width(10),
             Column::make('name')->title('Nama Kabinet')
                 ->width(100),
-            Column::make('logo')->title('Logo')->render('function() {
+            Column::make('logo')->title('Logo')->render(
+                'function() {
                 return `<img src="/storage/${this.logo}" class="img-fluid" width="100px">`;
-            }')
+            }'
+            )
                 ->width(100)
                 ->addClass('text-center'),
             Column::make('year')->title('Tahun')
@@ -91,13 +105,15 @@ class CabinetsDataTable extends DataTable
                 ->addClass('text-center'),
             Column::make('is_active')
                 ->title('Status')
-                ->render('function() {
+                ->render(
+                    'function() {
                     if (this.is_active == 1) {
                         return `<span class="badge bg-success">Aktif</span>`
                     } else {
                         return `<span class="badge bg-danger">Tidak Aktif</span>`
                     }
-            }')
+            }'
+                )
                 ->width(50)
                 ->addClass('text-center'),
             Column::computed('action')
@@ -106,12 +122,14 @@ class CabinetsDataTable extends DataTable
                 ->searchable(false)
                 ->addClass('text-center')
                 ->title('Action')
-                ->render('function() {
+                ->render(
+                    'function() {
                 return `
                     <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('cabinets.edit', ':id') . '" data-id="${this.id}"></a>
                     <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('cabinets.destroy', ':id') . '" data-id="${this.id}"></a>
                 `
-                }')
+                }'
+                )
                 ->width(50),
         ];
     }

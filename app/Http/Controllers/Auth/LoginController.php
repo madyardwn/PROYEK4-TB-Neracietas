@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class LoginController extends Controller
@@ -77,9 +79,43 @@ class LoginController extends Controller
         if (auth()->attempt($credentials)) {
             $token = Auth::user()->createToken('authToken')->plainTextToken;
 
+            $user = User::query()
+                ->select(
+                    [
+                        'users.name',
+                        'users.nim',
+                        'users.email',
+                        'users.na',
+                        'users.year',
+                        'nama_bagus',
+                        DB::raw(
+                            "
+                        CASE
+                            WHEN roles.name IN (
+                                'Ketua Himpunan',
+                                'Wakil Ketua Himpunan',
+                                'Bendahara',
+                                'Sekretaris'
+                                ) THEN roles.name
+                            WHEN roles.name = 'Ketua Divisi'
+                                THEN CONCAT('Ketua', ' ', departments.name)
+                            WHEN roles.name = 'Wakil Ketua Divisi'
+                                THEN CONCAT('Wakil Ketua', ' ', departments.name)
+                            ELSE roles.name
+                        END as role
+                    "
+                        ),
+                        DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                    ]
+                )
+                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+                ->where('email', $request->email)->first();
+
             return response()->json(
                 [
-                    'user' => Auth::user(),
+                    'user' => $user,
                     'access_token' => $token,
                 ],
                 200
