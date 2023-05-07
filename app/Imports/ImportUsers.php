@@ -37,7 +37,7 @@ class ImportUsers implements ToModel
             return null;
         }
 
-        $user =  new User(
+        return new User(
             [
             'nim' => $row[0],
             'name' => $row[1],

@@ -15,13 +15,15 @@ class UserController extends Controller
 {
     public function index(UsersDataTable $dataTable)
     {
-        return $dataTable->render('pages.users.index', [
+        return $dataTable->render(
+            'pages.users.index', [
             'roles' => Role::all(),
             'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
                 ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
                 ->where('cabinets.is_active', 1)
                 ->get(),
-        ]);
+            ]
+        );
     }
 
     public function store(Request $request)
@@ -90,7 +92,8 @@ class UserController extends Controller
         $request->validate($rules, $message);
 
         try {
-            $user = User::create([
+            $user = User::create(
+                [
                 'nim' => $request->nim,
                 'name' => $request->name,
                 'email' => $request->email,
@@ -100,7 +103,8 @@ class UserController extends Controller
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
-            ]);
+                ]
+            );
 
             // attach role
             $user->assignRole(Role::findOrFail(request()->role));
@@ -113,14 +117,18 @@ class UserController extends Controller
             $cabinet = Cabinet::find($department->cabinet_id);
             $user->departments()->updateExistingPivot($request->department, ['is_active' => $cabinet->is_active]);
 
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'User ' . $user->name . ' berhasil ditambahkan',
-            ], 200);
+                ], 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'User gagal ditambahkan',
                 'error' => $e->getMessage(),
-            ], 500);
+                ], 500
+            );
         }
     }
 
@@ -220,7 +228,8 @@ class UserController extends Controller
                 }
             }
 
-            $user->update([
+            $user->update(
+                [
                 'nim' => $request->nim,
                 'name' => $request->name,
                 'email' => $request->email,
@@ -228,7 +237,8 @@ class UserController extends Controller
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
-            ]);
+                ]
+            );
 
             // attach role
             $user->syncRoles(Role::findOrFail(request()->role));
@@ -236,14 +246,18 @@ class UserController extends Controller
             // sync department
             $user->departments()->sync([$request->department => ['position' => $user->roles->first()->id]]);
 
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'User ' . $user->name . ' berhasil diubah',
-            ], 200);
+                ], 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'User gagal diubah',
                 'error' => $e->getMessage(),
-            ], 500);
+                ], 500
+            );
         }
     }
 
@@ -277,19 +291,25 @@ class UserController extends Controller
             }
 
             if ($count > 0) {
-                return response()->json([
+                return response()->json(
+                    [
                     'message' => 'Berhasil menghapus ' . $count . ' pengguna',
-                ], 200);
+                    ], 200
+                );
             } else {
-                return response()->json([
+                return response()->json(
+                    [
                     'message' => 'Tidak ada pengguna yang berhasil dihapus',
-                ], 403);
+                    ], 403
+                );
             }
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Pengguna gagal dihapus',
                 'error' => $e->getMessage(),
-            ], 500);
+                ], 500
+            );
         }
     }
 }
