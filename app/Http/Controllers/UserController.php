@@ -30,7 +30,7 @@ class UserController extends Controller
     {
         $rules = [
             'nim' => 'required|unique:users,nim|numeric',
-            'na' => 'required|unique:users,na|numeric',
+            'na' => 'unique:users,na|numeric',
             'nama_bagus' => 'required|max:20',
             'year' => 'required|numeric',
             'name' => 'required|max:50',
