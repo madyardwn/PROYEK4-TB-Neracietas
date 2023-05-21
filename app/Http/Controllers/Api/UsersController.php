@@ -47,7 +47,8 @@ class UsersController extends Controller
                                 THEN CONCAT('Ketua', ' ', departments.name)
                             WHEN roles.name = 'Wakil Ketua Divisi'
                                 THEN CONCAT('Wakil Ketua', ' ', departments.name)
-                            ELSE roles.name
+                            ELSE
+                                CONCAT(UPPER(LEFT(roles.name, 1)), SUBSTRING(roles.name, 2))
                         END as role
                     "
                     ),
