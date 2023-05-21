@@ -41,6 +41,8 @@ class DepartmentsController extends Controller
             )
             ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id')
             ->where('cabinets.is_active', 1)
+            ->where('departments.name', '!=', 'Majelis Perwakilan Anggota')
+            ->where('departments.name', '!=', 'Himpunan Mahasiswa Teknik Komputer Polban')
             ->get();
 
         $departments = $departments->map(
@@ -50,7 +52,7 @@ class DepartmentsController extends Controller
                     ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
                     ->where('users_departments.is_active', 1)
                     ->where('roles.name', 'like', '%Ketua Divisi%')
-                    ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%')
+                    ->where('roles.name', 'like', '%Wakil Ketua Divisi%')
                     ->get()
                     ->map(
                         function ($user) {
