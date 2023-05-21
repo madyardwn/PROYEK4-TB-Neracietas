@@ -42,7 +42,7 @@ class UsersController extends Controller
                                 'Wakil Ketua Himpunan',
                                 'Bendahara',
                                 'Sekretaris'
-                                ) THEN roles.name
+                               ) THEN CONCAT(UPPER(LEFT(roles.name, 1)), SUBSTRING(roles.name, 2))
                             WHEN roles.name = 'Ketua Divisi'
                                 THEN CONCAT('Ketua', ' ', departments.name)
                             WHEN roles.name = 'Wakil Ketua Divisi'
@@ -67,8 +67,27 @@ class UsersController extends Controller
                         ->orWhere('roles.name', 'like', '%Wakil%');
                 }
             )
-            ->where('users_departments.is_active', 1)
-            ->get();
+        ->where('users_departments.is_active', 1)
+        // sort by role
+        ->orderByRaw(
+            "
+            CASE
+                WHEN roles.name IN (
+                    'Ketua Himpunan',
+                    'Wakil Ketua Himpunan',
+                    'Bendahara',
+                    'Sekretaris'
+                    ) THEN 1
+                WHEN roles.name = 'Ketua Divisi'
+                    THEN 2
+                WHEN roles.name = 'Wakil Ketua Divisi'
+                    THEN 3
+                ELSE
+                    4
+            END
+            "
+        )
+        ->get();
 
         // return response
         return response()->json(

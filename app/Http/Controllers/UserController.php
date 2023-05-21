@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         return $dataTable->render(
             'pages.users.index', [
-            'roles' => Role::all(),
+            'roles' => Role::where('name', '!=', 'superadmin')->get(),
             'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
                 ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
                 ->where('cabinets.is_active', 1)
