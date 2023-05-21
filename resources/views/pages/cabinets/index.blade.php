@@ -8,7 +8,7 @@
                 {!! $dataTable->table() !!}
             </div>
         </div>
-    </div>
+</div>
     @include('pages.cabinets.actions')
 @endsection
 

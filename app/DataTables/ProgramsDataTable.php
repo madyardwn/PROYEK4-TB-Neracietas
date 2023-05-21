@@ -18,21 +18,24 @@ class ProgramsDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-            ->addColumn('No', function ($program) {
-                return $this->no++;
-            });
+            ->addColumn(
+                'No', function ($program) {
+                    return $this->no++;
+                }
+            );
     }
 
     public function query(Program $model): QueryBuilder
     {
         return $model
-            ->select([
+            ->select(
+                [
                 'programs.id',
                 'programs.name',
                 'programs.description',
-                'programs.progress',
                 'departments.name as department_name',
-            ])
+                ]
+            )
             ->leftJoin('departments', 'departments.id', '=', 'programs.department_id');
     }
 
@@ -43,7 +46,8 @@ class ProgramsDataTable extends DataTable
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(1)
-            ->buttons([
+            ->buttons(
+                [
                 Button::make('')
                     ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
                     ->addClass('btnAdd'),
@@ -53,11 +57,14 @@ class ProgramsDataTable extends DataTable
                 Button::make('reload'),
                 Button::make('')
                     ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
-                    ->attr([
+                    ->attr(
+                        [
                         'id' => 'selectedDelete',
                         'disabled' => 'disabled'
-                    ])
-            ]);
+                        ]
+                    )
+                ]
+            );
     }
 
     public function getColumns(): array
@@ -71,29 +78,34 @@ class ProgramsDataTable extends DataTable
                 ->title(
                     '<input type="checkbox" class="form-check-input" id="checkAll">'
                 )
-                ->render('function() {
+                ->render(
+                    'function() {
                     return `<input type="checkbox" class="form-check-input checkItem" name="id[]" value="${this.id}" data-id="${this.id}">`;
-            }'),
-            Column::make('No')->title('No')->searchable(false)->orderable(false),
+            }'
+                ),
+            Column::make('No')->title('No')->searchable(false)->orderable(false)->width(10),
             Column::make('name')->title('Program Kerja'),
             Column::make('description')->title('Deskripsi'),
-            Column::make('departments.name')->title('Derpartemen')->render('function() {
+            Column::make('departments.name')->title('Derpartemen')->render(
+                'function() {
                 return this.department_name;
-            }'),
-            Column::make('progress')->title('Proses')->searchable(false),
+            }'
+            ),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->searchable(false)
                 ->addClass('text-center')
                 ->title('Opsi')
-                ->render('function() {
+                ->render(
+                    'function() {
                 return `
                     <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('programs.edit', ':id') . '" data-id="${this.id}"></a>
                     <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('programs.destroy', ':id') . '" data-id="${this.id}"></a>
                 `
-                }')
-                ->width(50),
+                }'
+                )
+                ->width(100),
         ];
     }
 

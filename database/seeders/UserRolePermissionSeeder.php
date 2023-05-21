@@ -21,8 +21,6 @@ class UserRolePermissionSeeder extends Seeder
             'remember_token' => Str::random(10),
         ];
 
-
-
         // Create Permissions
         $permission = [
             'read',
@@ -47,19 +45,13 @@ class UserRolePermissionSeeder extends Seeder
             }
         }
 
-        // permission for login in mobile and web
-        Permission::create(['name' => 'login mobile']);
-        Permission::create(['name' => 'login web']);
+        // import users
+        Permission::create(['name' => 'import users']);
 
         // Create Roles
         Role::create(['name' => 'superadmin'])->givePermissionTo(Permission::all());
-
         Role::create(['name' => 'ketua himpunan'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-                'read user',
-
                 'read cabinet',
                 'create cabinet',
                 'update cabinet',
@@ -73,10 +65,6 @@ class UserRolePermissionSeeder extends Seeder
         );
         Role::create(['name' => 'wakil ketua himpunan'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-                'read user',
-
                 'read cabinet',
                 'create cabinet',
                 'update cabinet',
@@ -91,9 +79,6 @@ class UserRolePermissionSeeder extends Seeder
 
         Role::create(['name' => 'ketua divisi'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-
                 'read program',
                 'create program',
                 'update program',
@@ -102,13 +87,11 @@ class UserRolePermissionSeeder extends Seeder
                 'read department',
                 'create department',
                 'update department',
+                'delete department'
             ]
         );
         Role::create(['name' => 'wakil ketua divisi'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-
                 'read program',
                 'create program',
                 'update program',
@@ -120,22 +103,11 @@ class UserRolePermissionSeeder extends Seeder
             ]
         );
 
-        Role::create(['name' => 'ketua majelis perwakilan anggota'])->givePermissionTo(
-            [
-                'login mobile',
-            ]
-        );
-        Role::create(['name' => 'wakil ketua majelis perwakilan anggota'])->givePermissionTo(
-            [
-                'login mobile',
-            ]
-        );
+        Role::create(['name' => 'ketua majelis perwakilan anggota']);
+        Role::create(['name' => 'wakil ketua majelis perwakilan anggota']);
 
         Role::create(['name' => 'staf ahli'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-
                 'read program',
                 'create program',
                 'update program',
@@ -144,9 +116,6 @@ class UserRolePermissionSeeder extends Seeder
         );
         Role::create(['name' => 'staf muda'])->givePermissionTo(
             [
-                'login mobile',
-                'login web',
-
                 'read program',
                 'create program',
                 'update program',
@@ -160,7 +129,7 @@ class UserRolePermissionSeeder extends Seeder
             array_merge(
                 [
                     'name' => 'superadmin',
-                    'email' => 'admin@gmail.com',
+                    'email' => 'admin@polban.ac.id',
                 ], $defaultUser
             )
         )->assignRole('superadmin');

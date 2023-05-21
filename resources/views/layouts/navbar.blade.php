@@ -40,6 +40,7 @@
                 </span>
             </a>
             <div class="dropdown-menu show">
+                @can('read user')
                 <a class="dropdown-item" href="{{ route('users.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/box -->
@@ -59,6 +60,10 @@
                         Daftar Anggota
                     </span>
                 </a>
+                @endcan
+
+
+                @can('read permission')
                 <a class="dropdown-item" href="{{ route('permissions.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/box -->
@@ -76,6 +81,9 @@
                         Permissions
                     </span>
                 </a>
+                @endcan
+
+                @can('read role')
                 <a class="dropdown-item" href="{{ route('roles.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/box -->
@@ -92,6 +100,9 @@
                         Roles
                     </span>
                 </a>
+                @endcan
+
+                @can('read cabinet')
                 <a class="dropdown-item" href="{{ route('cabinets.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
@@ -109,6 +120,9 @@
                         Kabinet
                     </span>
                 </a>
+                @endcan
+
+                @can('read department')
                 <a class="dropdown-item" href="{{ route('departments.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
@@ -130,6 +144,9 @@
                         Departemen
                     </span>
                 </a>
+                @endcan
+
+                @can('read program')
                 <a class="dropdown-item" href="{{ route('programs.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
@@ -147,6 +164,9 @@
                         Program Kerja
                     </span>
                 </a>
+                @endcan
+
+                @can('read event')
                 <a class="dropdown-item" href="{{ route('events.index') }}">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
@@ -166,6 +186,7 @@
                         Events
                     </span>
                 </a>
+                @endcan
             </div>
         </li>
 

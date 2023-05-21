@@ -11,19 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('programs', function (Blueprint $table) {
-            $table->id();
+        Schema::create(
+            'programs', function (Blueprint $table) {
+                $table->id();
 
-            $table->string('name');
-            $table->string('description')->nullable();
-            
-            $table->integer('progress')->default(0);
+                $table->string('name');
+                $table->string('description')->nullable();
+                $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
+                $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
-            $table->foreignId('department_id')->constrained('departments')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            
-            $table->timestamps();
-        });
+                $table->timestamps();
+            }
+        );
     }
 
     /**
