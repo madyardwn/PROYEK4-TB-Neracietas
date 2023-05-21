@@ -21,13 +21,9 @@ class UserRolePermissionSeeder extends Seeder
             'remember_token' => Str::random(10),
         ];
 
-        $admin = User::create(array_merge([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-        ], $defaultUser));
 
-        $role_superadmin = Role::create(['name' => 'superadmin']);
 
+        // Create Permissions
         $permission = [
             'read',
             'create',
@@ -37,8 +33,8 @@ class UserRolePermissionSeeder extends Seeder
 
         $models = [
             'user',
-            'role',
             'permission',
+            'role',
             'cabinet',
             'department',
             'event',
@@ -51,8 +47,122 @@ class UserRolePermissionSeeder extends Seeder
             }
         }
 
-        $role_superadmin->givePermissionTo(Permission::all());
+        // permission for login in mobile and web
+        Permission::create(['name' => 'login mobile']);
+        Permission::create(['name' => 'login web']);
 
-        $admin->assignRole($role_superadmin);
+        // Create Roles
+        Role::create(['name' => 'superadmin'])->givePermissionTo(Permission::all());
+
+        Role::create(['name' => 'ketua himpunan'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+                'read user',
+
+                'read cabinet',
+                'create cabinet',
+                'update cabinet',
+                'delete cabinet',
+
+                'read department',
+                'create department',
+                'update department',
+                'delete department',
+            ]
+        );
+        Role::create(['name' => 'wakil ketua himpunan'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+                'read user',
+
+                'read cabinet',
+                'create cabinet',
+                'update cabinet',
+                'delete cabinet',
+
+                'read department',
+                'create department',
+                'update department',
+                'delete department',
+            ]
+        );
+
+        Role::create(['name' => 'ketua divisi'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+
+                'read program',
+                'create program',
+                'update program',
+                'delete program',
+
+                'read department',
+                'create department',
+                'update department',
+            ]
+        );
+        Role::create(['name' => 'wakil ketua divisi'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+
+                'read program',
+                'create program',
+                'update program',
+                'delete program',
+
+                'read department',
+                'create department',
+                'update department',
+            ]
+        );
+
+        Role::create(['name' => 'ketua majelis perwakilan anggota'])->givePermissionTo(
+            [
+                'login mobile',
+            ]
+        );
+        Role::create(['name' => 'wakil ketua majelis perwakilan anggota'])->givePermissionTo(
+            [
+                'login mobile',
+            ]
+        );
+
+        Role::create(['name' => 'staf ahli'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+
+                'read program',
+                'create program',
+                'update program',
+                'delete program',
+            ]
+        );
+        Role::create(['name' => 'staf muda'])->givePermissionTo(
+            [
+                'login mobile',
+                'login web',
+
+                'read program',
+                'create program',
+                'update program',
+                'delete program',
+            ]
+        );
+
+
+        // Create Users
+        User::create(
+            array_merge(
+                [
+                    'name' => 'superadmin',
+                    'email' => 'admin@gmail.com',
+                ], $defaultUser
+            )
+        )->assignRole('superadmin');
     }
 }

@@ -55,23 +55,29 @@ class CabinetController extends Controller
                 $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
             }
 
-            $cabinet = Cabinet::create([
+            $cabinet = Cabinet::create(
+                [
                 'name' => $request->name,
                 'year' => $request->year,
                 'description' => $request->description,
                 'logo' => $logo,
                 'is_active' => $request->is_active ?? 0,
-            ]);
+                ]
+            );
 
             $this->generateDepartments($cabinet);
 
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
-            ], 200);
+                ], 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Kabinet ' . $request->name . ' gagal ditambahkan',
-            ], 500);
+                ], 500
+            );
         }
     }
 
@@ -136,21 +142,27 @@ class CabinetController extends Controller
 
         try {
             foreach ($departments as $department) {
-                Department::create([
+                Department::create(
+                    [
                     'name' => $department['name'],
                     'short_name' => $department['short_name'],
                     // 'description' => $department['description'],
                     'cabinet_id' => $cabinet->id,
-                ]);
+                    ]
+                );
             }
 
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Departemen berhasil dibuat',
-            ], 200);
+                ], 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Departemen gagal dibuat',
-            ], 500);
+                ], 500
+            );
         }
     }
 
@@ -204,13 +216,15 @@ class CabinetController extends Controller
                 $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
             }
 
-            $cabinet->update([
+            $cabinet->update(
+                [
                 'name' => $request->name,
                 'year' => $request->year,
                 'description' => $request->description,
                 'logo' => $logo ?? $cabinet->logo,
                 'is_active' => $request->is_active ?? 0,
-            ]);
+                ]
+            );
 
             $departments = Department::where('cabinet_id', $cabinet->id);
 
@@ -221,13 +235,17 @@ class CabinetController extends Controller
                 }
             }
 
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
-            ], 200);
+                ], 200
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Kabinet gagal diperbarui, ' . $e->getMessage(),
-            ], 500);
+                ], 500
+            );
         }
     }
 
@@ -261,23 +279,29 @@ class CabinetController extends Controller
                 $message = 'Berhasil menghapus ' . $count . ' kabinet';
 
                 if ($count != count($ids)) {
-                    $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . ' 
+                    $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . '
                     kabinet yang dipilih, karena masih ada kabinet yang memiliki departemen';
                 }
 
-                return response()->json([
+                return response()->json(
+                    [
                     'message' => $message,
-                ], 200);
+                    ], 200
+                );
             }
 
-            return response()->json([
-                'message' => 'Tidak ada kabinet yang berhasil dihapus 
+            return response()->json(
+                [
+                'message' => 'Tidak ada kabinet yang berhasil dihapus
                 karena masih ada kabinet yang memiliki departemen',
-            ], 403);
+                ], 403
+            );
         } catch (\Exception $e) {
-            return response()->json([
+            return response()->json(
+                [
                 'message' => 'Kabinet gagal dihapus',
-            ], 500);
+                ], 500
+            );
         }
     }
 }
