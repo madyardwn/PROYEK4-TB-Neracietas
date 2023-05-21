@@ -51,8 +51,12 @@ class DepartmentsController extends Controller
                     ->select(['users.id', 'users.name', 'users.avatar', 'roles.name as role'])
                     ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
                     ->where('users_departments.is_active', 1)
-                    ->where('roles.name', 'like', '%Ketua Divisi%')
-                    ->where('roles.name', 'like', '%Wakil Ketua Divisi%')
+                    ->where(
+                        function ($query) {
+                            $query->where('roles.name', 'like', '%Ketua Divisi%')
+                                ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%');
+                        }
+                    )
                     ->get()
                     ->map(
                         function ($user) {
