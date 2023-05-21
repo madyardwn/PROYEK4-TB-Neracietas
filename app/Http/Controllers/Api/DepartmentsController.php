@@ -71,7 +71,6 @@ class DepartmentsController extends Controller
                             'programs.id',
                             'programs.name',
                             'programs.description',
-                            'programs.progress',
                             'users.name as ketua_pelaksana'
                         ]
                     )
