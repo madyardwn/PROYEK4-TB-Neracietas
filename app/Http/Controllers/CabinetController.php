@@ -146,7 +146,7 @@ class CabinetController extends Controller
             ],
             [
                 'name' => 'Himpunan Mahasiswa Teknik Komputer Polban',
-                'short_name' => 'HMTK',
+                'short_name' => 'HIMAKOM',
                 'logo' => '',
                 'description' => 'Himpunan Mahasiswa Teknik Komputer Polban bertanggung jawab atas segala urusan Himpunan Mahasiswa Teknik Komputer Polban.',
             ]
