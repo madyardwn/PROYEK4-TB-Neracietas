@@ -57,6 +57,14 @@ class DepartmentsController extends Controller
                                 ->orWhere('roles.name', 'like', '%Wakil Ketua Divisi%');
                         }
                     )
+                ->orderByRaw(
+                    "
+                    CASE
+                        WHEN roles.name LIKE '%Ketua Divisi%' THEN 1
+                        WHEN roles.name LIKE '%Wakil Ketua Divisi%' THEN 2
+                    END
+                    "
+                )
                     ->get()
                     ->map(
                         function ($user) {
