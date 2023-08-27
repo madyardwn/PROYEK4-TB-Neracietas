@@ -370,7 +370,7 @@
                             // Filosofy Preview
                             $('#img-filosofy').attr('src',
                                 res.filosofy ?
-                                `/storage/${res.filosofy}` : `/img/default_avatar.png`
+                                `/storage/${res.filosofy}` : `/img/philosophy.jpg`
                             )
 
                             // Assign Action to Form
