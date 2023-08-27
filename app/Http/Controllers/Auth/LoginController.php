@@ -105,7 +105,8 @@ class LoginController extends Controller
                         END as role
                     "
                         ),
-                        DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                        // DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                        DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
                     ]
                 )
                 ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')

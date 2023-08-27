@@ -104,7 +104,11 @@ class CabinetsDataTable extends DataTable
                 ->addClass('text-center'),
             Column::make('filosofy')->title('Filosofi')->render(
                 'function() {
-                return `<img src="/storage/${this.filosofy}" class="img-fluid" width="100px">`;
+                if (this.filosofy == null) {
+                    return `<span class="badge bg-danger">Tidak ada</span>`
+                } else {
+                    return `<img src="/storage/${this.filosofy}" class="img-fluid" width="100px">`;
+                }
             }'
             )
                 ->width(100)

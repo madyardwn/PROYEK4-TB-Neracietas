@@ -52,7 +52,8 @@ class UsersController extends Controller
                         END as role
                     "
                     ),
-                    DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                    // DB::raw("CONCAT('" . asset('/storage') . "/', users.avatar) as avatar"),
+                    DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
                 ]
             )
             ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
@@ -67,10 +68,10 @@ class UsersController extends Controller
                         ->orWhere('roles.name', 'like', '%Wakil%');
                 }
             )
-        ->where('users_departments.is_active', 1)
-        // sort by role
-        ->orderByRaw(
-            "
+            ->where('users_departments.is_active', 1)
+            // sort by role
+            ->orderByRaw(
+                "
             CASE
                 WHEN roles.name IN (
                     'Ketua Himpunan',
@@ -86,8 +87,8 @@ class UsersController extends Controller
                     4
             END
             "
-        )
-        ->get();
+            )
+            ->get();
 
         // return response
         return response()->json(
