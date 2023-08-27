@@ -10,15 +10,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="logo" class="form-label d-block text-center">Logo</label>
-                                <img class="img-holder img-thumbnail" width="265" height="300" src=""
+                                <img id="img-logo" class="img-thumbnail" width="265" height="300" src=""
                                     alt="">
                                 <input type="file" class="form-control mt-2" id="logo" name="logo">
                             </div>
                         </div>
-                        <div class="col-md-7">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="filosofy" class="form-label d-block text-center">Filosofi</label>
+                                <div class="img-thumbnail d-flex justify-content-center align-items-center"
+                                    style="width: 265px; height: 300px; background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center;">
+                                    <img id="img-filosofy" class="img-fluid" src="" alt="">
+                                </div>
+                                <input type="file" class="form-control mt-2" id="filosofy" name="filosofy">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
                             <!-- nim -->
                             <div class="form-group mb-3">
                                 <label for="name" class="form-label">Nama Kabinet</label>
@@ -189,7 +199,28 @@
                 const reader = new FileReader()
 
                 reader.onload = function(e) {
-                    $('.img-holder').attr('src', e.target.result)
+                    $('#img-logo').attr('src', e.target.result)
+                }
+
+                // if empty file
+                if (file == undefined) {
+                    $('#img-logo').attr('src', "{{ asset('assets/img/default_avatar.png') }}");
+                }
+
+                reader.readAsDataURL(file)
+            });
+
+            $('input[name="filosofy"]').on('change', function() {
+                const file = $(this)[0].files[0]
+                const reader = new FileReader()
+
+                reader.onload = function(e) {
+                    $('#img-filosofy').attr('src', e.target.result)
+                }
+
+                // if empty file
+                if (file == undefined) {
+                    $('#img-filosofy').attr('src', "{{ asset('assets/img/philosophy.jpg') }}");
                 }
 
                 reader.readAsDataURL(file)
@@ -285,7 +316,8 @@
                 $('.modal-footer').find('button').text('Simpan')
 
                 // Image Preview
-                $('.img-holder').attr('src', '/img/default_avatar.png');
+                $('#img-logo').attr('src', '/img/default_avatar.png');
+                $('#img-filosofy').attr('src', '/img/philosophy.jpg');
 
                 // Define Action
                 $('form').attr('action', '{{ route('cabinets.store') }}');
@@ -331,9 +363,15 @@
 
 
                             // Avatar Preview
-                            $('.img-holder').attr('src',
+                            $('#img-logo').attr('src',
                                 res.logo ?
                                 `/storage/${res.logo}` : `/img/default_avatar.png`
+                            )
+
+                            // Filosofy Preview
+                            $('#img-filosofy').attr('src',
+                                res.filosofy ?
+                                `/storage/${res.filosofy}` : `/img/default_avatar.png`
                             )
 
                             // Assign Action to Form

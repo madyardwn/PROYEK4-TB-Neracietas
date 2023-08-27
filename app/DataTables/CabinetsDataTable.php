@@ -18,7 +18,8 @@ class CabinetsDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->addColumn(
-                'No', function ($cabinet) {
+                'No',
+                function ($cabinet) {
                     return $this->no++;
                 }
             );
@@ -29,12 +30,13 @@ class CabinetsDataTable extends DataTable
         return $model
             ->select(
                 [
-                'cabinets.id',
-                'cabinets.name',
-                'cabinets.logo',
-                'cabinets.year',
-                'cabinets.description',
-                'cabinets.is_active',
+                    'cabinets.id',
+                    'cabinets.name',
+                    'cabinets.logo',
+                    'cabinets.year',
+                    'cabinets.description',
+                    'cabinets.is_active',
+                    'cabinets.filosofy'
                 ]
             );
     }
@@ -49,21 +51,21 @@ class CabinetsDataTable extends DataTable
             ->orderBy(4)
             ->buttons(
                 [
-                Button::make('')
-                    ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
-                    ->addClass('btnAdd'),
-                Button::make('export')
-                    ->text('<span class="fa fa-download"></span>&nbsp; Export')
-                    ->titleAttr('Export'),
-                Button::make('reload'),
-                Button::make('')
-                    ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
-                    ->attr(
-                        [
-                        'id' => 'selectedDelete',
-                        'disabled' => 'disabled'
-                        ]
-                    )
+                    Button::make('')
+                        ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
+                        ->addClass('btnAdd'),
+                    Button::make('export')
+                        ->text('<span class="fa fa-download"></span>&nbsp; Export')
+                        ->titleAttr('Export'),
+                    Button::make('reload'),
+                    Button::make('')
+                        ->text('<span class="fa fa-trash"></span>&nbsp; Hapus')
+                        ->attr(
+                            [
+                                'id' => 'selectedDelete',
+                                'disabled' => 'disabled'
+                            ]
+                        )
                 ]
             );
     }
@@ -100,6 +102,13 @@ class CabinetsDataTable extends DataTable
             )
                 ->width(100)
                 ->addClass('text-center'),
+            Column::make('filosofy')->title('Filosofi')->render(
+                'function() {
+                return `<img src="/storage/${this.filosofy}" class="img-fluid" width="100px">`;
+            }'
+            )
+                ->width(100)
+                ->addClass('text-center'),
             Column::make('year')->title('Tahun')
                 ->width(50)
                 ->addClass('text-center'),
@@ -131,6 +140,7 @@ class CabinetsDataTable extends DataTable
                 }'
                 )
                 ->width(50),
+
         ];
     }
 

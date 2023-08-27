@@ -164,13 +164,6 @@ class DepartmentController extends Controller
             foreach ($ids as $id) {
                 $department = Department::find($id);
 
-                $programsCount = Program::where('department_id', $id)->count();
-                $usersCount = User::where('department_id', $id)->count();
-
-                if ($programsCount > 0 || $usersCount > 0) {
-                    continue;
-                }
-
                 if ($department->logo) {
                     Storage::disk('public')->delete($department->logo);
                 }

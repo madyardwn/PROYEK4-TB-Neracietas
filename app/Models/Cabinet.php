@@ -15,6 +15,7 @@ class Cabinet extends Model
         'year',
         'description',
         'is_active',
+        'filosofy'
     ];
 
     public function departments()

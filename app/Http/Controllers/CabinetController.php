@@ -24,6 +24,7 @@ class CabinetController extends Controller
             'year' => 'required|numeric',
             'description' => 'required',
             'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'filosofy' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
 
         $message = [
@@ -44,6 +45,11 @@ class CabinetController extends Controller
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
             ],
+            'filosofy' => [
+                'image' => 'Filosofy harus berupa gambar',
+                'mimes' => 'Filosofy harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Filosofy maksimal 2 MB',
+            ],
         ];
 
         $request->validate($rules, $message);
@@ -55,13 +61,20 @@ class CabinetController extends Controller
                 $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
             }
 
+            if ($request->hasFile('filosofy')) {
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->filosofy->extension();
+                $filosofy = $request->filosofy->storeAs('cabinets/filosofy', $filename, 'public');
+            }
+
             $cabinet = Cabinet::create(
                 [
-                'name' => $request->name,
-                'year' => $request->year,
-                'description' => $request->description,
-                'logo' => $logo,
-                'is_active' => $request->is_active ?? 0,
+                    'name' => $request->name,
+                    'year' => $request->year,
+                    'description' => $request->description,
+                    'logo' => $logo,
+                    'is_active' => $request->is_active ?? 0,
+                    'filosofy' => $filosofy ?? null,
                 ]
             );
 
@@ -69,14 +82,16 @@ class CabinetController extends Controller
 
             return response()->json(
                 [
-                'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
-                ], 200
+                    'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response()->json(
                 [
-                'message' => 'Kabinet ' . $request->name . ' gagal ditambahkan',
-                ], 500
+                    'message' => 'Kabinet ' . $request->name . ' gagal ditambahkan',
+                ],
+                500
             );
         }
     }
@@ -156,24 +171,26 @@ class CabinetController extends Controller
             foreach ($departments as $department) {
                 Department::create(
                     [
-                    'name' => $department['name'],
-                    'short_name' => $department['short_name'],
-                    // 'description' => $department['description'],
-                    'cabinet_id' => $cabinet->id,
+                        'name' => $department['name'],
+                        'short_name' => $department['short_name'],
+                        // 'description' => $department['description'],
+                        'cabinet_id' => $cabinet->id,
                     ]
                 );
             }
 
             return response()->json(
                 [
-                'message' => 'Departemen berhasil dibuat',
-                ], 200
+                    'message' => 'Departemen berhasil dibuat',
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response()->json(
                 [
-                'message' => 'Departemen gagal dibuat',
-                ], 500
+                    'message' => 'Departemen gagal dibuat',
+                ],
+                500
             );
         }
     }
@@ -191,6 +208,7 @@ class CabinetController extends Controller
             'year' => 'required|numeric',
             'description' => 'required',
             'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'filosofy' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
 
         $message = [
@@ -211,6 +229,11 @@ class CabinetController extends Controller
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
             ],
+            'filosofy' => [
+                'image' => 'Filosofy harus berupa gambar',
+                'mimes' => 'Filosofy harus berupa gambar dengan format jpeg, png, atau jpg',
+                'max' => 'Filosofy maksimal 2 MB',
+            ],
         ];
 
         $request->validate($rules, $message);
@@ -228,13 +251,24 @@ class CabinetController extends Controller
                 $logo = $request->logo->storeAs('cabinets/logo', $filename, 'public');
             }
 
+            if ($request->hasFile('filosofy')) {
+                if ($cabinet->filosofy) {
+                    Storage::disk('public')->delete($cabinet->filosofy);
+                }
+
+                $currentDate = date('Y-m-d-H-i-s');
+                $filename = $currentDate . '_' . $request->name . '.' . $request->filosofy->extension();
+                $filosofy = $request->filosofy->storeAs('cabinets/filosofy', $filename, 'public');
+            }
+
             $cabinet->update(
                 [
-                'name' => $request->name,
-                'year' => $request->year,
-                'description' => $request->description,
-                'logo' => $logo ?? $cabinet->logo,
-                'is_active' => $request->is_active ?? 0,
+                    'name' => $request->name,
+                    'year' => $request->year,
+                    'description' => $request->description,
+                    'logo' => $logo ?? $cabinet->logo,
+                    'is_active' => $request->is_active ?? 0,
+                    'filosofy' => $filosofy ?? $cabinet->filosofy,
                 ]
             );
 
@@ -249,14 +283,16 @@ class CabinetController extends Controller
 
             return response()->json(
                 [
-                'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
-                ], 200
+                    'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
+                ],
+                200
             );
         } catch (\Exception $e) {
             return response()->json(
                 [
-                'message' => 'Kabinet gagal diperbarui, ' . $e->getMessage(),
-                ], 500
+                    'message' => 'Kabinet gagal diperbarui, ' . $e->getMessage(),
+                ],
+                500
             );
         }
     }
@@ -297,22 +333,25 @@ class CabinetController extends Controller
 
                 return response()->json(
                     [
-                    'message' => $message,
-                    ], 200
+                        'message' => $message,
+                    ],
+                    200
                 );
             }
 
             return response()->json(
                 [
-                'message' => 'Tidak ada kabinet yang berhasil dihapus
+                    'message' => 'Tidak ada kabinet yang berhasil dihapus
                 karena masih ada kabinet yang memiliki departemen',
-                ], 403
+                ],
+                403
             );
         } catch (\Exception $e) {
             return response()->json(
                 [
-                'message' => 'Kabinet gagal dihapus',
-                ], 500
+                    'message' => 'Kabinet gagal dihapus',
+                ],
+                500
             );
         }
     }
