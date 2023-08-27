@@ -13,8 +13,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="logo" class="form-label d-block text-center">Logo</label>
-                                <img id="img-logo" class="img-thumbnail" width="265" height="300" src=""
-                                    alt="">
+                                <img id="img-logo" class="img-thumbnail" src="" alt="">
                                 <input type="file" class="form-control mt-2" id="logo" name="logo">
                             </div>
                         </div>
@@ -22,7 +21,7 @@
                             <div class="form-group">
                                 <label for="filosofy" class="form-label d-block text-center">Filosofi</label>
                                 <div class="img-thumbnail d-flex justify-content-center align-items-center"
-                                    style="width: 265px; height: 300px; background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center;">
+                                    style="height: 300px; background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center;">
                                     <img id="img-filosofy" class="img-fluid" src="" alt="">
                                 </div>
                                 <input type="file" class="form-control mt-2" id="filosofy" name="filosofy">

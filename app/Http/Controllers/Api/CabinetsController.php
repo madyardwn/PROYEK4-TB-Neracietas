@@ -35,6 +35,7 @@ class CabinetsController extends Controller
                     'cabinets.name',
                     'cabinets.description',
                     DB::raw("CONCAT('" . asset('/storage') . "/', cabinets.logo) as logo"),
+                    DB::raw("CONCAT('" . asset('/storage') . "/', cabinets.filosofy) as filosofy"),
                 ]
             )
             ->where('cabinets.is_active', 1)

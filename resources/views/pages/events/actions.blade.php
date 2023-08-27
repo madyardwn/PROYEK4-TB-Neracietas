@@ -17,6 +17,7 @@
                                     alt="">
                                 <input type="file" class="form-control" id="poster" name="poster"
                                     value="{{ old('poster') }}" placeholder="Masukkan Poster">
+                                <small class="text-muted">Rekomendasi ukuran gambar 265x300</small>
                             </div>
                         </div>
                         <div class="col-md-7">
