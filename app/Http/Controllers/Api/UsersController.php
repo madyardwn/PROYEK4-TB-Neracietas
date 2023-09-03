@@ -123,6 +123,26 @@ class UsersController extends Controller
             [
                 'status' => 'success',
                 'data' => $request->user()
+                    ->select(
+                        [
+                            'users.id',
+                            'users.nim',
+                            'users.na',
+                            'users.nama_bagus',
+                            'users.avatar',
+                            'users.email',
+                            'users.name',
+                            'users.year',
+                            'users.email_verified_at',
+                            'users.created_at',
+                            'users.updated_at',
+                            'roles.name as role'
+                        ]
+                    )
+                    ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+                    ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                    ->where('users.id', $request->user()->id)
+                    ->first()
             ]
         );
     }
