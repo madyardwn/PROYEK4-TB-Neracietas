@@ -98,4 +98,32 @@ class UsersController extends Controller
             ]
         );
     }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/user",
+     *     summary="GET user",
+     *     description="Return data user yang akan ditampilkan pada halaman profile mobile",
+     *     tags={"Users"},
+     *     security={{"sanctum":{}}},
+     * @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     * @OA\Response(
+     *         response=403,
+     *         description="Access Denied"
+     *     )
+     * )
+     */
+    public function user(Request $request)
+    {
+        return response()->json(
+            [
+                'status' => 'success',
+                'data' => $request->user()
+            ]
+        );
+    }
 }

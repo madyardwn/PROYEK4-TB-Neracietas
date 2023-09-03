@@ -98,6 +98,29 @@
                 ]
             }
         },
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "GET user",
+                "description": "Return data user yang akan ditampilkan pada halaman profile mobile",
+                "operationId": "9142ec228ea53995c67de772a779eed5",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/loginApi": {
             "post": {
                 "tags": [

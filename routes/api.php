@@ -19,13 +19,7 @@ Route::post('/loginApi', [App\Http\Controllers\Auth\LoginController::class, 'log
 // should be protected by auth:sanctum
 Route::middleware('auth:sanctum')->group(
     function () {
-        // protected routes
-        Route::get(
-            '/user',
-            function (Request $request) {
-                return $request->user();
-            }
-        );
+        Route::get('/user', [App\Http\Controllers\Api\UsersController::class, 'user']);
 
         Route::get('/users', [App\Http\Controllers\Api\UsersController::class, 'index']);
         Route::get('/cabinets', [App\Http\Controllers\Api\CabinetsController::class, 'index']);
