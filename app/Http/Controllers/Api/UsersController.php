@@ -122,21 +122,22 @@ class UsersController extends Controller
         return response()->json(
             [
                 'status' => 'success',
-                'data' => $request->user()
+                'data' => User::query()
                     ->select(
                         [
                             'users.id',
                             'users.nim',
                             'users.na',
                             'users.nama_bagus',
-                            'users.avatar',
+                            // 'users.avatar',
+                            DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
                             'users.email',
                             'users.name',
                             'users.year',
                             'users.email_verified_at',
                             'users.created_at',
                             'users.updated_at',
-                            'roles.name as role'
+                            'roles.name as role_name',
                         ]
                     )
                     ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
