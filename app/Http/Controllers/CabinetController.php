@@ -25,6 +25,8 @@ class CabinetController extends Controller
             'description' => 'required',
             'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'filosofy' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'visi' => 'nullable',
+            'misi' => 'nullable',
         ];
 
         $message = [
@@ -49,6 +51,12 @@ class CabinetController extends Controller
                 'image' => 'Filosofy harus berupa gambar',
                 'mimes' => 'Filosofy harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Filosofy maksimal 2 MB',
+            ],
+            'visi' => [
+                'nullable' => 'Visi harus berupa teks',
+            ],
+            'misi' => [
+                'nullable' => 'Misi harus berupa teks',
             ],
         ];
 
@@ -75,6 +83,8 @@ class CabinetController extends Controller
                     'logo' => $logo,
                     'is_active' => $request->is_active ?? 0,
                     'filosofy' => $filosofy ?? null,
+                    'visi' => $request->visi ?? null,
+                    'misi' => $request->misi ?? null,
                 ]
             );
 
@@ -209,6 +219,8 @@ class CabinetController extends Controller
             'description' => 'required',
             'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
             'filosofy' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'visi' => 'nullable',
+            'misi' => 'nullable',
         ];
 
         $message = [
@@ -269,6 +281,8 @@ class CabinetController extends Controller
                     'logo' => $logo ?? $cabinet->logo,
                     'is_active' => $request->is_active ?? 0,
                     'filosofy' => $filosofy ?? $cabinet->filosofy,
+                    'visi' => $request->visi ?? '',
+                    'misi' => $request->misi ?? '',
                 ]
             );
 

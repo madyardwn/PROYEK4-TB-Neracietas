@@ -36,7 +36,9 @@ class CabinetsDataTable extends DataTable
                     'cabinets.year',
                     'cabinets.description',
                     'cabinets.is_active',
-                    'cabinets.filosofy'
+                    'cabinets.filosofy',
+                    'cabinets.visi',
+                    'cabinets.misi',
                 ]
             );
     }

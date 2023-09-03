@@ -16,9 +16,7 @@
                                 <img id="img-logo" class="img-thumbnail" src="" alt="">
                                 <input type="file" class="form-control mt-2" id="logo" name="logo">
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
+                            <div class="form-group mt-3">
                                 <label for="filosofy" class="form-label d-block text-center">Filosofi</label>
                                 <div class="img-thumbnail d-flex justify-content-center align-items-center"
                                     style="height: 300px; background-image: url(''); background-repeat: no-repeat; background-size: cover; background-position: center;">
@@ -27,7 +25,7 @@
                                 <input type="file" class="form-control mt-2" id="filosofy" name="filosofy">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-9">
                             <!-- nim -->
                             <div class="form-group mb-3">
                                 <label for="name" class="form-label">Nama Kabinet</label>
@@ -39,6 +37,16 @@
                             <div class="form-group mb-3">
                                 <label for="description" class="form-label">Deskripsi</label>
                                 <textarea class="form-control" id="description" name="description" placeholder="Masukkan Deskripsi" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="visi" class="form-label">Visi</label>
+                                <textarea class="form-control" id="visi" name="visi" placeholder="Masukkan Visi" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label for="misi" class="form-label">Misi</label>
+                                <textarea class="form-control" id="misi" name="misi" placeholder="Masukkan Misi" rows="3"></textarea>
                             </div>
 
                             <!--- year -->
@@ -349,6 +357,8 @@
                             $('input[name="_method"]').val('PUT')
                             $('input[name="name"]').val(res.name)
                             $('textarea[name="description"]').val(res.description)
+                            $('textarea[name="visi"]').val(res.visi)
+                            $('textarea[name="misi"]').val(res.misi)
                             $('input[name="year"]').val(res.year)
                             if (res.is_active == 1) {
                                 $('input[name="is_active"]')

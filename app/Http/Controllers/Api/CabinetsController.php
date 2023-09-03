@@ -34,6 +34,8 @@ class CabinetsController extends Controller
                 [
                     'cabinets.name',
                     'cabinets.description',
+                    'cabinets.visi',
+                    'cabinets.misi',
                     // DB::raw("CONCAT('" . asset('/storage') . "/', cabinets.logo) as logo"),
                     // DB::raw("CONCAT('" . asset('/storage') . "/', cabinets.filosofy) as filosofy"),
 
