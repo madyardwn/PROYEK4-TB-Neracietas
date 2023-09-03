@@ -11,6 +11,7 @@
     @vite('resources/sass/app.scss')
     @yield('custom_styles')
     <!-- Custom styles for this Page-->
+    <link rel="icon" href="{{ asset('img/himakom.png') }}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/libs/dropzone/dist/dropzone.css"
         rel="stylesheet" />
