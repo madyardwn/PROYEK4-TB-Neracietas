@@ -120,30 +120,28 @@ class UsersController extends Controller
     public function user(Request $request)
     {
         return response()->json(
-            [
-                User::query()
-                    ->select(
-                        [
-                            'users.id',
-                            'users.nim',
-                            'users.na',
-                            'users.nama_bagus',
-                            // 'users.avatar',
-                            DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
-                            'users.email',
-                            'users.name',
-                            'users.year',
-                            'users.email_verified_at',
-                            'users.created_at',
-                            'users.updated_at',
-                            'roles.name as role_name',
-                        ]
-                    )
-                    ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-                    ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
-                    ->where('users.id', $request->user()->id)
-                    ->first()
-            ]
+            User::query()
+                ->select(
+                    [
+                        'users.id',
+                        'users.nim',
+                        'users.na',
+                        'users.nama_bagus',
+                        // 'users.avatar',
+                        DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
+                        'users.email',
+                        'users.name',
+                        'users.year',
+                        'users.email_verified_at',
+                        'users.created_at',
+                        'users.updated_at',
+                        'roles.name as role_name',
+                    ]
+                )
+                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
+                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                ->where('users.id', $request->user()->id)
+                ->first()
         );
     }
 }
