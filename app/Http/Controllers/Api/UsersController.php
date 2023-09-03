@@ -121,8 +121,7 @@ class UsersController extends Controller
     {
         return response()->json(
             [
-                'status' => 'success',
-                'data' => User::query()
+                User::query()
                     ->select(
                         [
                             'users.id',
