@@ -41,152 +41,169 @@
             </a>
             <div class="dropdown-menu show">
                 @can('read user')
-                <a class="dropdown-item" href="{{ route('users.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list" width="24"
-                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M9 6l11 0"></path>
-                            <path d="M9 12l11 0"></path>
-                            <path d="M9 18l11 0"></path>
-                            <path d="M5 6l0 .01"></path>
-                            <path d="M5 12l0 .01"></path>
-                            <path d="M5 18l0 .01"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Daftar Anggota
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('users.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-list" width="24"
+                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M9 6l11 0"></path>
+                                <path d="M9 12l11 0"></path>
+                                <path d="M9 18l11 0"></path>
+                                <path d="M5 6l0 .01"></path>
+                                <path d="M5 12l0 .01"></path>
+                                <path d="M5 18l0 .01"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Daftar Anggota
+                        </span>
+                    </a>
                 @endcan
 
 
                 @can('read permission')
-                <a class="dropdown-item" href="{{ route('permissions.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-open"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z">
-                            </path>
-                            <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-                            <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Permissions
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('permissions.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-lock-open"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z">
+                                </path>
+                                <path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+                                <path d="M8 11v-5a4 4 0 0 1 8 0"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Permissions
+                        </span>
+                    </a>
                 @endcan
 
                 @can('read role')
-                <a class="dropdown-item" href="{{ route('roles.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/box -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
-                            <path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path>
-                            <path d="M15 19l2 2l4 -4"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Roles
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('roles.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/box -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"></path>
+                                <path d="M6 21v-2a4 4 0 0 1 4 -4h4"></path>
+                                <path d="M15 19l2 2l4 -4"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Roles
+                        </span>
+                    </a>
                 @endcan
 
                 @can('read cabinet')
-                <a class="dropdown-item" href="{{ route('cabinets.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checklist"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M9.615 20h-2.615a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8"></path>
-                            <path d="M14 19l2 2l4 -4"></path>
-                            <path d="M9 8h4"></path>
-                            <path d="M9 12h2"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Kabinet
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('cabinets.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-checklist"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M9.615 20h-2.615a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8"></path>
+                                <path d="M14 19l2 2l4 -4"></path>
+                                <path d="M9 8h4"></path>
+                                <path d="M9 12h2"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Kabinet
+                        </span>
+                    </a>
                 @endcan
 
                 @can('read department')
-                <a class="dropdown-item" href="{{ route('departments.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-bank"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M3 21l18 0"></path>
-                            <path d="M3 10l18 0"></path>
-                            <path d="M5 6l7 -3l7 3"></path>
-                            <path d="M4 10l0 11"></path>
-                            <path d="M20 10l0 11"></path>
-                            <path d="M8 14l0 3"></path>
-                            <path d="M12 14l0 3"></path>
-                            <path d="M16 14l0 3"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Departemen
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('departments.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-building-bank"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M3 21l18 0"></path>
+                                <path d="M3 10l18 0"></path>
+                                <path d="M5 6l7 -3l7 3"></path>
+                                <path d="M4 10l0 11"></path>
+                                <path d="M20 10l0 11"></path>
+                                <path d="M8 14l0 3"></path>
+                                <path d="M12 14l0 3"></path>
+                                <path d="M16 14l0 3"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Departemen
+                        </span>
+                    </a>
                 @endcan
 
                 @can('read program')
-                <a class="dropdown-item" href="{{ route('programs.index') }}">
-                    <span class="nav-link-icon d-md-none d-lg-inline-block">
-                        <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-upload"
-                            width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                            stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M14 20h-8a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12v5"></path>
-                            <path d="M11 16h-5a2 2 0 0 0 -2 2"></path>
-                            <path d="M15 16l3 -3l3 3"></path>
-                            <path d="M18 13v9"></path>
-                        </svg>
-                    </span>
-                    <span class="nav-link-title">
-                        Program Kerja
-                    </span>
-                </a>
+                    <a class="dropdown-item" href="{{ route('programs.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-book-upload"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M14 20h-8a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12v5"></path>
+                                <path d="M11 16h-5a2 2 0 0 0 -2 2"></path>
+                                <path d="M15 16l3 -3l3 3"></path>
+                                <path d="M18 13v9"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Program Kerja
+                        </span>
+                    </a>
                 @endcan
 
                 @can('read event')
-                <a class="dropdown-item" href="{{ route('events.index') }}">
+                    <a class="dropdown-item" href="{{ route('events.index') }}">
+                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                            <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event"
+                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z">
+                                </path>
+                                <path d="M16 3l0 4"></path>
+                                <path d="M8 3l0 4"></path>
+                                <path d="M4 11l16 0"></path>
+                                <path d="M8 15h2v2h-2z"></path>
+                            </svg>
+                        </span>
+                        <span class="nav-link-title">
+                            Events
+                        </span>
+                    </a>
+                @endcan
+
+                <a class="dropdown-item" href="">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                         <!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-stairs-up"
                             width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
                             stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <path d="M4 5m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z">
-                            </path>
-                            <path d="M16 3l0 4"></path>
-                            <path d="M8 3l0 4"></path>
-                            <path d="M4 11l16 0"></path>
-                            <path d="M8 15h2v2h-2z"></path>
+                            <path d="M22 6h-5v5h-5v5h-5v5h-5"></path>
+                            <path d="M6 10v-7"></path>
+                            <path d="M3 6l3 -3l3 3"></path>
                         </svg>
                     </span>
                     <span class="nav-link-title">
-                        Events
+                        Periode
                     </span>
                 </a>
-                @endcan
             </div>
         </li>
 
