@@ -74,6 +74,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
+                'status' => $request->date < date('Y-m-d') ? 0 : 1,
             ]);
 
             return response()->json([
@@ -148,15 +149,40 @@ class EventController extends Controller
                 $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
             }
 
-            $event->update([
-                'name' => $request->name,
-                'description' => $request->description,
-                'poster' => $poster ?? $event->poster,
-                'date' => $request->date,
-                'time' => $request->time,
-                'location' => $request->location,
-                'type' => $request->type,
-            ]);
+            // $event->update([
+            //     'name' => $request->name,
+            //     'description' => $request->description,
+            //     'poster' => $poster ?? $event->poster,
+            //     'date' => $request->date,
+            //     'time' => $request->time,
+            //     'location' => $request->location,
+            //     'type' => $request->type,
+            // ]);
+
+            // update status if date is passed or not
+            if ($request->date < date('Y-m-d')) {
+                $event->update([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'poster' => $poster ?? $event->poster,
+                    'date' => $request->date,
+                    'time' => $request->time,
+                    'location' => $request->location,
+                    'type' => $request->type,
+                    'status' => 0,
+                ]);
+            } else {
+                $event->update([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'poster' => $poster ?? $event->poster,
+                    'date' => $request->date,
+                    'time' => $request->time,
+                    'location' => $request->location,
+                    'type' => $request->type,
+                    'status' => 1,
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Event ' . $event->name . ' berhasil diubah',
@@ -241,7 +267,7 @@ class EventController extends Controller
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, $url);
-        
+
         curl_setopt($ch, CURLOPT_POST, true);
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
