@@ -60,91 +60,6 @@
                 "summary": "GET events",
                 "description": "Return data events yang akan ditampilkan pada halaman events mobile",
                 "operationId": "02564acadf6f48e7cf453bb2319ac1b4",
-                "parameters": [
-                    {
-                        "name": "type",
-                        "in": "query",
-                        "description": "Type of event",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "proker",
-                                "kegiatan",
-                                "lomba"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "date",
-                        "in": "query",
-                        "description": "Date of event",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "date"
-                        }
-                    },
-                    {
-                        "name": "time",
-                        "in": "query",
-                        "description": "Time of event",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "format": "time"
-                        }
-                    },
-                    {
-                        "name": "location",
-                        "in": "query",
-                        "description": "Location of event",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Search event by name",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "sort",
-                        "in": "query",
-                        "description": "Sort event by date",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "asc",
-                                "desc"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Limit event",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page of event",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Success"
@@ -191,6 +106,40 @@
                 "summary": "GET user",
                 "description": "Return data user yang akan ditampilkan pada halaman profile mobile",
                 "operationId": "9142ec228ea53995c67de772a779eed5",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/user/device-token": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update device token",
+                "description": "Update device token user",
+                "operationId": "5db00c1b9ed75a0640013bd589329ca8",
+                "parameters": [
+                    {
+                        "name": "device_token",
+                        "in": "query",
+                        "description": "Device token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success"
