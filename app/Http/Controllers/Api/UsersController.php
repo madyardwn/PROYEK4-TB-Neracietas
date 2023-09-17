@@ -173,14 +173,10 @@ class UsersController extends Controller
      */
     public function updateDeviceToken(Request $request)
     {
-        // get user
         $user = $request->user();
-
-        // update device_token
         $user->device_token = $request->device_token;
         $user->save();
 
-        // return response
         return response()->json(
             [
                 'status' => 'success',
