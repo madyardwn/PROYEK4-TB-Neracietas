@@ -36,7 +36,9 @@ class EventsDataTable extends DataTable
                 'events.location',
                 'events.poster',
                 'events.is_active',
-            ]);
+            ])
+            ->orderBy('events.date', 'desc')
+            ->orderBy('events.time', 'desc');
     }
 
     public function html(): HtmlBuilder
@@ -45,7 +47,6 @@ class EventsDataTable extends DataTable
             ->setTableId('events-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(8, 'asc')
             ->buttons([
                 Button::make('')
                     ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
