@@ -74,7 +74,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'status' => $request->date < date('Y-m-d') ? 0 : 1,
+                'is_active' => $request->date < date('Y-m-d') ? 0 : 1,
             ]);
 
             return response()->json([
@@ -169,7 +169,7 @@ class EventController extends Controller
                     'time' => $request->time,
                     'location' => $request->location,
                     'type' => $request->type,
-                    'status' => 0,
+                    'is_active' => 0,
                 ]);
             } else {
                 $event->update([
@@ -180,7 +180,7 @@ class EventController extends Controller
                     'time' => $request->time,
                     'location' => $request->location,
                     'type' => $request->type,
-                    'status' => 1,
+                    'is_active' => 1,
                 ]);
             }
 
