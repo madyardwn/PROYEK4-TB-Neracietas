@@ -75,7 +75,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date >= Carbon::now()->format('Y-m-d') && $request->time >= Carbon::now()->format('H:i:s') ? true : false,
+                'is_active' => $request->date >= Carbon::now()->format('Y-m-d') ? true : false,
             ]);
 
             return response()->json([
@@ -158,7 +158,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date >= Carbon::now()->format('Y-m-d') && $request->time >= Carbon::now()->format('H:i:s') ? true : false,
+                'is_active' => $request->date >= Carbon::now()->format('Y-m-d') ? true : false,
             ]);
 
             return response()->json([
