@@ -318,6 +318,68 @@
             });
 
             // -------------------------------------------------
+            // NOTIFICATION
+            // -------------------------------------------------
+            $(document).on('click', '.btnNotification', function() {                
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Kirim Notifikasi?',
+                    text: "Notifikasi akan dikirim ke semua anggota aktif",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Kirim!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: 'GET',
+                            url: "{{ route('events.notification', ':id') }}".replace(':id', id),
+                            success: function(res) {
+                                if (res) {
+                                    Swal.fire({
+                                            icon: 'success',
+                                            title: 'Berhasil',
+                                            html: res.message,
+                                            showConfirmButton: true
+                                        })
+                                        .then((result) => {
+                                            if (result.isConfirmed) {
+                                                table.DataTable().ajax.reload();
+                                                ids.splice(0, ids.length);
+                                                $('#checkAll').prop('checked', false);
+                                                $('#selectedDelete').prop('disabled', true);
+
+                                                $('#card').before(
+                                                    '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                                                    res.message +
+                                                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                                                    '</div>'
+                                                );
+
+                                                $('.alert').delay(3000).slideUp(300,
+                                                    function() {
+                                                        $(this).alert('close');
+                                                    });
+                                            }
+                                        });
+                                }
+                            },
+                            error: function(err) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: err.responseJSON.message,
+                                    showConfirmButton: true
+                                });
+                            }
+                        });
+                    }                    
+                })
+            });
+
+            // -------------------------------------------------
             // EDIT DATA
             // -------------------------------------------------
             $(document).on('click', '.btnEdit', function() {

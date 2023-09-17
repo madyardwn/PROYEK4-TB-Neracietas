@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\EventsDataTable;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
@@ -203,5 +204,58 @@ class EventController extends Controller
                 'message' => 'Terjadi kesalahan saat menghapus event',
             ], 500);
         }
+    }
+
+    public function notification(Event $event)
+    {
+        $url = env('FCM_URL');
+
+        $serverKey = env('FCM_SERVER_KEY');
+
+        $dataArr = [
+            "click_action" => "FLUTTER_NOTIFICATION_CLICK",
+            "status" => "done",
+        ];
+
+        $users = User::whereNotNull('device_token')->get();
+
+        $data = [
+            "registration_ids" => $users->pluck('device_token')->toArray(),
+            "notification" => [
+                "title" => $event->name,
+                "body" => $event->description,
+                "sound" => "default",
+                "badge" => "1",
+            ],
+            "data" => $dataArr,
+            "priority" => "high",
+        ];
+
+        $dataString = json_encode($data);
+
+        $headers = [
+            'Authorization: key=' . $serverKey,
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        
+        curl_setopt($ch, CURLOPT_POST, true);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+
+        return response()->json([
+            'message' => 'Notifikasi berhasil dikirim',
+        ], 200);
     }
 }

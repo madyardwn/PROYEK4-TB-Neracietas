@@ -82,9 +82,9 @@ class EventsDataTable extends DataTable
             Column::make('poster')->title('Poster')->render('function() {
                 return `<img src="/storage/${this.poster}" class="img-fluid" width="100px">`;
             }'),
-            Column::make('description')->title('Deksripsi'),
             Column::make('type')->title('Tipe'),
-            Column::make('location')->title('Lokasi'),
+            Column::make('location')->title('Lokasi')
+                ->width(100),
             Column::make('date')->title('Tanggal'),
             Column::make('time')->title('Jam'),
             Column::make('is_active')->title('Status')->render('function() {
@@ -98,6 +98,7 @@ class EventsDataTable extends DataTable
                 ->title('Opsi')
                 ->render('function() {
                 return `
+                    <a class="btnNotification btn btn-ghost-primary btn-sm fa fa-bell" data-action="' . route('events.notification', ':id') . '" data-id="${this.id}"></a>
                     <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
                     <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
                 `

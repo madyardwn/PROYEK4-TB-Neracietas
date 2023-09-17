@@ -144,4 +144,49 @@ class UsersController extends Controller
                 ->first()
         );
     }
+
+    // API update device_token, swagger
+    /**
+     * @OA\Put(
+     *     path="/api/user/device-token",
+     *     summary="Update device token",
+     *     description="Update device token user",
+     *     tags={"Users"},
+     *     security={{"sanctum":{}}},
+     * @OA\Parameter(
+     *         name="device_token",
+     *         in="query",
+     *         description="Device token",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     * @OA\Response(
+     *         response=200,
+     *         description="Success"
+     *     ),
+     * @OA\Response(
+     *         response=403,
+     *         description="Access Denied"
+     *     )
+     * )
+     */
+    public function updateDeviceToken(Request $request)
+    {
+        // get user
+        $user = $request->user();
+
+        // update device_token
+        $user->device_token = $request->device_token;
+        $user->save();
+
+        // return response
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Device token updated'
+            ]
+        );
+    }
 }
