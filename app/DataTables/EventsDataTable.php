@@ -45,7 +45,7 @@ class EventsDataTable extends DataTable
             ->setTableId('events-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->orderBy(1)
+            ->orderBy(4, 'desc')
             ->buttons([
                 Button::make('')
                     ->text('<span class="fa fa-plus"></span>&nbsp; Tambah')
