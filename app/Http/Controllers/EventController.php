@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\EventsDataTable;
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
@@ -74,7 +75,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date <= date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
+                'is_active' => Carbon::parse($request->date . ' ' . $request->time)->utc() <= Carbon::now()->utc() ? 0 : 1,
             ]);
 
             return response()->json([
@@ -157,7 +158,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date <= date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
+                'is_active' => Carbon::parse($request->date . ' ' . $request->time)->utc() <= Carbon::now()->utc() ? 0 : 1,
             ]);
 
             return response()->json([
