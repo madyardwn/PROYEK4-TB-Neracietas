@@ -74,7 +74,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date < date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
+                'is_active' => $request->date <= date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
             ]);
 
             return response()->json([
@@ -157,7 +157,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date < date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
+                'is_active' => $request->date <= date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
             ]);
 
             return response()->json([
