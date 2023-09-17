@@ -29,6 +29,7 @@ class User extends Authenticatable
         'year',
         'department_id',
         'is_active',
+        'device_token'
     ];
 
     /**
