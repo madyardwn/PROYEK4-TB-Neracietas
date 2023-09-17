@@ -74,7 +74,7 @@ class EventController extends Controller
                 'time' => $request->time,
                 'location' => $request->location,
                 'type' => $request->type,
-                'is_active' => $request->date < date('Y-m-d') ? 0 : 1,
+                'is_active' => $request->date < date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
             ]);
 
             return response()->json([
@@ -149,40 +149,16 @@ class EventController extends Controller
                 $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
             }
 
-            // $event->update([
-            //     'name' => $request->name,
-            //     'description' => $request->description,
-            //     'poster' => $poster ?? $event->poster,
-            //     'date' => $request->date,
-            //     'time' => $request->time,
-            //     'location' => $request->location,
-            //     'type' => $request->type,
-            // ]);
-
-            // update status if date is passed or not
-            if ($request->date < date('Y-m-d')) {
-                $event->update([
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'poster' => $poster ?? $event->poster,
-                    'date' => $request->date,
-                    'time' => $request->time,
-                    'location' => $request->location,
-                    'type' => $request->type,
-                    'is_active' => 0,
-                ]);
-            } else {
-                $event->update([
-                    'name' => $request->name,
-                    'description' => $request->description,
-                    'poster' => $poster ?? $event->poster,
-                    'date' => $request->date,
-                    'time' => $request->time,
-                    'location' => $request->location,
-                    'type' => $request->type,
-                    'is_active' => 1,
-                ]);
-            }
+            $event->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'poster' => $poster ?? $event->poster,
+                'date' => $request->date,
+                'time' => $request->time,
+                'location' => $request->location,
+                'type' => $request->type,
+                'is_active' => $request->date < date('Y-m-d') && $request->time < date('H:i:s') ? 0 : 1,
+            ]);
 
             return response()->json([
                 'message' => 'Event ' . $event->name . ' berhasil diubah',
