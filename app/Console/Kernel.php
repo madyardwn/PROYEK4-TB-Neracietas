@@ -13,9 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        // $schedule->command('app:update-events-status')->everyMinute();
-        // time zone indonesia
-        $schedule->command('app:update-events-status')->timezone('Asia/Jakarta')->everyMinute();
+        $schedule->command('app:update-events-status')->everyMinute();
     }
 
     /**
