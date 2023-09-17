@@ -145,7 +145,6 @@ class UsersController extends Controller
         );
     }
 
-    // API update device_token, swagger
     /**
      * @OA\Put(
      *     path="/api/user/device-token",
