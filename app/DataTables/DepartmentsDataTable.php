@@ -32,11 +32,7 @@ class DepartmentsDataTable extends DataTable
                 'departments.short_name',
                 'departments.logo',
                 'departments.description',
-                'cabinets.name as cabinet_name',
-                'cabinets.is_active as status',
-                'cabinets.year as year'
-            ])
-            ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id');
+            ]);
     }
 
     public function html(): HtmlBuilder
@@ -95,24 +91,6 @@ class DepartmentsDataTable extends DataTable
                     return ``;
                 }
             }')
-                ->width(50)
-                ->addClass('text-center'),
-            Column::make('cabinets.name')->title('Kabinet')->render('function() {
-                return this.cabinet_name;
-            }')
-                ->width(100),
-            Column::make('cabinets.year')->title('Tahun')->render('function() {
-                return this.year;
-            }')
-                ->width(50)
-                ->addClass('text-center'),
-            Column::make('cabinets.is_active')->title('Status')->render('function() {
-                    if (this.status == 1) {
-                        return `<span class="badge bg-success">Aktif</span>`
-                    } else {
-                        return `<span class="badge bg-danger">Tidak Aktif</span>`
-                    }
-                }')
                 ->width(50)
                 ->addClass('text-center'),
             Column::computed('Opsi')

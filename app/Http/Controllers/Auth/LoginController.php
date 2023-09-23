@@ -109,9 +109,9 @@ class LoginController extends Controller
                         DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
                     ]
                 )
-                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
-                ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+                ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+                ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
+                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
                 ->where('email', $request->email)->first();
 
             return response()->json(

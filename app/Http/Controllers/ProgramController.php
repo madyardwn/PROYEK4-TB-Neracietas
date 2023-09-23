@@ -13,21 +13,22 @@ class ProgramController extends Controller
     public function index(ProgramsDataTable $dataTable)
     {
         return $dataTable->render('pages.programs.index', [
-            'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
+            'departments' => Department::leftJoin('periodes', 'departments.id', '=', 'periodes.department_id')
+                ->leftJoin('cabinets', 'periodes.cabinet_id', '=', 'cabinets.id')
                 ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
                 ->where('cabinets.is_active', 1)
                 ->get(),
             'users' => User::leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-                ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+                ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
                 ->select(
                     'users.id',
                     'users.name',
                     'roles.name as role',
                     'departments.id as department_id',
                     'departments.name as department',
-                    'users_departments.is_active as status'
+                    'periodes.is_active as status'
                 )
                 ->get(),
         ]);

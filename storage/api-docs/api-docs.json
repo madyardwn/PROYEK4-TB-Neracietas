@@ -127,19 +127,28 @@
                     "Users"
                 ],
                 "summary": "Update device token",
-                "description": "Update device token user",
+                "description": "Update device token",
                 "operationId": "5db00c1b9ed75a0640013bd589329ca8",
-                "parameters": [
-                    {
-                        "name": "device_token",
-                        "in": "query",
-                        "description": "Device token",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                "requestBody": {
+                    "description": "Update device token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "device_token"
+                                ],
+                                "properties": {
+                                    "device_token": {
+                                        "type": "string",
+                                        "example": "device_token"
+                                    }
+                                },
+                                "type": "object"
+                            }
                         }
                     }
-                ],
+                },
                 "responses": {
                     "200": {
                         "description": "Success"

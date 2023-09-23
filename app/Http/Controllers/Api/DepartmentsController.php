@@ -39,18 +39,24 @@ class DepartmentsController extends Controller
                     DB::raw("CONCAT('" . asset('/storage') . "/', departments.logo) as logo"),
                 ]
             )
-            ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id')
+            ->leftJoin('periodes', 'departments.id', '=', 'periodes.department_id')
+            ->leftJoin('cabinets', 'cabinets.id', '=', 'periodes.cabinet_id')
             ->where('cabinets.is_active', 1)
             ->where('departments.name', '!=', 'Majelis Perwakilan Anggota')
             ->where('departments.name', '!=', 'Himpunan Mahasiswa Teknik Komputer Polban')
             ->get();
-
+            // ->leftJoin('cabinets', 'cabinets.id', '=', 'departments.cabinet_id')
+            // ->where('cabinets.is_active', 1)
+            // ->where('departments.name', '!=', 'Majelis Perwakilan Anggota')
+            // ->where('departments.name', '!=', 'Himpunan Mahasiswa Teknik Komputer Polban')
+            // ->get();
+            
         $departments = $departments->map(
             function ($department) {
                 $department->users = $department->users()
                     ->select(['users.id', 'users.name', 'users.avatar', 'roles.name as role'])
-                    ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
-                    ->where('users_departments.is_active', 1)
+                    ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
+                    ->where('periodes.is_active', 1)
                     ->where(
                         function ($query) {
                             $query->where('roles.name', 'like', '%Ketua Divisi%')

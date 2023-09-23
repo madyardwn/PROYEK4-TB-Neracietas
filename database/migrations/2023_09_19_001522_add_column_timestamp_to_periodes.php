@@ -11,15 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cabinets', function (Blueprint $table) {
-            $table->id();
-
-            $table->string('name');
-            $table->string('description');
-            $table->string('logo');
-            $table->string('year');
-            $table->boolean('is_active')->default(true);
-
+        Schema::table('periodes', function (Blueprint $table) {            
             $table->timestamps();
         });
     }
@@ -29,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cabinets');
+        Schema::table('periodes', function (Blueprint $table) {
+            $table->dropTimestamps();
+        });
     }
 };

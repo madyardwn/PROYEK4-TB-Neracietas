@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 /*
@@ -94,5 +95,11 @@ Route::middleware(['auth'])->group(
         // Excel Import
         Route::get('import-users', [\App\Http\Controllers\ImportUsersController::class, 'index'])->name('import-users.index')->middleware('permission:import users');
         Route::post('import-users', [\App\Http\Controllers\ImportUsersController::class, 'import'])->name('import-users.import')->middleware('permission:import users');
+
+        Route::get('filosofy', [\App\Http\Controllers\FilosofyController::class, 'index'])->name('filosofy.index');
+        Route::post('filosofy', [\App\Http\Controllers\FilosofyController::class, 'store'])->name('filosofy.store');
+        Route::get('filosofy/{filosofy}/edit', [\App\Http\Controllers\FilosofyController::class, 'edit'])->name('filosofy.edit');
+        Route::put('filosofy/{filosofy}', [\App\Http\Controllers\FilosofyController::class, 'update'])->name('filosofy.update');
+        Route::delete('filosofy/{filosofy}', [\App\Http\Controllers\FilosofyController::class, 'destroy'])->name('filosofy.destroy');
     }
 );

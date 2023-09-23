@@ -77,11 +77,11 @@
                             </div>
 
                             <div class="form-group mb-3">
-                                <label for="role" class="form-label">Role</label>
-                                <select class="" id="role" name="role">
-                                    <option value="" selected disabled>Pilih Role</option>
-                                    @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}
+                                <label for="department" class="form-label">Kabinet</label>
+                                <select class="" id="cabinet" name="cabinet">
+                                    <option value="" selected disabled>Pilih Kabinet</option>
+                                    @foreach ($cabinets as $cabinet)
+                                        <option value="{{ $cabinet->id }}">{{ $cabinet->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -99,6 +99,17 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="form-group mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                <select class="" id="role" name="role">
+                                    <option value="" selected disabled>Pilih Role</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}">{{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>                            
                         </div>
                     </div>
                 </div>
@@ -123,6 +134,7 @@
 
             const tomselectDepartment = new TomSelect('#department');
             const tomselectRole = new TomSelect('#role');
+            const tomselectCabinet = new TomSelect('#cabinet');
 
             // -------------------------------------------------
             // AJAX SETUP
@@ -419,6 +431,9 @@
 
                             // Assign Selected Department
                             tomselectDepartment.setValue(res.department_id)
+
+                            // Assign Selected Cabinet
+                            tomselectCabinet.setValue(res.cabinet_id)
                         }
                     },
                 })
@@ -509,6 +524,7 @@
             function resetForm() {
                 tomselectDepartment.clear(true);
                 tomselectRole.clear(true);
+                tomselectCabinet.clear(true);
                 $('.is-invalid').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
                 $('form')[0].reset();

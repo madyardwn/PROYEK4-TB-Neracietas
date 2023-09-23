@@ -17,11 +17,9 @@ class UserController extends Controller
     {
         return $dataTable->render(
             'pages.users.index', [
+            'cabinets' => Cabinet::where('is_active', 1)->get(),
             'roles' => Role::where('name', '!=', 'superadmin')->get(),
-            'departments' => Department::leftJoin('cabinets', 'departments.cabinet_id', '=', 'cabinets.id')
-                ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
-                ->where('cabinets.is_active', 1)
-                ->get(),
+            'departments' => Department::where('is_active', 1)->get(),
             ]
         );
     }
@@ -35,9 +33,10 @@ class UserController extends Controller
             'name' => 'required|max:50',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
-            'role' => 'required',
             'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'department' => 'required',
+            'role' => 'required',
+            'cabinet' => 'required',
+            'department' => 'required',            
         ];
 
         $message = [
@@ -86,13 +85,15 @@ class UserController extends Controller
             'department' => [
                 'required' => 'Departemen harus diisi',
             ],
+            'cabinet' => [
+                'required' => 'Kabinet harus diisi',
+            ],
         ];
 
         $request->validate($rules, $message);
 
         try {
-            $user = User::create(
-                [
+            $user = User::create([
                 'nim' => $request->nim,
                 'name' => $request->name,
                 'email' => $request->email,
@@ -102,40 +103,31 @@ class UserController extends Controller
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
-                ]
-            );
+            ]);
 
-            // attach role
             $user->assignRole(Role::findOrFail(request()->role));
+            
+            $user->periode()->create([
+                'cabinet_id' => $request->cabinet,
+                'department_id' => $request->department,
+                'role_id' => $request->role,
+                'is_active' => 1,
+            ]);
 
-            // attach department
-            $user->departments()->attach($request->department, ['position' => $user->roles->first()->id]);
-
-            // update status users_departments
-            $department = Department::find($request->department);
-            $cabinet = Cabinet::find($department->cabinet_id);
-            $user->departments()->updateExistingPivot($request->department, ['is_active' => $cabinet->is_active]);
-
-            return response()->json(
-                [
+            return response()->json([
                 'message' => 'User ' . $user->name . ' berhasil ditambahkan',
-                ], 200
-            );
+            ], 200);
         } catch (\Exception $e) {
-            return response()->json(
-                [
+            return response()->json([
                 'message' => 'User gagal ditambahkan',
                 'error' => $e->getMessage(),
-                ], 500
-            );
+            ], 500);
         }
     }
 
     public function edit(User $user): User
     {
         return $user
-            ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
             ->select(
                 'users.id',
                 'users.na',
@@ -145,10 +137,15 @@ class UserController extends Controller
                 'users.name',
                 'users.email',
                 'users.avatar',
-                'users_departments.department_id',
-                'users_departments.position as role_id',
-                'users_departments.is_active',
+                'periodes.cabinet_id',
+                'periodes.department_id',
+                'periodes.role_id',
+                'periodes.is_active',
             )
+            ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+            ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')            
+            ->leftJoin('cabinets', 'periodes.cabinet_id', '=', 'cabinets.id')
+            ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
             ->where('users.id', $user->id)
             ->first();
     }
@@ -162,9 +159,10 @@ class UserController extends Controller
             'year' => 'required|numeric',
             'name' => 'required|max:50',
             'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required',
             'avatar' => 'image|mimes:jpeg,png,jpg|max:2048',
+            'role' => 'required',
             'department' => 'required',
+            'cabinet' => 'required',
         ];
 
         $message = [
@@ -208,6 +206,9 @@ class UserController extends Controller
             'department' => [
                 'required' => 'Departemen harus diisi',
             ],
+            'cabinet' => [
+                'required' => 'Kabinet harus diisi',
+            ],
         ];
 
         $request->validate($rules, $message);
@@ -226,8 +227,7 @@ class UserController extends Controller
                 }
             }
 
-            $user->update(
-                [
+            $user->update([
                 'nim' => $request->nim,
                 'name' => $request->name,
                 'email' => $request->email,
@@ -235,14 +235,18 @@ class UserController extends Controller
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
-                ]
-            );
+            ]);
 
             // attach role
             $user->syncRoles(Role::findOrFail(request()->role));
 
-            // sync department
-            $user->departments()->sync([$request->department => ['position' => $user->roles->first()->id]]);
+            // update periode
+            $user->periode()->update([
+                'cabinet_id' => $request->cabinet,
+                'department_id' => $request->department,
+                'role_id' => $request->role,
+                'is_active' => 1,
+            ]);
 
             return response()->json(
                 [

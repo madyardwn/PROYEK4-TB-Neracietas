@@ -215,50 +215,63 @@ class EventController extends Controller
 
         $serverKey = env('FCM_SERVER_KEY');
 
-        $dataArr = [
-            "click_action" => "FLUTTER_NOTIFICATION_CLICK",
-            "status" => "done",
-        ];
-
-        $users = User::whereNotNull('device_token')->get();
-
-        $data = [
-            "registration_ids" => $users->pluck('device_token')->toArray(),
-            "notification" => [
-                "title" => $event->name,
-                "body" => $event->description,
-                "sound" => "default",
-                "badge" => "1",
-            ],
-            "data" => $dataArr,
-            "priority" => "high",
-        ];
-
-        $dataString = json_encode($data);
-
         $headers = [
             'Authorization: key=' . $serverKey,
             'Content-Type: application/json',
         ];
 
-        $ch = curl_init();
+        $notification = [
+            'title' => 'Event ' . $event->name,
+            'body' => 'Event ' . $event->name . ' akan dilaksanakan pada ' . $event->date . ' pukul ' . $event->time . ' di ' . $event->location,
+        ];
 
-        curl_setopt($ch, CURLOPT_URL, $url);
+        $data = [
+            'event_id' => $event->id,
+        ];
 
-        curl_setopt($ch, CURLOPT_POST, true);
+        $fcmTokens = User::whereNotNull('device_token')->pluck('device_token')->all();
+        // $fcmTokens = User::query()
+        //     ->select([
+        //         'users.device_token',
+        //         'periodes.is_active'
+        //     ])
+        //     ->leftJoin('periodes', 'periodes.id', '=', 'users.periode_id')
+        //     ->where('periodes.is_active', true)
+        //     ->whereNotNull('users.device_token')
+        //     ->pluck('users.device_token')
+        //     ->all();
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $chunks = array_chunk($fcmTokens, 50);
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        foreach ($chunks as $chunk) {
+            $fields = [
+                'registration_ids' => $chunk,
+                'notification' => $notification,
+                'data' => $data,
+            ];
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+            $payload = json_encode($fields);
 
-        $response = curl_exec($ch);
+            $curl = curl_init();
 
-        curl_close($ch);
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_HTTPHEADER => $headers,
+            ]);
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+        }
 
         return response()->json([
             'message' => 'Notifikasi berhasil dikirim',
-        ], 200);
+            'data' => $response,
+            'tokens' => $fcmTokens,
+            'chunks' => $chunks,
+        ], 200);                
     }
 }

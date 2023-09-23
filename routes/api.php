@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/users', [App\Http\Controllers\Api\UsersController::class, 'index']);
         Route::get('/cabinets', [App\Http\Controllers\Api\CabinetsController::class, 'index']);
         Route::get('/events', [App\Http\Controllers\Api\EventsController::class, 'index']);
-        Route::get('/departments', [App\Http\Controllers\Api\DepartmentsController::class, 'index']);        
+        Route::get('/departments', [App\Http\Controllers\Api\DepartmentsController::class, 'index']);                    
         Route::put('/user/device-token', [App\Http\Controllers\Api\UsersController::class, 'updateDeviceToken']);
 
         // api logout
@@ -39,7 +39,16 @@ Route::middleware('auth:sanctum')->group(
 );
 
 // unauthenticated routes
-Route::get(
+// Route::get(
+//     '/unauthenticated',
+//     function () {
+//         return response()->json(['message' => 'Unauthenticated.'], 401);
+//     }
+// )->name('unauthenticated');
+
+// unauthenticated routes multiple method
+Route::match(
+    ['get', 'post', 'put', 'delete'],
     '/unauthenticated',
     function () {
         return response()->json(['message' => 'Unauthenticated.'], 401);

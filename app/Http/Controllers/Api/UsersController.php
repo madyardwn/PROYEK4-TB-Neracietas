@@ -56,9 +56,9 @@ class UsersController extends Controller
                     DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
                 ]
             )
-            ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-            ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
-            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+            ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+            ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
+            ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
             ->where(
                 function ($query) {
                     $query->where('roles.name', 'like', '%Ketua Himpunan%')
@@ -68,7 +68,7 @@ class UsersController extends Controller
                         ->orWhere('roles.name', 'like', '%Wakil%');
                 }
             )
-            ->where('users_departments.is_active', 1)
+            ->where('periodes.is_active', 1)
             // sort by role
             ->orderByRaw(
                 "
@@ -138,37 +138,37 @@ class UsersController extends Controller
                         'roles.name as role_name',
                     ]
                 )
-                ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-                ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+                ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+                ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
                 ->where('users.id', $request->user()->id)
                 ->first()
         );
     }
 
+    // swagger request from request body
     /**
      * @OA\Put(
      *     path="/api/user/device-token",
-     *     summary="Update device token",
-     *     description="Update device token user",
-     *     tags={"Users"},
-     *     security={{"sanctum":{}}},
-     * @OA\Parameter(
-     *         name="device_token",
-     *         in="query",
-     *         description="Device token",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
+     *    summary="Update device token",
+     *   description="Update device token",
+     *  tags={"Users"},
+     * security={{"sanctum":{}}},
+     * @OA\RequestBody(
+     *   required=true,
+     *  description="Update device token",
+     * @OA\JsonContent(
+     *      required={"device_token"},
+     *     @OA\Property(property="device_token", type="string", example="device_token"),
+     * ),
+     * ),
      * @OA\Response(
-     *         response=200,
-     *         description="Success"
-     *     ),
+     *        response=200,
+     *       description="Success"
+     *   ),
      * @OA\Response(
-     *         response=403,
-     *         description="Access Denied"
-     *     )
+     *       response=403,
+     *     description="Access Denied"
+     *  )
      * )
      */
     public function updateDeviceToken(Request $request)

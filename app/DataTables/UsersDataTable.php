@@ -34,13 +34,13 @@ class UsersDataTable extends DataTable
                 'users.year',
                 'roles.name as roles',
                 'departments.name as departments',
-                'users_departments.is_active as status'
+                'periodes.is_active as status'
             ])
             // leftjoin with department
-            ->leftJoin('users_departments', 'users.id', '=', 'users_departments.user_id')
-            ->leftJoin('departments', 'users_departments.department_id', '=', 'departments.id')
+            ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+            ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
             // leftjoin with role
-            ->leftJoin('roles', 'users_departments.position', '=', 'roles.id')
+            ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
 
             // exclude users with superadmin role
             ->whereNotExists(function ($query) {
@@ -151,7 +151,7 @@ class UsersDataTable extends DataTable
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Angkatan'),
-            Column::make('users_departments.is_active')
+            Column::make('periodes.is_active')
                 ->width(60)
                 ->addClass('text-center')
                 ->title('Status')

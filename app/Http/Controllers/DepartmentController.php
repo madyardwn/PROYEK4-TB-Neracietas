@@ -25,7 +25,6 @@ class DepartmentController extends Controller
             'name' => 'required|max:50',
             'description' => 'required',
             'logo' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'cabinet' => 'required',
             'short_name' => 'required|max:10',
         ];
 
@@ -42,9 +41,6 @@ class DepartmentController extends Controller
                 'image' => 'Logo harus berupa gambar',
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
-            ],
-            'cabinet' => [
-                'required' => 'Kabinet harus diisi',
             ],
             'short_name' => [
                 'required' => 'Nama singkat harus diisi',
@@ -66,7 +62,6 @@ class DepartmentController extends Controller
                 'description' => $request->description,
                 'logo' => $logo,
                 'short_name' => $request->short_name,
-                'cabinet_id' => $request->cabinet,
             ]);
 
             return response()->json([
@@ -74,7 +69,7 @@ class DepartmentController extends Controller
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                'message' => 'Departemen ' . $request->name . ' gagal ditambahkan',
+                'message' => 'Departemen ' . $request->name . ' gagal ditambahkan' . $th->getMessage(),
             ], 500);
         }
     }
@@ -91,7 +86,6 @@ class DepartmentController extends Controller
             'name' => 'required|max:50',
             'description' => 'required',
             'logo' => 'image|mimes:jpeg,png,jpg|max:2048',
-            'cabinet' => 'required',
             'short_name' => 'required|max:10',
         ];
 
@@ -108,9 +102,6 @@ class DepartmentController extends Controller
                 'image' => 'Logo harus berupa gambar',
                 'mimes' => 'Logo harus berupa gambar dengan format jpeg, png, atau jpg',
                 'max' => 'Logo maksimal 2 MB',
-            ],
-            'cabinet' => [
-                'required' => 'Kabinet harus diisi',
             ],
             'short_name' => [
                 'required' => 'Nama singkat harus diisi',
@@ -138,7 +129,6 @@ class DepartmentController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'logo' => $logo ?? $department->logo,
-                'cabinet_id' => $request->cabinet,
                 'short_name' => $request->short_name,
             ]);
 

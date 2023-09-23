@@ -369,4 +369,9 @@ class CabinetController extends Controller
             );
         }
     }
+
+    // <a class="btnFilosofy btn btn-ghost-info btn-sm fa fa-image" data-action="' . route('cabinets.filosofy', ':id') . '" data-id="${this.id}"></a>
+    //                 <a class="btnMakeFilosofy btn btn-ghost-warning btn-sm fa fa-image" data-action="' . route('cabinets.makefilosofy', ':id') . '" data-id="${this.id}"></a>
+    //                 <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('cabinets.edit', ':id') . '" data-id="${this.id}"></a>
+    //                 <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('cabinets.destroy', ':id') . '" data-id="${this.id}"></a>                    
 }

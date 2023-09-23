@@ -29,4 +29,9 @@ class Cabinet extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function filosofies()
+    {
+        return $this->hasMany(Filosofy::class);
+    }
 }

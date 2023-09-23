@@ -17,9 +17,9 @@ return new class extends Migration
 
             $table->string('name');
             $table->string('short_name');
-            $table->string('logo')->nullable();
             $table->string('description')->nullable();
-            $table->foreignId('cabinet_id')->constrained('cabinets')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('logo')->nullable();
+            $table->boolean('is_active')->default(true);
 
             $table->timestamps();
         });

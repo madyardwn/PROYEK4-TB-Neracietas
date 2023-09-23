@@ -3,40 +3,35 @@
         <div class="modal-content">
             <form method="POST" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="_method" value="">                
+                <input type="hidden" name="_method" value="">
                 <div class="modal-header">
                     <h5 class="modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-3">
                             <div class="form-group">
-                                <label for="logo" class="form-label">Logo</label>
+                                <label for="logo" class="form-label d-block text-center">Logo</label>
                                 <img class="img-holder img-thumbnail" width="265" height="300" src=""
                                     alt="">
                                 <input type="file" class="form-control mt-2" id="logo" name="logo">
                             </div>
-                        </div>
-                        <div class="col-md-7">
-                            <!-- nim -->
+                        </div>  
+                        <div class="col-md-9">
                             <div class="form-group mb-3">
-                                <label for="name" class="form-label">Nama Departmen</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ old('name') }}" placeholder="Masukkan Nama" max="50">
+                                <label for="label" class="form-label">Filosofy</label>
+                                <textarea class="form-control" id="label" name="label" rows="3"></textarea>
                             </div>
-
-                            <!-- short_name -->
                             <div class="form-group mb-3">
-                                <label for="short_name" class="form-label">Nama Singkat</label>
-                                <input type="text" class="form-control" id="short_name" name="short_name"
-                                    value="{{ old('short_name') }}" placeholder="Masukkan Nama Singkat" max="50">
-                            </div>
-
-                            <!-- description -->
-                            <div class="form-group mb-3">
-                                <label for="description" class="form-label">Deskripsi</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="Masukkan Deskripsi" rows="3"></textarea>
+                                <label for="department" class="form-label">Kabinet</label>
+                                <select class="" id="cabinet" name="cabinet">
+                                    <option value="" selected disabled>Pilih Kabinet</option>
+                                    @foreach ($cabinets as $cabinet)
+                                        <option value="{{ $cabinet->id }}">{{ $cabinet->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -58,18 +53,23 @@
         $(document).ready(function() {
 
             // inisialisasi datatable
-            const table = $('#departments-table');
+            const table = $('#filosofy-table');
 
-            // ajax header csrf token
+            const tomselectCabinet = new TomSelect('#cabinet');
+
+            // -------------------------------------------------
+            // AJAX SETUP
+            // -------------------------------------------------       
             $ajaxSetup = $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            })
+            });
 
             // -------------------------------------------------
             //  CHECKBOX ACTION
             // ------------------------------------------------- 
+
             // array for store id
             const ids = [];
 
@@ -126,7 +126,7 @@
                 })
 
                 $.ajax({
-                    url: "{{ route('departments.destroy', ':id') }}".replace(':id', ids),
+                    url: "{{ route('filosofy.destroy', ':id') }}".replace(':id', ids),
                     method: 'DELETE',
                     data: {
                         ids: ids
@@ -215,17 +215,19 @@
 
                     success: function(res) {
                         if (res) {
-
                             Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
                                     text: res.message,
                                     showConfirmButton: false,
-                                    timer: 1500
+                                    timer: 1500,
+                                    timerProgressBar: true,
                                 })
                                 .then(() => {
-                                    $('button[type="submit"]').attr('disabled', false);
-                                    $('button[type="submit"]').removeClass('btn-loading');
+                                    $('button[type="submit"]').attr('disabled',
+                                        false);
+                                    $('button[type="submit"]').removeClass(
+                                        'btn-loading');
                                     $('.action-modal').modal('hide');
 
                                     // Reload Datatable
@@ -239,20 +241,21 @@
                                         '</div>'
                                     );
 
-                                    $('.alert').delay(3000).slideUp(300, function() {
-                                        $(this).alert('close');
-                                    });
+                                    $('.alert').delay(3000).slideUp(300,
+                                        function() {
+                                            $(this).alert('close');
+                                        });
                                 })
                         }
                     },
                     error: function(err) {
                         if (err) {
-
                             $('button[type="submit"]').attr('disabled', false);
                             $('button[type="submit"]').removeClass('btn-loading');
 
                             $.each(err.responseJSON.errors, function(key, value) {
-                                $('form').find(`#${key}`).addClass('is-invalid');
+                                $('form').find(`#${key}`).addClass(
+                                    'is-invalid');
                                 for (let i = 0; i < value.length; i++) {
                                     $('form').find(`#${key}`).after(`
                                     <div class="invalid-feedback">
@@ -273,17 +276,18 @@
             $(document).on('click', '.btnAdd', function() {
                 // Modal Setup
                 resetForm();
-                $('.modal-title').text('Buat Departemen');
+                $('.modal-title').text('Tambah Filosofy')
                 $('.modal-footer').find('button').text('Simpan')
 
                 // Image Preview
                 $('.img-holder').attr('src', '/img/default_avatar.png');
 
                 // Define Action
-                $('form').attr('action', "{{ route('departments.store') }}");
+                $('form').attr("action", "{{ route('filosofy.store') }}")
 
                 // Assign POST Method
                 $('input[name="_method"]').val('POST');
+
             });
 
             // -------------------------------------------------
@@ -301,25 +305,27 @@
                         if (res) {
                             // Modal Setup
                             resetForm();
-                            $('.modal-title').text('Edit Departemen')
+                            $('.modal-title').text('Edit Filosofy')
                             $('.modal-footer').find('button').text('Simpan')
                             $('.input-password').remove()
 
                             // Assign Value to Form
                             $('input[name="_method"]').val('PUT')
-                            $('input[name="name"]').val(res.name)
-                            $('input[name="short_name"]').val(res.short_name)
-                            $('textarea[name="description"]').val(res.description)
+                            $('textarea[name="label"]').val(res.label)
+                            $('input[name="cabinet"]').val(res.cabinet)
 
                             // Avatar Preview
                             $('.img-holder').attr('src',
                                 res.logo ?
-                                `/storage/${res.logo}` : `/img/default_avatar.png`
+                                `/storage/${res.logo}` :
+                                `/img/default_avatar.png`
                             )
 
                             // Assign Action to Form
-                            $('form').attr('action', "{{ route('departments.update', ':id') }}"
+                            $('form').attr('action',
+                                "{{ route('filosofy.update', ':id') }}"
                                 .replace(':id', res.id))
+                            tomselectCabinet.setValue(res.cabinet_id)
                         }
                     },
                 })
@@ -344,6 +350,16 @@
 
                 }).then((result) => {
                     if (result.isConfirmed) {
+
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: 'Sedang menghapus data...',
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading()
+                            }
+                        })
+
                         $.ajax({
                             method: 'DELETE',
                             url: action.replace(':id', id),
@@ -357,7 +373,8 @@
                                         if (result.isConfirmed) {
 
                                             // Reload Datatable
-                                            table.DataTable().ajax.reload();
+                                            table.DataTable().ajax
+                                                .reload();
 
                                             // Show Alert
                                             $('#card').before(
@@ -367,10 +384,15 @@
                                                 '</div>'
                                             );
 
-                                            $('.alert').delay(3000).slideUp(300,
-                                                function() {
-                                                    $(this).alert('close');
-                                                });
+                                            $('.alert').delay(3000)
+                                                .slideUp(
+                                                    300,
+                                                    function() {
+                                                        $(this)
+                                                            .alert(
+                                                                'close'
+                                                            );
+                                                    });
                                         }
                                     })
                                 }
@@ -378,7 +400,7 @@
                             error: function(err) {
                                 if (err) {
                                     Swal.fire(
-                                        'Gagal!',
+                                        'Error!',
                                         err.responseJSON.message,
                                         'error'
                                     )
@@ -388,11 +410,11 @@
                     }
                 })
             });
-
             // -------------------------------------------------
             // FUNCTION
             // -------------------------------------------------
             function resetForm() {
+                tomselectCabinet.clear(true);
                 $('.is-invalid').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
                 $('form')[0].reset();
