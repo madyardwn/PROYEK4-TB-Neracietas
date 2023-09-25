@@ -28,10 +28,21 @@ class CabinetsController extends Controller
      */
     public function index()
     {
-        // get all cabinets
-        $cabinets = Cabinet::query()
+        $cabinets = Cabinet::with([
+                'filosofies' => function ($query) {
+                    $query->select(
+                        [
+                            'filosofy.id',
+                            'filosofy.cabinet_id',
+                            'filosofy.label',
+                            DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', filosofy.logo), CONCAT('" . asset('img/default_avatar.png') . "')) as logo"),
+                        ]
+                    );
+                },
+            ])
             ->select(
                 [
+                    'cabinets.id',
                     'cabinets.name',
                     'cabinets.description',
                     'cabinets.visi',

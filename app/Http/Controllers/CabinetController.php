@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\CabinetsDataTable;
 use App\Models\Cabinet;
 use App\Models\Department;
+use App\Models\Periode;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -88,8 +89,6 @@ class CabinetController extends Controller
                 ]
             );
 
-            $this->generateDepartments($cabinet);
-
             return response()->json(
                 [
                     'message' => 'Kabinet ' . $request->name . ' berhasil ditambahkan',
@@ -100,105 +99,6 @@ class CabinetController extends Controller
             return response()->json(
                 [
                     'message' => 'Kabinet ' . $request->name . ' gagal ditambahkan',
-                ],
-                500
-            );
-        }
-    }
-
-    public function generateDepartments(Cabinet $cabinet)
-    {
-        $departments = [
-            [
-                'name' => 'Biro Administrasi & Sekretariat',
-                'short_name' => 'Adkes',
-                'logo' => '',
-                'description' => 'Biro Administrasi & Sekretariat bertanggung jawab atas segala urusan administrasi dan keuangan Himpunan Mahasiswa Teknik Komputer Polban. Selain itu, Biro Administrasi & Sekretariat juga bertanggung jawab atas segala urusan keuangan Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Biro Keuangan',
-                'short_name' => 'Keuangan',
-                'logo' => '',
-                'description' => 'Biro Keuangan bertanggung jawab atas segala urusan keuangan Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Biro Kewirausahaan',
-                'short_name' => 'Kewirausahaan',
-                'logo' => '',
-                'description' => 'Biro Kewirausahaan bertanggung jawab atas segala urusan kewirausahaan Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Departemen Luar Himpunan',
-                'short_name' => 'Luhim',
-                'logo' => '',
-                'description' => 'Biro Luar Himpunan bertanggung jawab atas segala urusan luar Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Departemen Riset, Pendidikan, dan Teknologi',
-                'short_name' => 'Risetdikti',
-                'logo' => '',
-                'description' => 'Departemen Riset, Pendidikan, dan Teknologi bertanggung jawab atas segala urusan riset, pendidikan, dan teknologi Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Departemen Pengembangan Sumber Daya Anggota',
-                'short_name' => 'PSDA',
-                'logo' => '',
-                'description' => 'Departemen Pengembangan Sumber Daya Anggota bertanggung jawab atas segala urusan pengembangan sumber daya anggota Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Departemen Komunikasi & Informasi',
-                'short_name' => 'Kominfo',
-                'logo' => '',
-                'description' => 'Departemen Komunikasi & Informasi bertanggung jawab atas segala urusan komunikasi dan informasi Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Unit Teknologi',
-                'short_name' => 'Tekno',
-                'logo' => '',
-                'description' => 'Unit Teknologi bertanggung jawab atas segala urusan teknologi Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Departemen Seni & Olahraga',
-                'short_name' => 'Senor',
-                'logo' => '',
-                'description' => 'Departemen Seni & Olahraga bertanggung jawab atas segala urusan seni dan olahraga Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Majelis Perwakilan Anggota',
-                'short_name' => 'MPA',
-                'logo' => '',
-                'description' => 'Majelis Perwakilan Anggota bertanggung jawab atas segala urusan perwakilan anggota Himpunan Mahasiswa Teknik Komputer Polban.',
-            ],
-            [
-                'name' => 'Himpunan Mahasiswa Teknik Komputer Polban',
-                'short_name' => 'HIMAKOM',
-                'logo' => '',
-                'description' => 'Himpunan Mahasiswa Teknik Komputer Polban bertanggung jawab atas segala urusan Himpunan Mahasiswa Teknik Komputer Polban.',
-            ]
-        ];
-
-        try {
-            foreach ($departments as $department) {
-                Department::create(
-                    [
-                        'name' => $department['name'],
-                        'short_name' => $department['short_name'],
-                        // 'description' => $department['description'],
-                        'cabinet_id' => $cabinet->id,
-                    ]
-                );
-            }
-
-            return response()->json(
-                [
-                    'message' => 'Departemen berhasil dibuat',
-                ],
-                200
-            );
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'message' => 'Departemen gagal dibuat',
                 ],
                 500
             );
@@ -286,15 +186,6 @@ class CabinetController extends Controller
                 ]
             );
 
-            $departments = Department::where('cabinet_id', $cabinet->id);
-
-            if ($departments->count() > 0) {
-                // Update user active status if department exists
-                foreach ($departments->get() as $department) {
-                    $department->users()->update(['is_active' => $request->is_active ?? 0]);
-                }
-            }
-
             return response()->json(
                 [
                     'message' => 'Kabinet ' . $request->name . ' berhasil diperbarui',
@@ -323,34 +214,16 @@ class CabinetController extends Controller
             foreach ($ids as $id) {
                 $cabinet = Cabinet::find($id);
 
-                $departmentsCount = Department::where('cabinet_id', $id)->count();
-
-                if ($departmentsCount > 0) {
-                    continue;
-                }
-
                 if ($cabinet->logo) {
                     Storage::disk('public')->delete($cabinet->logo);
                 }
 
-                $cabinet->delete();
-                $count++;
-            }
-
-            if ($count > 0) {
-                $message = 'Berhasil menghapus ' . $count . ' kabinet';
-
-                if ($count != count($ids)) {
-                    $message = 'Berhasil menghapus ' . $count . ' kabinet dari ' . count($ids) . '
-                    kabinet yang dipilih, karena masih ada kabinet yang memiliki departemen';
+                if ($cabinet->filosofy) {
+                    Storage::disk('public')->delete($cabinet->filosofy);
                 }
 
-                return response()->json(
-                    [
-                        'message' => $message,
-                    ],
-                    200
-                );
+                $cabinet->delete();
+                $count++;
             }
 
             return response()->json(
@@ -369,9 +242,4 @@ class CabinetController extends Controller
             );
         }
     }
-
-    // <a class="btnFilosofy btn btn-ghost-info btn-sm fa fa-image" data-action="' . route('cabinets.filosofy', ':id') . '" data-id="${this.id}"></a>
-    //                 <a class="btnMakeFilosofy btn btn-ghost-warning btn-sm fa fa-image" data-action="' . route('cabinets.makefilosofy', ':id') . '" data-id="${this.id}"></a>
-    //                 <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('cabinets.edit', ':id') . '" data-id="${this.id}"></a>
-    //                 <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('cabinets.destroy', ':id') . '" data-id="${this.id}"></a>                    
 }
