@@ -98,11 +98,19 @@ class EventsDataTable extends DataTable
                 ->addClass('text-center')
                 ->title('Opsi')
                 ->render('function() {
-                return `
-                    <a class="btnNotification btn btn-ghost-primary btn-sm fa fa-bell" data-action="' . route('events.notification', ':id') . '" data-id="${this.id}"></a>
-                    <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
-                    <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
-                `
+                    if (this.is_active == 1) {
+                        return `
+                            <a class="btnNotification btn btn-ghost-primary btn-sm fa fa-bell" data-action="' . route('events.notification', ':id') . '" data-id="${this.id}"></a>
+                            <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
+                            <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
+                        `
+                    } else {
+                        return `
+                            <a class="btn btn-ghost-primary btn-sm fa fa-bell" disabled></a>
+                            <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
+                            <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
+                        `
+                    }
                 }')
                 ->width(50),
         ];

@@ -216,6 +216,12 @@ class EventController extends Controller
 
     public function notification(Event $event, Request $request)
     {
+        if (!$event->is_active) {
+            return response()->json([
+                'message' => 'Event ' . $event->name . ' sudah berakhir',
+            ], 403);
+        }
+
         $url = env('FCM_URL');
 
         $serverKey = env('FCM_SERVER_KEY');
