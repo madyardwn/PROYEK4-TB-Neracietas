@@ -106,7 +106,6 @@ class EventsDataTable extends DataTable
                         `
                     } else {
                         return `
-                            <a class="btn btn-ghost-primary btn-sm fa fa-bell" disabled></a>
                             <a class="btnEdit btn btn-ghost-primary  btn-sm fa fa-edit" data-action="' . route('events.edit', ':id') . '" data-id="${this.id}"></a>
                             <a class="btnDelete btn btn-ghost-danger btn-sm fa fa-trash" data-action="' . route('events.destroy', ':id') . '" data-id="${this.id}"></a>
                         `
