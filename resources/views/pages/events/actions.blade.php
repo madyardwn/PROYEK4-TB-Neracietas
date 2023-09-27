@@ -323,19 +323,44 @@
             $(document).on('click', '.btnNotification', function() {                
                 const id = $(this).data('id');
                 Swal.fire({
-                    title: 'Kirim Notifikasi?',
-                    text: "Notifikasi akan dikirim ke semua anggota aktif",
+                    title: 'Kirim Notifikasi',
+                    html: `
+                        <div class="form-group mt-3">
+                            <input type="text" class="form-control" id="swal-title" placeholder="Title">
+                        </div>
+                        <div class="form-group mt-3">
+                            <textarea class="form-control" id="swal-body" placeholder="Content" rows="4"></textarea>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="text" class="form-control" id="swal-link" placeholder="Link">
+                        </div>
+                    `,                        
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#6c757d',
                     confirmButtonText: 'Ya, Kirim!',
-                    cancelButtonText: 'Batal'
+                    cancelButtonText: 'Batal',
+                    preConfirm: () => {
+                        const title = document.getElementById('swal-title').value;
+                        const body = document.getElementById('swal-body').value;
+                        const link = document.getElementById('swal-link').value;
+
+                        return { title, body, link };
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        const formData = new FormData();
+                        formData.append('title', result.value.title);
+                        formData.append('body', result.value.body);
+                        formData.append('link', result.value.link);
+
                         $.ajax({
-                            method: 'GET',
+                            method: 'POST',
                             url: "{{ route('events.notification', ':id') }}".replace(':id', id),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
                             success: function(res) {
                                 if (res) {
                                     Swal.fire({
@@ -378,6 +403,7 @@
                     }                    
                 })
             });
+
 
             // -------------------------------------------------
             // EDIT DATA

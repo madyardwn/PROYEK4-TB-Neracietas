@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\EventsDataTable;
 use App\Models\Event;
+use App\Models\Notification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -63,7 +64,9 @@ class EventController extends Controller
         try {
             if ($request->hasFile('poster')) {
                 $currentDate = date('Y-m-d-H-i-s');
-                $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                // $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                // replace space with underscore
+                $filename = $currentDate . '_' . str_replace(' ', '_', $request->name) . '.' . $request->poster->extension();
                 $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
             }
 
@@ -146,7 +149,9 @@ class EventController extends Controller
                 }
 
                 $currentDate = date('Y-m-d-H-i-s');
-                $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                // $filename = $currentDate . '_' . $request->name . '.' . $request->poster->extension();
+                // replace space with underscore
+                $filename = $currentDate . '_' . str_replace(' ', '_', $request->name) . '.' . $request->poster->extension();
                 $poster = $request->poster->storeAs('cabinets/events/poster', $filename, 'public');
             }
 
@@ -209,7 +214,7 @@ class EventController extends Controller
         }
     }
 
-    public function notification(Event $event)
+    public function notification(Event $event, Request $request)
     {
         $url = env('FCM_URL');
 
@@ -221,27 +226,36 @@ class EventController extends Controller
         ];
 
         $notification = [
-            'title' => 'Event ' . $event->name,
-            'body' => 'Event ' . $event->name . ' akan dilaksanakan pada ' . $event->date . ' pukul ' . $event->time . ' di ' . $event->location,
+            'title' => $request->title ?? 'Event ' . $event->name,
+            'body' => $request->body ?? 'Event ' . $event->name . ' akan dilaksanakan pada ' . $event->date . ' pukul ' . $event->time . ' di ' . $event->location,
+            'link' => $request->link ?? '',
+            'poster' => $event->poster ? asset('storage/' . $event->poster) : '',
         ];
 
         $data = [
             'event_id' => $event->id,
         ];
 
-        $fcmTokens = User::whereNotNull('device_token')->pluck('device_token')->all();
-        // $fcmTokens = User::query()
-        //     ->select([
-        //         'users.device_token',
-        //         'periodes.is_active'
-        //     ])
-        //     ->leftJoin('periodes', 'periodes.id', '=', 'users.periode_id')
-        //     ->where('periodes.is_active', true)
-        //     ->whereNotNull('users.device_token')
-        //     ->pluck('users.device_token')
-        //     ->all();
+        // $fcmTokens = User::whereNotNull('device_token')->pluck('device_token')->all();
+        $fcmTokens = User::query()
+            ->select([
+                'users.device_token',
+                'periodes.is_active'
+            ])
+            ->leftJoin('periodes', 'periodes.user_id', '=', 'users.id')
+            ->where('periodes.is_active', true)
+            ->whereNotNull('users.device_token')
+            ->pluck('users.device_token')
+            ->all();
 
-        $chunks = array_chunk($fcmTokens, 50);
+        $chunks = array_chunk($fcmTokens, 50);        
+
+        Notification::create([
+            'title' => $notification['title'],
+            'body' => $notification['body'],
+            'link' => $notification['link'],
+            'poster' => $notification['poster'],
+        ]);
 
         foreach ($chunks as $chunk) {
             $fields = [
@@ -263,15 +277,17 @@ class EventController extends Controller
             ]);
 
             $response = curl_exec($curl);
-
             curl_close($curl);
+
+            $user = User::where('device_token', $chunk[0])->first();
+            $user->notifications()->attach(Notification::latest()->first()->id, [
+                'created_at' => Carbon::now(), 
+                'updated_at' => Carbon::now()
+            ]);
         }
 
         return response()->json([
             'message' => 'Notifikasi berhasil dikirim',
-            'data' => $response,
-            'tokens' => $fcmTokens,
-            'chunks' => $chunks,
         ], 200);                
     }
 }

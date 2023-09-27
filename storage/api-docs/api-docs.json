@@ -75,6 +75,66 @@
                 ]
             }
         },
+        "/api/events/notification": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "GET notification",
+                "description": "Return data notification yang akan ditampilkan pada halaman notification mobile",
+                "operationId": "a65019dcccd46af7522cf617497f8798",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/events/notification/{notification}/read": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "GET notification read",
+                "description": "Return data notification yang akan ditampilkan pada halaman notification mobile",
+                "operationId": "9e0bc8619074374ed105775f4f4b7f5e",
+                "parameters": [
+                    {
+                        "name": "notification",
+                        "in": "path",
+                        "description": "Notification ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "403": {
+                        "description": "Access Denied"
+                    },
+                    "404": {
+                        "description": "Notification not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [

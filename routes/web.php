@@ -72,7 +72,8 @@ Route::middleware(['auth'])->group(
         Route::get('events/{event}/edit', [\App\Http\Controllers\EventController::class, 'edit'])->name('events.edit')->middleware('permission:update event');
         Route::put('events/{event}', [\App\Http\Controllers\EventController::class, 'update'])->name('events.update')->middleware('permission:update event');
         Route::delete('events/{event}', [\App\Http\Controllers\EventController::class, 'destroy'])->name('events.destroy')->middleware('permission:delete event');
-        Route::get('events/notification/{event}', [\App\Http\Controllers\EventController::class, 'notification'])->name('events.notification')->middleware('permission:update event');
+        // Route::get('events/notification/{event}', [\App\Http\Controllers\EventController::class, 'notification'])->name('events.notification')->middleware('permission:update event');        
+        Route::post('events/notification/{event}', [\App\Http\Controllers\EventController::class, 'notification'])->name('events.notification')->middleware('permission:update event');
 
         Route::get('roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('roles.index')->middleware('permission:read role');
         Route::get('roles/create', [\App\Http\Controllers\RoleController::class, 'create'])->name('roles.create')->middleware('permission:create role');

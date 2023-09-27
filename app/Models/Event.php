@@ -20,4 +20,9 @@ class Event extends Model
         'type',
         'is_active',
     ];
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

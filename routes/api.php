@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->group(
         Route::get('/users', [App\Http\Controllers\Api\UsersController::class, 'index']);
         Route::get('/cabinets', [App\Http\Controllers\Api\CabinetsController::class, 'index']);
         Route::get('/events', [App\Http\Controllers\Api\EventsController::class, 'index']);
+        Route::get('/events/notification', [App\Http\Controllers\Api\EventsController::class, 'notification']);
+        Route::get('/events/notification/{notification}/read', [App\Http\Controllers\Api\EventsController::class, 'notificationRead']);
         Route::get('/departments', [App\Http\Controllers\Api\DepartmentsController::class, 'index']);                    
         Route::put('/user/device-token', [App\Http\Controllers\Api\UsersController::class, 'updateDeviceToken']);
 
