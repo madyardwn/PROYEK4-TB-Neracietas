@@ -146,9 +146,9 @@ class LoginController extends Controller
      */
     public function logoutApi(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        
-        $user = User::find($request->user()->id);
+        $user = $request->user();
+
+        $user->currentAccessToken()->delete();
         $user->device_token = null;
         $user->save();
 
