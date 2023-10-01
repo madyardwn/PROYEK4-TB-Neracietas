@@ -34,6 +34,8 @@ Route::middleware('auth:sanctum')->group(
             '/logoutApi',
             function (Request $request) {
                 $request->user()->currentAccessToken()->delete();
+                $request->user()->device_token = null;
+                $request->user()->save();
                 return response()->json(['message' => 'Logged out.'], 200);
             }
         );
