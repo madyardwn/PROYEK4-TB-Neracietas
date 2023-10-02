@@ -135,11 +135,27 @@ class UsersController extends Controller
                         'users.email_verified_at',
                         'users.created_at',
                         'users.updated_at',
-                        'roles.name as role_name',
+                        DB::raw("
+                            CASE
+                                WHEN roles.name IN (
+                                    'Ketua Himpunan',
+                                    'Wakil Ketua Himpunan',
+                                    'Bendahara',
+                                    'Sekretaris'
+                                   ) THEN CONCAT(UPPER(LEFT(roles.name, 1)), SUBSTRING(roles.name, 2))
+                                WHEN roles.name = 'Ketua Divisi'
+                                    THEN CONCAT('Ketua', ' ', departments.name)
+                                WHEN roles.name = 'Wakil Ketua Divisi'
+                                    THEN CONCAT('Wakil Ketua', ' ', departments.name)
+                                ELSE
+                                    CONCAT(UPPER(LEFT(roles.name, 1)), SUBSTRING(roles.name, 2))
+                            END as role_name"
+                        ),
                     ]
                 )
                 ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
                 ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
+                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
                 ->where('users.id', $request->user()->id)
                 ->first()
         );

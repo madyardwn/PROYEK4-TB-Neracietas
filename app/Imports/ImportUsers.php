@@ -20,31 +20,30 @@ class ImportUsers implements ToModel
             && $row[2] == 'email'
             && $row[3] == 'password'
             && $row[4] == 'year'
+            && $row[5] == 'nama_bagus'
         ) { return null;
         }
 
         // check if user already exists just update it
         $user = User::where('nim', $row[0])->first();
         if ($user) {
-            $user->update(
-                [
+            $user->update([
                 'name' => $row[1],
                 'email' => $row[2],
                 'password' => bcrypt($row[3]),
                 'year' => $row[4],
-                ]
-            );
+                'nama_bagus' => $row[5],
+            ]);
             return null;
         }
 
-        return new User(
-            [
+        return new User([
             'nim' => $row[0],
             'name' => $row[1],
             'email' => $row[2],
             'password' => bcrypt($row[3]),
             'year' => $row[4],
-            ]
-        );
+            'nama_bagus' => $row[5],
+        ]);
     }
 }
