@@ -19,9 +19,16 @@ class UserController extends Controller
             'pages.users.index', [
             'cabinets' => Cabinet::where('is_active', 1)->get(),
             'roles' => Role::where('name', '!=', 'superadmin')->get(),
-            'departments' => Department::where('is_active', 1)->get(),
-            ]
-        );
+            'departments' => Department::select([
+                'departments.id',
+                'departments.name',
+                'cabinets.name as cabinet_name',                
+            ])
+                ->leftJoin('periodes', 'departments.id', '=', 'periodes.department_id')
+                ->leftJoin('cabinets', 'periodes.cabinet_id', '=', 'cabinets.id')
+                ->where('departments.is_active', 1)
+                ->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -217,10 +224,12 @@ class UserController extends Controller
             $user = User::find($id);
 
             if ($request->hasFile('avatar')) {
-                $currentDate = date('Y-m-d-H-i-s');
-                $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
+                // $currentDate = date('Y-m-d-H-i-s');
+                // $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
 
-                $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+                // $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
+
+                $path = $request->file('avatar')->store('avatars', 'public');
 
                 if ($user->avatar) {
                     Storage::disk('public')->delete($user->avatar);

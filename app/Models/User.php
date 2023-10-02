@@ -51,6 +51,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function cabinets()
+    {
+        return $this->belongsToMany(Cabinet::class, 'periodes', 'user_id', 'cabinet_id');
+    }
+
     public function departments()
     {
         return $this->belongsToMany(Department::class, 'periodes', 'user_id', 'department_id');
