@@ -41,7 +41,7 @@ class UsersDataTable extends DataTable
             ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
             // leftjoin with role
             ->leftJoin('roles', 'periodes.role_id', '=', 'roles.id')
-
+            ->where('periodes.is_active', '=', 1)
             // exclude users with superadmin role
             ->whereNotExists(function ($query) {
                 // superadmin role name
