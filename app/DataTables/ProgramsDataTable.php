@@ -36,7 +36,8 @@ class ProgramsDataTable extends DataTable
                 'departments.name as department_name',
                 ]
             )
-            ->leftJoin('departments', 'departments.id', '=', 'programs.department_id');
+            ->leftJoin('departments', 'departments.id', '=', 'programs.department_id')
+            ->where('programs.department_id', auth()->user()->departments()->first()->id);
     }
 
     public function html(): HtmlBuilder

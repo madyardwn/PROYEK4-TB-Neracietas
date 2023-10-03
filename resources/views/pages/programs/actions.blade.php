@@ -31,7 +31,6 @@
                                     <option value="" selected disabled>Pilih Departemen</option>
                                     @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">
-                                            {{ $department->cabinet_name }} -
                                             {{ $department->name }}
                                         </option>
                                     @endforeach

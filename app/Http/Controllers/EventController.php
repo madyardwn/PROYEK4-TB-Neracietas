@@ -261,15 +261,7 @@ class EventController extends Controller
             'body' => $notification['body'],
             'link' => $notification['link'],
             'poster' => $notification['poster'],
-        ]);
-
-        foreach ($fcmTokens as $token) {
-            $user = User::where('device_token', $token)->first();
-            $user->notifications()->attach(Notification::latest()->first()->id, [
-                'created_at' => Carbon::now(), 
-                'updated_at' => Carbon::now()
-            ]);
-        }
+        ]);        
 
         foreach ($chunks as $chunk) {
             $fields = [
@@ -292,6 +284,14 @@ class EventController extends Controller
 
             $response = curl_exec($curl);
             curl_close($curl);            
+
+            foreach ($chunk as $token) {
+                $user = User::where('device_token', $token)->first();
+                $user->notifications()->attach(Notification::latest()->first()->id, [
+                    'created_at' => Carbon::now(), 
+                    'updated_at' => Carbon::now()
+                ]);
+            }
         }
 
         return response()->json([

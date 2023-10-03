@@ -13,23 +13,23 @@ class ProgramController extends Controller
     public function index(ProgramsDataTable $dataTable)
     {
         return $dataTable->render('pages.programs.index', [
-            'departments' => Department::leftJoin('periodes', 'departments.id', '=', 'periodes.department_id')
-                ->leftJoin('cabinets', 'periodes.cabinet_id', '=', 'cabinets.id')
-                ->select('departments.id', 'departments.name', 'cabinets.name as cabinet_name', 'cabinets.is_active as status')
-                ->where('cabinets.is_active', 1)
-                ->get(),
-            'users' => User::leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            // 'departments' => Department::when(auth()->user()->roles()->first()->name == 'ketua divisi', function ($query) {
+            'departments' => Department::when(auth()->user()->hasRole('ketua divisi'), function ($query) {
+                $query->where('id', auth()->user()->departments()->first()->id);
+            })->get(),
+            'users' => User::select(
+                'users.id',
+                'users.name',
+                'roles.name as role',
+                'departments.id as department_id',
+                'departments.name as department',
+                'periodes.is_active as status'
+            )
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                 ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
                 ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
                 ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
-                ->select(
-                    'users.id',
-                    'users.name',
-                    'roles.name as role',
-                    'departments.id as department_id',
-                    'departments.name as department',
-                    'periodes.is_active as status'
-                )
+                ->where('departments.name', auth()->user()->departments()->first()->name)
                 ->get(),
         ]);
     }

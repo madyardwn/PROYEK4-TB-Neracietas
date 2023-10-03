@@ -32,7 +32,10 @@ class DepartmentsDataTable extends DataTable
                 'departments.short_name',
                 'departments.logo',
                 'departments.description',
-            ]);
+            ])
+            ->when(auth()->user()->hasRole('ketua divisi'), function ($query) {
+                return $query->where('departments.name', auth()->user()->departments()->first()->name);
+            });
     }
 
     public function html(): HtmlBuilder

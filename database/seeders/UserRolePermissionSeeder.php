@@ -85,9 +85,12 @@ class UserRolePermissionSeeder extends Seeder
                 'delete program',
 
                 'read department',
-                'create department',
                 'update department',
-                'delete department'
+
+                'read event',
+                'create event',
+                'update event',
+                'delete event',
             ]
         );
         Role::create(['name' => 'wakil ketua divisi'])->givePermissionTo(
@@ -98,8 +101,12 @@ class UserRolePermissionSeeder extends Seeder
                 'delete program',
 
                 'read department',
-                'create department',
                 'update department',
+
+                'read event',
+                'create event',
+                'update event',
+                'delete event',
             ]
         );
 
@@ -112,14 +119,16 @@ class UserRolePermissionSeeder extends Seeder
                 'create program',
                 'update program',
                 'delete program',
+
+                'read event',
+                'create event',
+                'update event',
+                'delete event',
             ]
         );
         Role::create(['name' => 'staf muda'])->givePermissionTo(
             [
                 'read program',
-                'create program',
-                'update program',
-                'delete program',
             ]
         );
 
