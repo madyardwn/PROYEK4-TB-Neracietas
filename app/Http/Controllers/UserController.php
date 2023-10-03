@@ -19,15 +19,7 @@ class UserController extends Controller
             'pages.users.index', [
             'cabinets' => Cabinet::where('is_active', 1)->get(),
             'roles' => Role::where('name', '!=', 'superadmin')->get(),
-            'departments' => Department::select([
-                'departments.id',
-                'departments.name',
-                'cabinets.name as cabinet_name',                
-            ])
-                ->leftJoin('periodes', 'departments.id', '=', 'periodes.department_id')
-                ->leftJoin('cabinets', 'periodes.cabinet_id', '=', 'cabinets.id')
-                ->where('departments.is_active', 1)
-                ->get(),
+            'departments' => Department::select('id', 'name')->get(),
         ]);
     }
 
@@ -106,7 +98,11 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
 
-                'avatar' => $request->file('avatar')->store('avatars', 'public'),
+                'avatar' => $request->file('avatar')->storeAs(
+                    'avatars',
+                    $request->na . '.' . $request->file('avatar')->extension(),
+                    'public'
+                ),
                 'na' => $request->na ?? null,
                 'nama_bagus' => $request->nama_bagus ?? null,
                 'year' => $request->year ?? null,
@@ -224,13 +220,8 @@ class UserController extends Controller
             $user = User::find($id);
 
             if ($request->hasFile('avatar')) {
-                // $currentDate = date('Y-m-d-H-i-s');
-                // $filename = $currentDate . '_' . $request->name . '.' . $request->file('avatar')->getClientOriginalExtension();
-
-                // $path = $request->file('avatar')->storeAs('avatars', $filename, 'public');
-
-                $path = $request->file('avatar')->store('avatars', 'public');
-
+                $name = $request->na . '.' . $request->file('avatar')->extension();
+                $path = $request->file('avatar')->storeAs('avatars', $name, 'public');
                 if ($user->avatar) {
                     Storage::disk('public')->delete($user->avatar);
                 }

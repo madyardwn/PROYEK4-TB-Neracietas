@@ -14,7 +14,7 @@ class Department extends Model
         'logo',
         'short_name',
         'description',
-        'cabinet_id',
+        'is_active',
     ];
 
     public function cabinet()

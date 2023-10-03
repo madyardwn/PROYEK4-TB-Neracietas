@@ -24,20 +24,47 @@ class ImportUsers implements ToModel
             && $row[3] == 'password'
             && $row[4] == 'year'
             && $row[5] == 'nama_bagus'
-            && $row[6] == 'department_name'
-        ) { return null;
-        }
+            && $row[6] == 'na'
+            && $row[7] == 'department_name'
+            && $row[8] == 'avatar'
+            && $row[9] == 'role'
+        ) { return null;}
 
-        // check if user already exists just update it
         $user = User::where('nim', $row[0])->first();
         if ($user) {
-            $user->update([
+            $user->update([                
                 'name' => $row[1],
                 'email' => $row[2],
                 'password' => bcrypt($row[3]),
                 'year' => $row[4],
                 'nama_bagus' => $row[5],
+                'na' => $row[6],
+                'avatar' => $row[8],
             ]);
+            $user->assignRole($row[9]);
+
+            // update periode latest
+            $cabinet = Cabinet::where('is_active', true)->first();
+            $department = Department::where('short_name', $row[7])
+                ->first();
+            $periode = Periode::where('user_id', $user->id)
+                ->latest()
+                ->first();
+
+            if ($periode) {
+                $periode->update([
+                    'is_active' => false,
+                ]);
+            }
+
+            Periode::create([
+                'user_id' => $user->id,
+                'cabinet_id' => $cabinet->id,
+                'department_id' => $department->id ?? 1,
+                'role_id' => $user->roles->first()->id,
+                'is_active' => true,
+            ]);
+            
             return null;
         }
 
@@ -48,13 +75,16 @@ class ImportUsers implements ToModel
             'password' => bcrypt($row[3]),
             'year' => $row[4],
             'nama_bagus' => $row[5],
+            'na' => $row[6] ?? null,
+            'avatar' => $row[8],
         ]);
-        $user->assignRole('staf muda');
+        $user->assignRole($row[9]);
 
         $cabinet = Cabinet::where('is_active', true)->first();
 
-        $department = Department::where('name', $row[6])->first();
-        
+        $department = Department::where('short_name', $row[7])
+            ->first();
+
         Periode::create([
             'user_id' => $user->id,
             'cabinet_id' => $cabinet->id,
