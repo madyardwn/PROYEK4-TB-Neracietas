@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\ProgramsDataTable;
 use App\Models\Department;
+use App\Models\Periode;
 use App\Models\Program;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,12 +13,8 @@ class ProgramController extends Controller
 {
     public function index(ProgramsDataTable $dataTable)
     {
-        return $dataTable->render('pages.programs.index', [
-            // 'departments' => Department::when(auth()->user()->roles()->first()->name == 'ketua divisi', function ($query) {
-            'departments' => Department::when(auth()->user()->hasRole('ketua divisi'), function ($query) {
-                $query->where('id', auth()->user()->departments()->first()->id);
-            })->get(),
-            'users' => User::select(
+        if (auth()->user()->hasRole('superadmin')) {
+            $users = Periode::select(
                 'users.id',
                 'users.name',
                 'roles.name as role',
@@ -25,25 +22,34 @@ class ProgramController extends Controller
                 'departments.name as department',
                 'periodes.is_active as status'
             )
-                // ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                // ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                // ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
-                // ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
-                // // ->where('departments.name', auth()->user()->departments()->first()->name)
-                // ->when(auth()->user()->hasRole('ketua divisi'), function ($query) {
-                //     $query->where('departments.id', auth()->user()->departments()->first()->id);
-                // })
-                // ->get(),
+                ->leftJoin('users', 'periodes.user_id', '=', 'users.id')
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
+                ->get();
+        } else {
+            $users = User::select(
+                'users.id',
+                'users.name',
+                'roles.name as role',
+                'departments.id as department_id',
+                'departments.name as department',
+                'periodes.is_active as status'
+            )
+                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
+                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
+                ->where('departments.name', auth()->user()->departments()->first()->name)
+                ->get();
+        }
 
-            // exclude superadmin
-            ->when(!auth()->user()->hasRole('superadmin'), function ($query) {
-                $query->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                    ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                    ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
-                    ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
-                    ->where('departments.name', auth()->user()->departments()->first()->name);
-            })
-            ->get(),
+        return $dataTable->render('pages.programs.index', [
+            // 'departments' => Department::when(auth()->user()->roles()->first()->name == 'ketua divisi', function ($query) {
+            'departments' => Department::when(auth()->user()->hasRole('ketua divisi'), function ($query) {
+                $query->where('id', auth()->user()->departments()->first()->id);
+            })->get(),           
+            'users' => $users,
         ]);
     }
 
