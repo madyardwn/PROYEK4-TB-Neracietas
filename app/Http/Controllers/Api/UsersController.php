@@ -84,8 +84,7 @@ class UsersController extends Controller
                         CONCAT('Wakil Ketua Divisi', ' ', departments.name)
                     ) THEN 3
                     ELSE 4
-                END,
-                departments.name ASC
+                END
                 "
             )
             ->get();
