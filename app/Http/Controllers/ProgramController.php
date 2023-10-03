@@ -30,7 +30,7 @@ class ProgramController extends Controller
                 ->leftJoin('periodes', 'users.id', '=', 'periodes.user_id')
                 ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
                 // ->where('departments.name', auth()->user()->departments()->first()->name)
-                -when(auth()->user()->hasRole('ketua divisi'), function ($query) {
+                ->when(auth()->user()->hasRole('ketua divisi'), function ($query) {
                     $query->where('departments.id', auth()->user()->departments()->first()->id);
                 })
                 ->get(),
