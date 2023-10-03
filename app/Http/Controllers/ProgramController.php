@@ -22,10 +22,10 @@ class ProgramController extends Controller
                 'departments.name as department',
                 'periodes.is_active as status'
             )
-                ->leftJoin('users', 'periodes.user_id', '=', 'users.id')
-                ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-                ->leftJoin('departments', 'periodes.department_id', '=', 'departments.id')
+                ->join('users', 'periodes.user_id', '=', 'users.id')
+                ->join('roles', 'periodes.role_id', '=', 'roles.id')
+                ->join('departments', 'periodes.department_id', '=', 'departments.id')
+                ->where('periodes.is_active', 1)                
                 ->get();
         } else {
             $users = User::select(
