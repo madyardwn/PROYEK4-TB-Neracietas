@@ -37,7 +37,12 @@ class ProgramsDataTable extends DataTable
                 ]
             )
             ->leftJoin('departments', 'departments.id', '=', 'programs.department_id')
-            ->where('programs.department_id', auth()->user()->departments()->first()->id);
+            // ->where('programs.department_id', auth()->user()->departments()->first()->id);
+            ->when(
+                auth()->user()->hasRole('ketua divisi'), function ($query) {
+                    return $query->where('programs.department_id', auth()->user()->departments()->first()->id);
+                }
+            );
     }
 
     public function html(): HtmlBuilder
