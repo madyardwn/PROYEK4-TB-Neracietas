@@ -69,24 +69,24 @@ class UsersController extends Controller
                 }
             )
             ->where('periodes.is_active', 1)
-            // sort by role
             ->orderByRaw(
-                "
-            CASE
-                WHEN roles.name IN (
-                    'Ketua Himpunan',
-                    'Wakil Ketua Himpunan',
-                    'Bendahara',
-                    'Sekretaris'
+                "CASE
+                    WHEN roles.name IN (
+                        'Ketua Himpunan',
+                        'Wakil Ketua Himpunan'             
                     ) THEN 1
-                WHEN roles.name = 'Ketua Divisi'
-                    THEN 2
-                WHEN roles.name = 'Wakil Ketua Divisi'
-                    THEN 3
-                ELSE
-                    4
-            END
-            "
+                    WHEN roles.name IN (
+                        'Ketua Majelis Perwakilan Anggota',
+                        'Wakil Ketua Majelis Perwakilan Anggota'
+                    ) THEN 2
+                    WHEN roles.name IN (
+                        CONCAT('Ketua Divisi', ' ', departments.name),
+                        CONCAT('Wakil Ketua Divisi', ' ', departments.name)
+                    ) THEN 3
+                    ELSE 4
+                END,
+                departments.name ASC
+                "
             )
             ->get();
 
