@@ -91,7 +91,7 @@ class FilosofyController extends Controller
     {
         $rules = [
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'label' => 'required|max:50',
+            'label' => 'required|max:255',
             'cabinet' => 'required|exists:cabinets,id',
         ];
 
