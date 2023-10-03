@@ -85,7 +85,7 @@ class LoginController extends Controller
                         'users.name',
                         'users.nim',
                         'users.email',
-                        'users.na',
+                        DB::raw("IFNULL(users.na, users.nim) as na"),
                         'users.year',
                         'nama_bagus',
                         DB::raw(

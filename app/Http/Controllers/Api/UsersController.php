@@ -125,8 +125,7 @@ class UsersController extends Controller
                     [
                         'users.id',
                         'users.nim',
-                        // if na null, return empty string
-                        DB::raw("IFNULL(users.na, '') as na"),
+                        DB::raw("IFNULL(users.na, users.nim) as na"),
                         'users.nama_bagus',
                         // 'users.avatar',
                         DB::raw("IFNULL(CONCAT('" . asset('/storage') . "/', users.avatar), CONCAT('" . asset('img/default_avatar.png') . "')) as avatar"),
